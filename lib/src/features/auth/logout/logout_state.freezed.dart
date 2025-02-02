@@ -18,7 +18,9 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$LogoutState {
   AsyncValue<bool> get isSuccessful => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of LogoutState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $LogoutStateCopyWith<LogoutState> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -42,6 +44,8 @@ class _$LogoutStateCopyWithImpl<$Res, $Val extends LogoutState>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of LogoutState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -75,6 +79,8 @@ class __$$LogoutStateImplCopyWithImpl<$Res>
       _$LogoutStateImpl _value, $Res Function(_$LogoutStateImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of LogoutState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -115,7 +121,9 @@ class _$LogoutStateImpl implements _LogoutState {
   @override
   int get hashCode => Object.hash(runtimeType, isSuccessful);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of LogoutState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$LogoutStateImplCopyWith<_$LogoutStateImpl> get copyWith =>
@@ -128,8 +136,11 @@ abstract class _LogoutState implements LogoutState {
 
   @override
   AsyncValue<bool> get isSuccessful;
+
+  /// Create a copy of LogoutState
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$LogoutStateImplCopyWith<_$LogoutStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

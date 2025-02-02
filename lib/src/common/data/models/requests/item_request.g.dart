@@ -8,14 +8,14 @@ part of 'item_request.dart';
 
 _$ItemRequestImpl _$$ItemRequestImplFromJson(Map<String, dynamic> json) =>
     _$ItemRequestImpl(
-      id: json['id'] as int? ?? null,
+      id: (json['id'] as num?)?.toInt() ?? null,
       title: json['title'] as String? ?? null,
       description: json['description'] as String? ?? null,
-      price: json['price'] as int? ?? null,
+      price: (json['price'] as num?)?.toInt() ?? null,
       discountPercentage:
           (json['discountPercentage'] as num?)?.toDouble() ?? null,
       rating: (json['rating'] as num?)?.toDouble() ?? null,
-      stock: json['stock'] as int? ?? null,
+      stock: (json['stock'] as num?)?.toInt() ?? null,
       brand: json['brand'] as String? ?? null,
       category: json['category'] as String? ?? null,
       thumbnail: json['thumbnail'] as String? ?? null,

@@ -32,8 +32,12 @@ mixin _$ItemResponse {
   String? get thumbnail => throw _privateConstructorUsedError;
   List<String>? get images => throw _privateConstructorUsedError;
 
+  /// Serializes this ItemResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ItemResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ItemResponseCopyWith<ItemResponse> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -68,6 +72,8 @@ class _$ItemResponseCopyWithImpl<$Res, $Val extends ItemResponse>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ItemResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -162,6 +168,8 @@ class __$$ItemResponseImplCopyWithImpl<$Res>
       _$ItemResponseImpl _value, $Res Function(_$ItemResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ItemResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -315,7 +323,7 @@ class _$ItemResponseImpl implements _ItemResponse {
             const DeepCollectionEquality().equals(other._images, _images));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -331,7 +339,9 @@ class _$ItemResponseImpl implements _ItemResponse {
       thumbnail,
       const DeepCollectionEquality().hash(_images));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ItemResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ItemResponseImplCopyWith<_$ItemResponseImpl> get copyWith =>
@@ -384,8 +394,11 @@ abstract class _ItemResponse implements ItemResponse {
   String? get thumbnail;
   @override
   List<String>? get images;
+
+  /// Create a copy of ItemResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ItemResponseImplCopyWith<_$ItemResponseImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

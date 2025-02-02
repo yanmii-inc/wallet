@@ -18,41 +18,41 @@ final Provider<ShellRoute> _mainRouteProvider = Provider<ShellRoute>((ref) {
         name: Routes.main.name,
         parentNavigatorKey: _mainTabNavigatorKey,
         pageBuilder: (BuildContext context, GoRouterState state) =>
-            const NoTransitionPage(child: HomeScreen()),
+            NoTransitionPage(child: TransactionsScreen()),
       ),
       GoRoute(
-        path: MainTabRoute.tab1.path,
+        path: MainTabRoute.transactions.path,
         parentNavigatorKey: _mainTabNavigatorKey,
         pageBuilder: (BuildContext context, GoRouterState state) =>
-            const NoTransitionPage(child: HomeScreen()),
+            NoTransitionPage(child: TransactionsScreen()),
       ),
       GoRoute(
-        path: MainTabRoute.tab2.path,
+        path: MainTabRoute.wallets.path,
         parentNavigatorKey: _mainTabNavigatorKey,
         builder: (context, state) => const LoginScreen(),
         pageBuilder: (BuildContext context, GoRouterState state) =>
             NoTransitionPage(
-          child: ContentScreen(title: MainTabRoute.tab2.label),
+          child: ContentScreen(title: MainTabRoute.wallets.label),
         ),
       ),
       GoRoute(
-        path: MainTabRoute.tab3.path,
+        path: MainTabRoute.reports.path,
         parentNavigatorKey: _mainTabNavigatorKey,
         pageBuilder: (BuildContext context, GoRouterState state) =>
             NoTransitionPage(
-          child: ContentScreen(title: MainTabRoute.tab3.label),
+          child: ContentScreen(title: MainTabRoute.reports.label),
         ),
       ),
       GoRoute(
-        path: MainTabRoute.tab4.path,
+        path: MainTabRoute.loans.path,
         parentNavigatorKey: _mainTabNavigatorKey,
         pageBuilder: (BuildContext context, GoRouterState state) =>
             NoTransitionPage(
-          child: ContentScreen(title: MainTabRoute.tab4.label),
+          child: ContentScreen(title: MainTabRoute.loans.label),
         ),
       ),
       GoRoute(
-        path: MainTabRoute.tab5.path,
+        path: MainTabRoute.settings.path,
         parentNavigatorKey: _mainTabNavigatorKey,
         redirect: (context, state) async {
           // TODO: make redirection popable
@@ -64,7 +64,7 @@ final Provider<ShellRoute> _mainRouteProvider = Provider<ShellRoute>((ref) {
         pageBuilder: (BuildContext context, GoRouterState state) =>
             NoTransitionPage(
           child: ContentScreen(
-            title: MainTabRoute.tab5.label,
+            title: MainTabRoute.settings.label,
             content: const LogoutButton(),
           ),
         ),

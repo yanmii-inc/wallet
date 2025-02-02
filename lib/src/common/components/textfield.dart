@@ -1,5 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:yanmii_wallet/src/common/components/button.dart';
+import 'package:yanmii_wallet/src/features/main/main_screen.dart';
 
 class CommonTextfield extends StatelessWidget {
   final String label;
@@ -12,7 +14,7 @@ class CommonTextfield extends StatelessWidget {
 
   final TextInputType inputType;
 
-  final void Function(String)? onChanged;
+  final void Function(String value)? onChanged;
 
   final FormFieldValidator<String>? validator;
 
@@ -32,32 +34,20 @@ class CommonTextfield extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 15, bottom: 4),
-          child: Text(
-            label,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-        TextFormField(
-          controller: controller,
-          focusNode: focusNode,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          keyboardType: inputType,
-          validator: validator,
-          onChanged: onChanged,
-          obscureText: obscureText,
-          onEditingComplete: onEditingComplete,
-          onTapOutside: (event) =>
-              FocusManager.instance.primaryFocus?.unfocus(),
-        ),
-      ],
+    return TextFormField(
+      controller: controller,
+      focusNode: focusNode,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      keyboardType: inputType,
+      validator: validator,
+      onChanged: onChanged,
+      obscureText: obscureText,
+      onEditingComplete: onEditingComplete,
+      decoration: InputDecoration(
+        labelText: label,
+        suffixIcon: suffixIcon,
+      ),
+      onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
     );
   }
 }

@@ -32,8 +32,12 @@ mixin _$ItemRequest {
   String? get thumbnail => throw _privateConstructorUsedError;
   List<String>? get images => throw _privateConstructorUsedError;
 
+  /// Serializes this ItemRequest to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ItemRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ItemRequestCopyWith<ItemRequest> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -68,6 +72,8 @@ class _$ItemRequestCopyWithImpl<$Res, $Val extends ItemRequest>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ItemRequest
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -162,6 +168,8 @@ class __$$ItemRequestImplCopyWithImpl<$Res>
       _$ItemRequestImpl _value, $Res Function(_$ItemRequestImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ItemRequest
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -314,7 +322,7 @@ class _$ItemRequestImpl implements _ItemRequest {
             const DeepCollectionEquality().equals(other._images, _images));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -330,7 +338,9 @@ class _$ItemRequestImpl implements _ItemRequest {
       thumbnail,
       const DeepCollectionEquality().hash(_images));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ItemRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ItemRequestImplCopyWith<_$ItemRequestImpl> get copyWith =>
@@ -383,8 +393,11 @@ abstract class _ItemRequest implements ItemRequest {
   String? get thumbnail;
   @override
   List<String>? get images;
+
+  /// Create a copy of ItemRequest
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ItemRequestImplCopyWith<_$ItemRequestImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

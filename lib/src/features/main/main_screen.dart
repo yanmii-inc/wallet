@@ -25,11 +25,11 @@ class MainScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.dark_mode),
-        onPressed: () =>
-            ref.read(appControllerProvider.notifier).toggleThemeMode(),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   child: const Icon(Icons.dark_mode),
+      //   onPressed: () =>
+      //       ref.read(appControllerProvider.notifier).toggleThemeMode(),
+      // ),
       body: child,
       bottomNavigationBar: BottomNavigationBar(
         elevation: 5,

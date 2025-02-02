@@ -18,7 +18,9 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$AppState {
   ThemeMode get currentTheme => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AppState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $AppStateCopyWith<AppState> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -41,6 +43,8 @@ class _$AppStateCopyWithImpl<$Res, $Val extends AppState>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of AppState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -74,6 +78,8 @@ class __$$AppStateImplCopyWithImpl<$Res>
       _$AppStateImpl _value, $Res Function(_$AppStateImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of AppState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -114,7 +120,9 @@ class _$AppStateImpl implements _AppState {
   @override
   int get hashCode => Object.hash(runtimeType, currentTheme);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AppState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$AppStateImplCopyWith<_$AppStateImpl> get copyWith =>
@@ -126,8 +134,11 @@ abstract class _AppState implements AppState {
 
   @override
   ThemeMode get currentTheme;
+
+  /// Create a copy of AppState
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$AppStateImplCopyWith<_$AppStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

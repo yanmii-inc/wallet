@@ -11,6 +11,9 @@ import 'package:yanmii_wallet/src/features/main/home/home_screen.dart';
 import 'package:yanmii_wallet/src/features/main/main_screen.dart';
 import 'package:yanmii_wallet/src/features/onboarding/onboarding_screen.dart';
 import 'package:yanmii_wallet/src/features/splash/splash_screen.dart';
+import 'package:yanmii_wallet/src/features/transactions/application/transactions_service.dart';
+import 'package:yanmii_wallet/src/features/transactions/presentation/add/add_transaction_screen.dart';
+import 'package:yanmii_wallet/src/features/transactions/presentation/transactions_screen.dart';
 import 'package:yanmii_wallet/src/logging/analytics.dart';
 import 'package:yanmii_wallet/src/utils/extensions/string_extension.dart';
 
@@ -22,6 +25,7 @@ part 'route_enums.dart';
 part 'routes/auth_routes.dart';
 part 'routes/launch_routes.dart';
 part 'routes/main_routes.dart';
+part 'routes/transaction_routes.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _initNavigatorKey = GlobalKey<NavigatorState>();
@@ -52,7 +56,7 @@ final Provider<GoRouter> goRouterProvider = Provider<GoRouter>((ref) {
         return Routes.onboarding.path;
       }
 
-      if (goingToMain) return MainTabRoute.tab1.path;
+      if (goingToMain) return MainTabRoute.transactions.path;
 
       return null;
     },
@@ -62,6 +66,7 @@ final Provider<GoRouter> goRouterProvider = Provider<GoRouter>((ref) {
       ref.watch(_launchRoutesProvider),
       ref.watch(_authRoutesProvider),
       ref.watch(_mainRouteProvider),
+      ref.watch(_transactionRouteProvider),
     ],
   );
 });
