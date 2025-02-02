@@ -1,0 +1,90 @@
+stages:
+  - validate-apk-dev
+  - build-apk-dev
+  - build-apk-prod
+
+
+cache:
+  paths:
+    - .dart_tool/
+    - .packages/
+    - build/
+    - flutter/
+
+
+validate_apk_dev:
+  image: growerp/flutter-sdk-image:3.16.7
+  stage: validate-apk-dev
+
+  before_script:
+    - cp ${KEY_PROPERTIES} android/key.properties
+    - mkdir envs
+    - cp ${DEV_ENV_VAR} envs/env.dev.json
+    - echo $KEYSTORE_BASE64 | base64 -d > android/app/keystore.jks
+    - flutter clean
+    - dart pub get
+
+  script:
+    - flutter build apk --flavor dev --dart-define-from-file=envs/env.dev.json
+  
+  after_script:
+    - flutter clean
+
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    
+
+build_apk_dev:
+  image: growerp/flutter-sdk-image:3.16.7
+  stage: build-apk-dev
+
+  before_script:
+    - cp ${KEY_PROPERTIES} android/key.properties
+    - mkdir envs
+    - cp ${DEV_ENV_VAR} envs/env.dev.json
+    - echo $KEYSTORE_BASE64 | base64 -d > android/app/keystore.jks
+    - flutter clean
+    - dart pub get
+
+  script:
+    - flutter build apk --flavor dev --dart-define-from-file=envs/env.dev.json
+  
+  after_script:
+    - mv "build/app/outputs/flutter-apk/app-dev-release.apk" "./${CI_JOB_STARTED_AT}-app-release-dev.apk"
+
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - ./${CI_JOB_STARTED_AT}-app-release-dev.apk
+  
+  only:
+    - main
+    
+
+build_apk_prod:
+  image: growerp/flutter-sdk-image:3.16.7
+  stage: build-apk-prod
+
+  before_script:
+    - cp ${KEY_PROPERTIES} android/key.properties
+    - mkdir envs
+    - cp ${PROD_ENV_VAR} envs/env.prod.json
+    - echo $KEYSTORE_BASE64 | base64 -d > android/app/keystore.jks
+    - flutter clean
+    - dart pub get
+
+  script:
+    - flutter build apk --flavor prod --dart-define-from-file=envs/env.prod.json
+  
+  after_script:
+    - mv "build/app/outputs/flutter-apk/app-prod-release.apk" "./${CI_JOB_STARTED_AT}-app-release-prod.apk"
+
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - ./${CI_JOB_STARTED_AT}-app-release-prod.apk
+  
+  only:
+    - main
+  when: manual
+

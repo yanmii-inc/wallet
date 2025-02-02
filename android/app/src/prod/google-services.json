@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "784820756953",
+    "project_id": "yanmii-wallet",
+    "storage_bucket": "yanmii-wallet.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:784820756953:android:64dc85ec36190a05f039c8",
+        "android_client_info": {
+          "package_name": "com.yanmi.wallet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFe5mSQarFEjotCwCDWKoY3AHFinNim7A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

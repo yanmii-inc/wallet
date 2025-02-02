@@ -1,0 +1,38 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Dev",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "args": [
+                "--dart-define=API_URL=http://0.0.0.0:8080/", // Change to your server IP address
+                "--dart-define=ENV=DEV",
+                "--flavor=dev"
+            ]
+        }, 
+        {
+            "name": "Staging",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "args": [
+                "--dart-define=API_URL=http://0.0.0.0:8080/",
+                "--dart-define=ENV=STG",
+                "--flavor=stg"
+            ]
+        },
+        {
+            "name": "Prod",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "args": [
+                "--dart-define=API_URL=http://0.0.0.0:8080/",
+                "--dart-define=ENV=PROD",
+                "--flavor=prod"
+            ]
+        },
+    ]
+}

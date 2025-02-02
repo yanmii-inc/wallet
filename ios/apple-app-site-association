@@ -1,0 +1,18 @@
+{
+  "applinks": {
+      "details": [
+      {
+        "appID": "appleTeamId.com.yanmii.wallet.dev",
+        "paths": ["*"]
+      },
+      {
+        "appID": "appleTeamId.com.yanmii.wallet.stg",
+        "paths": ["*"]
+      },
+      {
+        "appID": "appleTeamId.com.yanmii.wallet",
+        "paths": ["*"]
+      }
+    ]
+  }
+}
