@@ -13,34 +13,21 @@ final Provider<ShellRoute> _mainRouteProvider = Provider<ShellRoute>((ref) {
       );
     },
     routes: [
-      GoRoute(
-        path: Routes.main.path,
-        name: Routes.main.name,
-        parentNavigatorKey: _mainTabNavigatorKey,
-        pageBuilder: (BuildContext context, GoRouterState state) =>
-            NoTransitionPage(child: TransactionsScreen()),
-      ),
-      GoRoute(
-        path: MainTabRoute.transactions.path,
-        parentNavigatorKey: _mainTabNavigatorKey,
-        pageBuilder: (BuildContext context, GoRouterState state) =>
-            NoTransitionPage(child: TransactionsScreen()),
-      ),
+      ref.watch(_transactionRouteProvider),
       GoRoute(
         path: MainTabRoute.wallets.path,
         parentNavigatorKey: _mainTabNavigatorKey,
-        builder: (context, state) => const LoginScreen(),
         pageBuilder: (BuildContext context, GoRouterState state) =>
             NoTransitionPage(
           child: ContentScreen(title: MainTabRoute.wallets.label),
         ),
       ),
       GoRoute(
-        path: MainTabRoute.reports.path,
+        path: MainTabRoute.report.path,
         parentNavigatorKey: _mainTabNavigatorKey,
         pageBuilder: (BuildContext context, GoRouterState state) =>
             NoTransitionPage(
-          child: ContentScreen(title: MainTabRoute.reports.label),
+          child: ContentScreen(title: MainTabRoute.report.label),
         ),
       ),
       GoRoute(

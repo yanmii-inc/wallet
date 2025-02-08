@@ -22,6 +22,7 @@ mixin _$AddTransactionState {
   int get amount => throw _privateConstructorUsedError;
   String get category => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
+  TransactionType get type => throw _privateConstructorUsedError;
   bool get isFormValid => throw _privateConstructorUsedError;
 
   /// Create a copy of AddTransactionState
@@ -44,6 +45,7 @@ abstract class $AddTransactionStateCopyWith<$Res> {
       int amount,
       String category,
       String description,
+      TransactionType type,
       bool isFormValid});
 }
 
@@ -68,6 +70,7 @@ class _$AddTransactionStateCopyWithImpl<$Res, $Val extends AddTransactionState>
     Object? amount = null,
     Object? category = null,
     Object? description = null,
+    Object? type = null,
     Object? isFormValid = null,
   }) {
     return _then(_value.copyWith(
@@ -95,6 +98,10 @@ class _$AddTransactionStateCopyWithImpl<$Res, $Val extends AddTransactionState>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as TransactionType,
       isFormValid: null == isFormValid
           ? _value.isFormValid
           : isFormValid // ignore: cast_nullable_to_non_nullable
@@ -118,6 +125,7 @@ abstract class _$$AddTransactionStateImplCopyWith<$Res>
       int amount,
       String category,
       String description,
+      TransactionType type,
       bool isFormValid});
 }
 
@@ -140,6 +148,7 @@ class __$$AddTransactionStateImplCopyWithImpl<$Res>
     Object? amount = null,
     Object? category = null,
     Object? description = null,
+    Object? type = null,
     Object? isFormValid = null,
   }) {
     return _then(_$AddTransactionStateImpl(
@@ -167,6 +176,10 @@ class __$$AddTransactionStateImplCopyWithImpl<$Res>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as TransactionType,
       isFormValid: null == isFormValid
           ? _value.isFormValid
           : isFormValid // ignore: cast_nullable_to_non_nullable
@@ -185,6 +198,7 @@ class _$AddTransactionStateImpl implements _AddTransactionState {
       this.amount = 0,
       this.category = '',
       this.description = '',
+      this.type = TransactionType.expense,
       this.isFormValid = false});
 
   @override
@@ -207,11 +221,14 @@ class _$AddTransactionStateImpl implements _AddTransactionState {
   final String description;
   @override
   @JsonKey()
+  final TransactionType type;
+  @override
+  @JsonKey()
   final bool isFormValid;
 
   @override
   String toString() {
-    return 'AddTransactionState(date: $date, wallet: $wallet, name: $name, amount: $amount, category: $category, description: $description, isFormValid: $isFormValid)';
+    return 'AddTransactionState(date: $date, wallet: $wallet, name: $name, amount: $amount, category: $category, description: $description, type: $type, isFormValid: $isFormValid)';
   }
 
   @override
@@ -227,13 +244,14 @@ class _$AddTransactionStateImpl implements _AddTransactionState {
                 other.category == category) &&
             (identical(other.description, description) ||
                 other.description == description) &&
+            (identical(other.type, type) || other.type == type) &&
             (identical(other.isFormValid, isFormValid) ||
                 other.isFormValid == isFormValid));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, date, wallet, name, amount,
-      category, description, isFormValid);
+      category, description, type, isFormValid);
 
   /// Create a copy of AddTransactionState
   /// with the given fields replaced by the non-null parameter values.
@@ -253,6 +271,7 @@ abstract class _AddTransactionState implements AddTransactionState {
       final int amount,
       final String category,
       final String description,
+      final TransactionType type,
       final bool isFormValid}) = _$AddTransactionStateImpl;
 
   @override
@@ -267,6 +286,8 @@ abstract class _AddTransactionState implements AddTransactionState {
   String get category;
   @override
   String get description;
+  @override
+  TransactionType get type;
   @override
   bool get isFormValid;
 

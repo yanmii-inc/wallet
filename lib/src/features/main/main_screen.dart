@@ -1,8 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:yanmii_wallet/src/features/main/main_controller.dart';
 import 'package:yanmii_wallet/src/routing/routes.dart';
 import 'package:yanmii_wallet/src/utils/extensions/build_context_extension/text_styles.dart';
 import 'package:yanmii_wallet/src/utils/extensions/build_context_extension/theme_extension.dart';
@@ -25,11 +22,6 @@ class MainScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      // floatingActionButton: FloatingActionButton(
-      //   child: const Icon(Icons.dark_mode),
-      //   onPressed: () =>
-      //       ref.read(appControllerProvider.notifier).toggleThemeMode(),
-      // ),
       body: child,
       bottomNavigationBar: BottomNavigationBar(
         elevation: 5,
@@ -44,11 +36,12 @@ class MainScreen extends ConsumerWidget {
               ),
             )
             .toList(),
-        currentIndex: MainTabRoute.values.indexWhere((element) {
-          log(' ${element.path} == $location');
-          return element.path == location;
-        }),
-        onTap: (index) => context.go(MainTabRoute.values[index].path),
+        currentIndex: MainTabRoute.values
+            .indexWhere((element) => element.path == location),
+        onTap: (index) {
+          final path = MainTabRoute.values[index].path;
+          context.go(path);
+        },
       ),
     );
   }

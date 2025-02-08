@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:yanmii_wallet/src/common/data/models/type.dart';
 import 'package:yanmii_wallet/src/common/domain/enums/auth_status.dart';
 import 'package:yanmii_wallet/src/common/services/app_service.dart';
 import 'package:yanmii_wallet/src/common/services/auth_service.dart';
@@ -11,7 +12,6 @@ import 'package:yanmii_wallet/src/features/main/home/home_screen.dart';
 import 'package:yanmii_wallet/src/features/main/main_screen.dart';
 import 'package:yanmii_wallet/src/features/onboarding/onboarding_screen.dart';
 import 'package:yanmii_wallet/src/features/splash/splash_screen.dart';
-import 'package:yanmii_wallet/src/features/transactions/application/transactions_service.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/add/add_transaction_screen.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/transactions_screen.dart';
 import 'package:yanmii_wallet/src/logging/analytics.dart';
@@ -65,8 +65,18 @@ final Provider<GoRouter> goRouterProvider = Provider<GoRouter>((ref) {
     routes: [
       ref.watch(_launchRoutesProvider),
       ref.watch(_authRoutesProvider),
+      GoRoute(
+        path: '${Routes.transactions.path}/add/:type',
+        name: Routes.transactionsAdd.name,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          final typeArg = state.pathParameters['type']!;
+          final type = TransactionType.values.firstWhere(
+              (element) => element.name == typeArg,
+              orElse: () => TransactionType.expense);
+          return MaterialPage(child: AddTransactionScreen(type: type));
+        },
+      ),
       ref.watch(_mainRouteProvider),
-      ref.watch(_transactionRouteProvider),
     ],
   );
 });

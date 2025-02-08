@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yanmii_wallet/src/app/constants/constants.dart';
-import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
+import 'package:yanmii_wallet/src/common/data/models/type.dart';
 import 'package:yanmii_wallet/src/routing/routes.dart';
 import 'package:yanmii_wallet/src/utils/extensions/string_extension.dart';
 
@@ -49,14 +50,17 @@ class TransactionsScreen extends ConsumerWidget {
           color: Colors.white.withOpacity(0.9),
         ),
         children: [
-          const Row(
+          Row(
             children: [
-              Text('Pengeluaran'),
-              SizedBox(width: 20),
+              const Text('Pengeluaran'),
+              const SizedBox(width: 20),
               FloatingActionButton.small(
                 heroTag: null,
-                onPressed: null,
-                child: Icon(Icons.outbond),
+                onPressed: () => context.pushNamed(
+                  Routes.transactionsAdd.name,
+                  pathParameters: {'type': TransactionType.expense.name},
+                ),
+                child: const Icon(Icons.shopping_bag),
               ),
             ],
           ),
@@ -64,10 +68,13 @@ class TransactionsScreen extends ConsumerWidget {
             children: [
               Text('Pemasukan'.hardcoded),
               const SizedBox(width: 20),
-              const FloatingActionButton.small(
+              FloatingActionButton.small(
                 heroTag: null,
-                onPressed: null,
-                child: Icon(Icons.receipt),
+                onPressed: () => context.pushNamed(
+                  Routes.transactionsAdd.name,
+                  pathParameters: {'type': TransactionType.expense.name},
+                ),
+                child: const Icon(Icons.receipt),
               ),
             ],
           ),

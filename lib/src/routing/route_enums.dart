@@ -5,9 +5,9 @@ enum Routes {
   splash,
   login,
   register,
+  main,
   transactions,
-  transactionsAdd,
-  main;
+  transactionsAdd;
 
   String get path => '/${name.toKebabCase}';
 
@@ -17,7 +17,7 @@ enum Routes {
 enum MainTabRoute {
   transactions,
   wallets,
-  reports,
+  report,
   loans,
   settings,
   ;
@@ -29,15 +29,15 @@ enum MainTabRoute {
   Widget get icon {
     switch (this) {
       case transactions:
-        return const Icon(Icons.note);
+        return const Icon(Icons.home);
       case wallets:
-        return const Icon(Icons.wallet);
-      case reports:
-        return const Icon(Icons.report);
+        return const Icon(Icons.list);
+      case report:
+        return const Icon(Icons.search);
       case loans:
-        return const Icon(Icons.document_scanner);
+        return const Icon(Icons.history);
       case settings:
-        return const Icon(Icons.settings);
+        return const Icon(Icons.person);
     }
   }
 

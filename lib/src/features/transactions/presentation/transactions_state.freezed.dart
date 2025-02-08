@@ -16,7 +16,7 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$TransactionsState {
-  AsyncValue<TransactionItemEntity?> get transactionItemEntity =>
+  AsyncValue<TransactionEntity?> get transactionItemEntity =>
       throw _privateConstructorUsedError;
 
   /// Create a copy of TransactionsState
@@ -32,7 +32,7 @@ abstract class $TransactionsStateCopyWith<$Res> {
           TransactionsState value, $Res Function(TransactionsState) then) =
       _$TransactionsStateCopyWithImpl<$Res, TransactionsState>;
   @useResult
-  $Res call({AsyncValue<TransactionItemEntity?> transactionItemEntity});
+  $Res call({AsyncValue<TransactionEntity?> transactionItemEntity});
 }
 
 /// @nodoc
@@ -56,7 +56,7 @@ class _$TransactionsStateCopyWithImpl<$Res, $Val extends TransactionsState>
       transactionItemEntity: null == transactionItemEntity
           ? _value.transactionItemEntity
           : transactionItemEntity // ignore: cast_nullable_to_non_nullable
-              as AsyncValue<TransactionItemEntity?>,
+              as AsyncValue<TransactionEntity?>,
     ) as $Val);
   }
 }
@@ -69,7 +69,7 @@ abstract class _$$TransactionsStateImplCopyWith<$Res>
       __$$TransactionsStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({AsyncValue<TransactionItemEntity?> transactionItemEntity});
+  $Res call({AsyncValue<TransactionEntity?> transactionItemEntity});
 }
 
 /// @nodoc
@@ -91,7 +91,7 @@ class __$$TransactionsStateImplCopyWithImpl<$Res>
       transactionItemEntity: null == transactionItemEntity
           ? _value.transactionItemEntity
           : transactionItemEntity // ignore: cast_nullable_to_non_nullable
-              as AsyncValue<TransactionItemEntity?>,
+              as AsyncValue<TransactionEntity?>,
     ));
   }
 }
@@ -104,7 +104,7 @@ class _$TransactionsStateImpl implements _TransactionsState {
 
   @override
   @JsonKey()
-  final AsyncValue<TransactionItemEntity?> transactionItemEntity;
+  final AsyncValue<TransactionEntity?> transactionItemEntity;
 
   @override
   String toString() {
@@ -135,11 +135,11 @@ class _$TransactionsStateImpl implements _TransactionsState {
 
 abstract class _TransactionsState implements TransactionsState {
   const factory _TransactionsState(
-          {final AsyncValue<TransactionItemEntity?> transactionItemEntity}) =
+          {final AsyncValue<TransactionEntity?> transactionItemEntity}) =
       _$TransactionsStateImpl;
 
   @override
-  AsyncValue<TransactionItemEntity?> get transactionItemEntity;
+  AsyncValue<TransactionEntity?> get transactionItemEntity;
 
   /// Create a copy of TransactionsState
   /// with the given fields replaced by the non-null parameter values.

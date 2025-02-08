@@ -1,19 +1,36 @@
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:yanmii_wallet/src/common/data/sources/remote/config/result.dart';
-import 'package:yanmii_wallet/src/features/transactions/domain/entities/transaction_item_entity.dart';
+import 'package:yanmii_wallet/src/common/data/models/local/transaction.dart';
+import 'package:yanmii_wallet/src/common/data/models/type.dart';
+import 'package:yanmii_wallet/src/common/data/repositories/transaction_repository.dart';
 
 class TransactionsService {
-  const TransactionsService();
-  // final TransactionsRepository transactionsRepository;
+  TransactionsService(this.ref);
 
+  Ref ref;
 
-  Future<Result<TransactionItemEntity>> get transactionItemEntity async {
-    // TODO: connect to repositories or do something else
-    return const Result.success(TransactionItemEntity());
+  TransactionRepository get _transactionRepository =>
+      ref.watch(transactionRepositoryProvider);
+
+  Future<int> saveTransaction({
+    required String amount,
+    required DateTime date,
+    required String description,
+    required String walletId,
+    required String categoryId,
+    required TransactionType type,
+  }) async {
+    final transaction = Transaction(
+      amount: double.parse(amount),
+      date: date.toIso8601String(),
+      description: description,
+      wallet: walletId,
+      category: categoryId,
+      type: type,
+    );
+    final id = await _transactionRepository.createTransaction(transaction);
+    return id;
   }
 }
 
-
-final transactionsServiceProvider = Provider<TransactionsService>(
-  (ref) => const TransactionsService(),);
+final transactionsServiceProvider =
+    Provider<TransactionsService>(TransactionsService.new);
