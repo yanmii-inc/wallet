@@ -3,7 +3,10 @@ import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yanmii_wallet/src/app/constants/constants.dart';
 import 'package:yanmii_wallet/src/common/data/models/type.dart';
+import 'package:yanmii_wallet/src/features/transactions/presentation/transactions_controller.dart';
 import 'package:yanmii_wallet/src/routing/routes.dart';
+import 'package:yanmii_wallet/src/utils/extensions/build_context_extension/theme_extension.dart';
+import 'package:yanmii_wallet/src/utils/extensions/num_extension.dart';
 import 'package:yanmii_wallet/src/utils/extensions/string_extension.dart';
 
 /// [TransactionsScreen] is a screen for Transactions
@@ -46,9 +49,8 @@ class TransactionsScreen extends ConsumerWidget {
         type: ExpandableFabType.up,
         childrenAnimation: ExpandableFabAnimation.none,
         distance: 70,
-        overlayStyle: ExpandableFabOverlayStyle(
-          color: Colors.white.withOpacity(0.9),
-        ),
+        overlayStyle:
+            ExpandableFabOverlayStyle(color: Colors.white.withOpacity(0.9)),
         children: [
           Row(
             children: [
@@ -72,7 +74,7 @@ class TransactionsScreen extends ConsumerWidget {
                 heroTag: null,
                 onPressed: () => context.pushNamed(
                   Routes.transactionsAdd.name,
-                  pathParameters: {'type': TransactionType.expense.name},
+                  pathParameters: {'type': TransactionType.income.name},
                 ),
                 child: const Icon(Icons.receipt),
               ),
@@ -97,32 +99,60 @@ class TransactionsScreen extends ConsumerWidget {
         ],
       ),
       body: PageView.builder(
+        itemCount: 3,
+        onPageChanged: (value) =>
+            ref.read(transactionsControllerProvider.notifier).getTransactions(),
         itemBuilder: (context, index) => _TransactionDaySection(),
       ),
     );
   }
 }
 
-class _TransactionDaySection extends ConsumerWidget {
+class _TransactionDaySection extends ConsumerStatefulWidget {
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return ListView.builder(
-      itemBuilder: (context, index) {
-        return ListTile(
-          titleAlignment: ListTileTitleAlignment.center,
-          title: const Text('Judul'),
-          subtitle: const Text('Sub judul'),
-          trailing: const Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('Rp. 100.000'),
-              Gap.w8,
-              Icon(Icons.arrow_forward_ios),
-            ],
-          ),
-          onTap: () => context.pushNamed(Routes.transactionsAdd.name),
+  _TransactionDaySectionState createState() => _TransactionDaySectionState();
+}
+
+class _TransactionDaySectionState
+    extends ConsumerState<_TransactionDaySection> {
+  @override
+  Widget build(BuildContext context) {
+    final transactions = ref.watch(transactionsControllerProvider).transactions;
+
+    return transactions.when(
+      data: (data) {
+        if (data.isEmpty) {
+          return const Center(child: Text('No data'));
+        }
+
+        return ListView.builder(
+          itemCount: data.length,
+          itemBuilder: (context, index) {
+            final item = data[index];
+            return ListTile(
+              titleAlignment: ListTileTitleAlignment.center,
+              dense: true,
+              title: Text(
+                item.category != null ? item.category!.label : item.name,
+                style: context.textTheme.titleSmall!
+                    .copyWith(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(item.name),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(item.amount.toIdr),
+                  Gap.w8,
+                  const Icon(Icons.arrow_forward_ios),
+                ],
+              ),
+              onTap: () => context.pushNamed(Routes.transactionsAdd.name),
+            );
+          },
         );
       },
+      error: (error, stackTrace) => Text(error.toString()),
+      loading: () => const Center(child: CircularProgressIndicator.adaptive()),
     );
   }
 }

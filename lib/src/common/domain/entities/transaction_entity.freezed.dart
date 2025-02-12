@@ -16,13 +16,13 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$TransactionEntity {
-// TODO: Change the field id
-  String? get id => throw _privateConstructorUsedError;
   String get date => throw _privateConstructorUsedError;
-  WalletEntity get wallet => throw _privateConstructorUsedError;
+  WalletEntity? get wallet => throw _privateConstructorUsedError;
   double get amount => throw _privateConstructorUsedError;
-  String get category => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  CategoryEntity? get category => throw _privateConstructorUsedError;
   TransactionType get type => throw _privateConstructorUsedError;
+  int? get id => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
 
   /// Create a copy of TransactionEntity
@@ -39,15 +39,17 @@ abstract class $TransactionEntityCopyWith<$Res> {
       _$TransactionEntityCopyWithImpl<$Res, TransactionEntity>;
   @useResult
   $Res call(
-      {String? id,
-      String date,
-      WalletEntity wallet,
+      {String date,
+      WalletEntity? wallet,
       double amount,
-      String category,
+      String name,
+      CategoryEntity? category,
       TransactionType type,
+      int? id,
       String? description});
 
-  $WalletEntityCopyWith<$Res> get wallet;
+  $WalletEntityCopyWith<$Res>? get wallet;
+  $CategoryEntityCopyWith<$Res>? get category;
 }
 
 /// @nodoc
@@ -65,39 +67,44 @@ class _$TransactionEntityCopyWithImpl<$Res, $Val extends TransactionEntity>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = freezed,
     Object? date = null,
-    Object? wallet = null,
+    Object? wallet = freezed,
     Object? amount = null,
-    Object? category = null,
+    Object? name = null,
+    Object? category = freezed,
     Object? type = null,
+    Object? id = freezed,
     Object? description = freezed,
   }) {
     return _then(_value.copyWith(
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String?,
       date: null == date
           ? _value.date
           : date // ignore: cast_nullable_to_non_nullable
               as String,
-      wallet: null == wallet
+      wallet: freezed == wallet
           ? _value.wallet
           : wallet // ignore: cast_nullable_to_non_nullable
-              as WalletEntity,
+              as WalletEntity?,
       amount: null == amount
           ? _value.amount
           : amount // ignore: cast_nullable_to_non_nullable
               as double,
-      category: null == category
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      category: freezed == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
-              as String,
+              as CategoryEntity?,
       type: null == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as TransactionType,
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
       description: freezed == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
@@ -109,9 +116,27 @@ class _$TransactionEntityCopyWithImpl<$Res, $Val extends TransactionEntity>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $WalletEntityCopyWith<$Res> get wallet {
-    return $WalletEntityCopyWith<$Res>(_value.wallet, (value) {
+  $WalletEntityCopyWith<$Res>? get wallet {
+    if (_value.wallet == null) {
+      return null;
+    }
+
+    return $WalletEntityCopyWith<$Res>(_value.wallet!, (value) {
       return _then(_value.copyWith(wallet: value) as $Val);
+    });
+  }
+
+  /// Create a copy of TransactionEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $CategoryEntityCopyWith<$Res>? get category {
+    if (_value.category == null) {
+      return null;
+    }
+
+    return $CategoryEntityCopyWith<$Res>(_value.category!, (value) {
+      return _then(_value.copyWith(category: value) as $Val);
     });
   }
 }
@@ -125,16 +150,19 @@ abstract class _$$TransactionEntityImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String? id,
-      String date,
-      WalletEntity wallet,
+      {String date,
+      WalletEntity? wallet,
       double amount,
-      String category,
+      String name,
+      CategoryEntity? category,
       TransactionType type,
+      int? id,
       String? description});
 
   @override
-  $WalletEntityCopyWith<$Res> get wallet;
+  $WalletEntityCopyWith<$Res>? get wallet;
+  @override
+  $CategoryEntityCopyWith<$Res>? get category;
 }
 
 /// @nodoc
@@ -150,39 +178,44 @@ class __$$TransactionEntityImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = freezed,
     Object? date = null,
-    Object? wallet = null,
+    Object? wallet = freezed,
     Object? amount = null,
-    Object? category = null,
+    Object? name = null,
+    Object? category = freezed,
     Object? type = null,
+    Object? id = freezed,
     Object? description = freezed,
   }) {
     return _then(_$TransactionEntityImpl(
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String?,
       date: null == date
           ? _value.date
           : date // ignore: cast_nullable_to_non_nullable
               as String,
-      wallet: null == wallet
+      wallet: freezed == wallet
           ? _value.wallet
           : wallet // ignore: cast_nullable_to_non_nullable
-              as WalletEntity,
+              as WalletEntity?,
       amount: null == amount
           ? _value.amount
           : amount // ignore: cast_nullable_to_non_nullable
               as double,
-      category: null == category
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      category: freezed == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
-              as String,
+              as CategoryEntity?,
       type: null == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as TransactionType,
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
       description: freezed == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
@@ -195,33 +228,35 @@ class __$$TransactionEntityImplCopyWithImpl<$Res>
 
 class _$TransactionEntityImpl implements _TransactionEntity {
   const _$TransactionEntityImpl(
-      {this.id,
-      required this.date,
+      {required this.date,
       required this.wallet,
       required this.amount,
+      required this.name,
       required this.category,
       required this.type,
+      this.id,
       this.description});
 
-// TODO: Change the field id
-  @override
-  final String? id;
   @override
   final String date;
   @override
-  final WalletEntity wallet;
+  final WalletEntity? wallet;
   @override
   final double amount;
   @override
-  final String category;
+  final String name;
+  @override
+  final CategoryEntity? category;
   @override
   final TransactionType type;
+  @override
+  final int? id;
   @override
   final String? description;
 
   @override
   String toString() {
-    return 'TransactionEntity(id: $id, date: $date, wallet: $wallet, amount: $amount, category: $category, type: $type, description: $description)';
+    return 'TransactionEntity(date: $date, wallet: $wallet, amount: $amount, name: $name, category: $category, type: $type, id: $id, description: $description)';
   }
 
   @override
@@ -229,20 +264,21 @@ class _$TransactionEntityImpl implements _TransactionEntity {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$TransactionEntityImpl &&
-            (identical(other.id, id) || other.id == id) &&
             (identical(other.date, date) || other.date == date) &&
             (identical(other.wallet, wallet) || other.wallet == wallet) &&
             (identical(other.amount, amount) || other.amount == amount) &&
+            (identical(other.name, name) || other.name == name) &&
             (identical(other.category, category) ||
                 other.category == category) &&
             (identical(other.type, type) || other.type == type) &&
+            (identical(other.id, id) || other.id == id) &&
             (identical(other.description, description) ||
                 other.description == description));
   }
 
   @override
   int get hashCode => Object.hash(
-      runtimeType, id, date, wallet, amount, category, type, description);
+      runtimeType, date, wallet, amount, name, category, type, id, description);
 
   /// Create a copy of TransactionEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -256,27 +292,29 @@ class _$TransactionEntityImpl implements _TransactionEntity {
 
 abstract class _TransactionEntity implements TransactionEntity {
   const factory _TransactionEntity(
-      {final String? id,
-      required final String date,
-      required final WalletEntity wallet,
+      {required final String date,
+      required final WalletEntity? wallet,
       required final double amount,
-      required final String category,
+      required final String name,
+      required final CategoryEntity? category,
       required final TransactionType type,
+      final int? id,
       final String? description}) = _$TransactionEntityImpl;
 
-// TODO: Change the field id
-  @override
-  String? get id;
   @override
   String get date;
   @override
-  WalletEntity get wallet;
+  WalletEntity? get wallet;
   @override
   double get amount;
   @override
-  String get category;
+  String get name;
+  @override
+  CategoryEntity? get category;
   @override
   TransactionType get type;
+  @override
+  int? get id;
   @override
   String? get description;
 

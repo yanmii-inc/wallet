@@ -17,13 +17,19 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$AddTransactionState {
   DateTime? get date => throw _privateConstructorUsedError;
-  String get wallet => throw _privateConstructorUsedError;
+  AsyncValue<List<WalletEntity>> get walletOptions =>
+      throw _privateConstructorUsedError;
+  WalletEntity? get wallet => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   int get amount => throw _privateConstructorUsedError;
-  String get category => throw _privateConstructorUsedError;
+  AsyncValue<List<CategoryEntity>> get categoryOptions =>
+      throw _privateConstructorUsedError;
+  CategoryEntity? get category => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
   TransactionType get type => throw _privateConstructorUsedError;
   bool get isFormValid => throw _privateConstructorUsedError;
+  FormzSubmissionStatus? get submissionStatus =>
+      throw _privateConstructorUsedError;
 
   /// Create a copy of AddTransactionState
   /// with the given fields replaced by the non-null parameter values.
@@ -40,13 +46,19 @@ abstract class $AddTransactionStateCopyWith<$Res> {
   @useResult
   $Res call(
       {DateTime? date,
-      String wallet,
+      AsyncValue<List<WalletEntity>> walletOptions,
+      WalletEntity? wallet,
       String name,
       int amount,
-      String category,
+      AsyncValue<List<CategoryEntity>> categoryOptions,
+      CategoryEntity? category,
       String description,
       TransactionType type,
-      bool isFormValid});
+      bool isFormValid,
+      FormzSubmissionStatus? submissionStatus});
+
+  $WalletEntityCopyWith<$Res>? get wallet;
+  $CategoryEntityCopyWith<$Res>? get category;
 }
 
 /// @nodoc
@@ -65,23 +77,30 @@ class _$AddTransactionStateCopyWithImpl<$Res, $Val extends AddTransactionState>
   @override
   $Res call({
     Object? date = freezed,
-    Object? wallet = null,
+    Object? walletOptions = null,
+    Object? wallet = freezed,
     Object? name = null,
     Object? amount = null,
-    Object? category = null,
+    Object? categoryOptions = null,
+    Object? category = freezed,
     Object? description = null,
     Object? type = null,
     Object? isFormValid = null,
+    Object? submissionStatus = freezed,
   }) {
     return _then(_value.copyWith(
       date: freezed == date
           ? _value.date
           : date // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      wallet: null == wallet
+      walletOptions: null == walletOptions
+          ? _value.walletOptions
+          : walletOptions // ignore: cast_nullable_to_non_nullable
+              as AsyncValue<List<WalletEntity>>,
+      wallet: freezed == wallet
           ? _value.wallet
           : wallet // ignore: cast_nullable_to_non_nullable
-              as String,
+              as WalletEntity?,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -90,10 +109,14 @@ class _$AddTransactionStateCopyWithImpl<$Res, $Val extends AddTransactionState>
           ? _value.amount
           : amount // ignore: cast_nullable_to_non_nullable
               as int,
-      category: null == category
+      categoryOptions: null == categoryOptions
+          ? _value.categoryOptions
+          : categoryOptions // ignore: cast_nullable_to_non_nullable
+              as AsyncValue<List<CategoryEntity>>,
+      category: freezed == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
-              as String,
+              as CategoryEntity?,
       description: null == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
@@ -106,7 +129,39 @@ class _$AddTransactionStateCopyWithImpl<$Res, $Val extends AddTransactionState>
           ? _value.isFormValid
           : isFormValid // ignore: cast_nullable_to_non_nullable
               as bool,
+      submissionStatus: freezed == submissionStatus
+          ? _value.submissionStatus
+          : submissionStatus // ignore: cast_nullable_to_non_nullable
+              as FormzSubmissionStatus?,
     ) as $Val);
+  }
+
+  /// Create a copy of AddTransactionState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $WalletEntityCopyWith<$Res>? get wallet {
+    if (_value.wallet == null) {
+      return null;
+    }
+
+    return $WalletEntityCopyWith<$Res>(_value.wallet!, (value) {
+      return _then(_value.copyWith(wallet: value) as $Val);
+    });
+  }
+
+  /// Create a copy of AddTransactionState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $CategoryEntityCopyWith<$Res>? get category {
+    if (_value.category == null) {
+      return null;
+    }
+
+    return $CategoryEntityCopyWith<$Res>(_value.category!, (value) {
+      return _then(_value.copyWith(category: value) as $Val);
+    });
   }
 }
 
@@ -120,13 +175,21 @@ abstract class _$$AddTransactionStateImplCopyWith<$Res>
   @useResult
   $Res call(
       {DateTime? date,
-      String wallet,
+      AsyncValue<List<WalletEntity>> walletOptions,
+      WalletEntity? wallet,
       String name,
       int amount,
-      String category,
+      AsyncValue<List<CategoryEntity>> categoryOptions,
+      CategoryEntity? category,
       String description,
       TransactionType type,
-      bool isFormValid});
+      bool isFormValid,
+      FormzSubmissionStatus? submissionStatus});
+
+  @override
+  $WalletEntityCopyWith<$Res>? get wallet;
+  @override
+  $CategoryEntityCopyWith<$Res>? get category;
 }
 
 /// @nodoc
@@ -143,23 +206,30 @@ class __$$AddTransactionStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? date = freezed,
-    Object? wallet = null,
+    Object? walletOptions = null,
+    Object? wallet = freezed,
     Object? name = null,
     Object? amount = null,
-    Object? category = null,
+    Object? categoryOptions = null,
+    Object? category = freezed,
     Object? description = null,
     Object? type = null,
     Object? isFormValid = null,
+    Object? submissionStatus = freezed,
   }) {
     return _then(_$AddTransactionStateImpl(
       date: freezed == date
           ? _value.date
           : date // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      wallet: null == wallet
+      walletOptions: null == walletOptions
+          ? _value.walletOptions
+          : walletOptions // ignore: cast_nullable_to_non_nullable
+              as AsyncValue<List<WalletEntity>>,
+      wallet: freezed == wallet
           ? _value.wallet
           : wallet // ignore: cast_nullable_to_non_nullable
-              as String,
+              as WalletEntity?,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -168,10 +238,14 @@ class __$$AddTransactionStateImplCopyWithImpl<$Res>
           ? _value.amount
           : amount // ignore: cast_nullable_to_non_nullable
               as int,
-      category: null == category
+      categoryOptions: null == categoryOptions
+          ? _value.categoryOptions
+          : categoryOptions // ignore: cast_nullable_to_non_nullable
+              as AsyncValue<List<CategoryEntity>>,
+      category: freezed == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
-              as String,
+              as CategoryEntity?,
       description: null == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
@@ -184,29 +258,41 @@ class __$$AddTransactionStateImplCopyWithImpl<$Res>
           ? _value.isFormValid
           : isFormValid // ignore: cast_nullable_to_non_nullable
               as bool,
+      submissionStatus: freezed == submissionStatus
+          ? _value.submissionStatus
+          : submissionStatus // ignore: cast_nullable_to_non_nullable
+              as FormzSubmissionStatus?,
     ));
   }
 }
 
 /// @nodoc
 
-class _$AddTransactionStateImpl implements _AddTransactionState {
+class _$AddTransactionStateImpl
+    with DiagnosticableTreeMixin
+    implements _AddTransactionState {
   const _$AddTransactionStateImpl(
       {this.date = null,
-      this.wallet = '',
+      this.walletOptions = const AsyncLoading<List<WalletEntity>>(),
+      this.wallet = null,
       this.name = '',
       this.amount = 0,
-      this.category = '',
+      this.categoryOptions = const AsyncLoading<List<CategoryEntity>>(),
+      this.category = null,
       this.description = '',
       this.type = TransactionType.expense,
-      this.isFormValid = false});
+      this.isFormValid = false,
+      this.submissionStatus = FormzSubmissionStatus.initial});
 
   @override
   @JsonKey()
   final DateTime? date;
   @override
   @JsonKey()
-  final String wallet;
+  final AsyncValue<List<WalletEntity>> walletOptions;
+  @override
+  @JsonKey()
+  final WalletEntity? wallet;
   @override
   @JsonKey()
   final String name;
@@ -215,7 +301,10 @@ class _$AddTransactionStateImpl implements _AddTransactionState {
   final int amount;
   @override
   @JsonKey()
-  final String category;
+  final AsyncValue<List<CategoryEntity>> categoryOptions;
+  @override
+  @JsonKey()
+  final CategoryEntity? category;
   @override
   @JsonKey()
   final String description;
@@ -225,10 +314,31 @@ class _$AddTransactionStateImpl implements _AddTransactionState {
   @override
   @JsonKey()
   final bool isFormValid;
+  @override
+  @JsonKey()
+  final FormzSubmissionStatus? submissionStatus;
 
   @override
-  String toString() {
-    return 'AddTransactionState(date: $date, wallet: $wallet, name: $name, amount: $amount, category: $category, description: $description, type: $type, isFormValid: $isFormValid)';
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'AddTransactionState(date: $date, walletOptions: $walletOptions, wallet: $wallet, name: $name, amount: $amount, categoryOptions: $categoryOptions, category: $category, description: $description, type: $type, isFormValid: $isFormValid, submissionStatus: $submissionStatus)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'AddTransactionState'))
+      ..add(DiagnosticsProperty('date', date))
+      ..add(DiagnosticsProperty('walletOptions', walletOptions))
+      ..add(DiagnosticsProperty('wallet', wallet))
+      ..add(DiagnosticsProperty('name', name))
+      ..add(DiagnosticsProperty('amount', amount))
+      ..add(DiagnosticsProperty('categoryOptions', categoryOptions))
+      ..add(DiagnosticsProperty('category', category))
+      ..add(DiagnosticsProperty('description', description))
+      ..add(DiagnosticsProperty('type', type))
+      ..add(DiagnosticsProperty('isFormValid', isFormValid))
+      ..add(DiagnosticsProperty('submissionStatus', submissionStatus));
   }
 
   @override
@@ -237,21 +347,38 @@ class _$AddTransactionStateImpl implements _AddTransactionState {
         (other.runtimeType == runtimeType &&
             other is _$AddTransactionStateImpl &&
             (identical(other.date, date) || other.date == date) &&
+            (identical(other.walletOptions, walletOptions) ||
+                other.walletOptions == walletOptions) &&
             (identical(other.wallet, wallet) || other.wallet == wallet) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.amount, amount) || other.amount == amount) &&
+            (identical(other.categoryOptions, categoryOptions) ||
+                other.categoryOptions == categoryOptions) &&
             (identical(other.category, category) ||
                 other.category == category) &&
             (identical(other.description, description) ||
                 other.description == description) &&
             (identical(other.type, type) || other.type == type) &&
             (identical(other.isFormValid, isFormValid) ||
-                other.isFormValid == isFormValid));
+                other.isFormValid == isFormValid) &&
+            (identical(other.submissionStatus, submissionStatus) ||
+                other.submissionStatus == submissionStatus));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, date, wallet, name, amount,
-      category, description, type, isFormValid);
+  int get hashCode => Object.hash(
+      runtimeType,
+      date,
+      walletOptions,
+      wallet,
+      name,
+      amount,
+      categoryOptions,
+      category,
+      description,
+      type,
+      isFormValid,
+      submissionStatus);
 
   /// Create a copy of AddTransactionState
   /// with the given fields replaced by the non-null parameter values.
@@ -265,31 +392,41 @@ class _$AddTransactionStateImpl implements _AddTransactionState {
 
 abstract class _AddTransactionState implements AddTransactionState {
   const factory _AddTransactionState(
-      {final DateTime? date,
-      final String wallet,
-      final String name,
-      final int amount,
-      final String category,
-      final String description,
-      final TransactionType type,
-      final bool isFormValid}) = _$AddTransactionStateImpl;
+          {final DateTime? date,
+          final AsyncValue<List<WalletEntity>> walletOptions,
+          final WalletEntity? wallet,
+          final String name,
+          final int amount,
+          final AsyncValue<List<CategoryEntity>> categoryOptions,
+          final CategoryEntity? category,
+          final String description,
+          final TransactionType type,
+          final bool isFormValid,
+          final FormzSubmissionStatus? submissionStatus}) =
+      _$AddTransactionStateImpl;
 
   @override
   DateTime? get date;
   @override
-  String get wallet;
+  AsyncValue<List<WalletEntity>> get walletOptions;
+  @override
+  WalletEntity? get wallet;
   @override
   String get name;
   @override
   int get amount;
   @override
-  String get category;
+  AsyncValue<List<CategoryEntity>> get categoryOptions;
+  @override
+  CategoryEntity? get category;
   @override
   String get description;
   @override
   TransactionType get type;
   @override
   bool get isFormValid;
+  @override
+  FormzSubmissionStatus? get submissionStatus;
 
   /// Create a copy of AddTransactionState
   /// with the given fields replaced by the non-null parameter values.

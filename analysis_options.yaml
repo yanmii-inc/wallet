@@ -40,6 +40,7 @@ analyzer:
     # Allow having TODOs in the code.
     todo: ignore
     flutter_style_todos: ignore
+    invalid_annotation_target: ignore
 
 # LINTER Preferences
 #

@@ -1,11 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
-  static const _databaseName = 'transactions.db';
-  static const _databaseVersion = 1;
+  static const _databaseName = 'pocketlog.db';
+  static const _databaseVersion = 6;
 
   static Database? _database;
 
@@ -20,6 +22,8 @@ class DatabaseHelper {
     final directory = await getApplicationDocumentsDirectory();
     final path = join(directory.path, _databaseName);
 
+    log('datavase path _initDatabase: $path');
+
     return openDatabase(
       path,
       version: _databaseVersion,
@@ -27,15 +31,80 @@ class DatabaseHelper {
         await db.execute('''
           CREATE TABLE transactions (
             id INTEGER PRIMARY KEY,
-            date TEXT NOT NULL,
-            wallet TEXT NOT NULL,
+            date TEXT,
+            wallet_id INTEGER,
             amount REAL NOT NULL,
-            category TEXT NOT NULL,
-            description TEXT
+            title REAL NOT NULL,
+            category_id INTEGER,
+            description TEXT,
+            type TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(wallet_id) REFERENCES wallets(id),
+            FOREIGN KEY(category_id) REFERENCES categories(id)
+          );
+
+        ''');
+
+        await db.execute('''
+          CREATE TABLE wallets (
+            id INTEGER PRIMARY KEY,
+            name TEXT NOT NULL,
+            logo TEXT
           );
         ''');
+
+        await db.execute('''
+          CREATE TABLE categories (
+            id INTEGER PRIMARY KEY,
+            label TEXT NOT NULL
+          )
+        ''');
+        await _seedDatabase(db);
       },
+      onUpgrade: (db, oldVersion, newVersion) {},
     );
+  }
+
+  Future<void> _seedDatabase(Database db) async {
+    log('seeed database');
+    final wallets = [
+      {'name': 'Uang Tunai'},
+      {'name': 'BCA'},
+      {'name': 'Mandiri'},
+      {'name': 'BRI'},
+      {'name': 'BNI'},
+      {'name': 'BSI'},
+      {'name': 'Jeniu'},
+      {'name': 'CIMB'},
+      {'name': 'OVO'},
+      {'name': 'Gopay'},
+      {'name': 'Dana'},
+      {'name': 'LinkAja'},
+    ];
+
+    final batch = db.batch();
+    for (final wallet in wallets) {
+      batch.insert('wallets', wallet);
+    }
+    await batch.commit();
+
+    // Insert some sample categories
+    final categories = [
+      {'label': 'Penghasilan'},
+      {'label': 'Pengeluaran'},
+      {'label': 'Makanan'},
+      {'label': 'Transportasi'},
+      {'label': 'Hiburan'},
+      {'label': 'Belanja'},
+      {'label': 'Kesehatan'},
+      {'label': 'Pendidikan'},
+    ];
+
+    final batch2 = db.batch();
+    for (final category in categories) {
+      batch2.insert('categories', category);
+    }
+    await batch2.commit();
   }
 }
 

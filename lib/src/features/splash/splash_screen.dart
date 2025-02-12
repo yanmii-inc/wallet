@@ -36,7 +36,7 @@ class SplashScreen extends ConsumerWidget {
   void _listenController(BuildContext context, WidgetRef ref) {
     ref.listen(splashControllerProvider, (previous, next) {
       if (!next.isLoading) {
-        context.goNamed(Routes.main.name);
+        context.goNamed(MainTabRoute.transactions.name);
       }
     });
   }

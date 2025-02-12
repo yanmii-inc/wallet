@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:formz/formz.dart';
 import 'package:yanmii_wallet/src/common/data/models/type.dart';
+import 'package:yanmii_wallet/src/common/domain/entities/category_entity.dart';
+import 'package:yanmii_wallet/src/common/domain/entities/wallet_entity.dart';
+import 'package:yanmii_wallet/src/features/transactions/application/category_service.dart';
 import 'package:yanmii_wallet/src/features/transactions/application/transactions_service.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/add/add_transaction_state.dart';
+import 'package:yanmii_wallet/src/features/wallet/application/wallet_service.dart';
 
 class AddTransactionController extends StateNotifier<AddTransactionState> {
   AddTransactionController(this.ref) : super(const AddTransactionState());
 
   final Ref ref;
   TransactionsService get _transactionService =>
-      ref.watch(transactionsServiceProvider);
+      ref.read(transactionsServiceProvider.notifier);
 
   void _validate() {
     final isValid = state.date != null &&
-        state.wallet.isNotEmpty &&
+        state.wallet != null &&
         state.name.isNotEmpty &&
-        state.amount > 0 &&
-        state.category.isNotEmpty;
+        state.amount > 0;
     state = state.copyWith(isFormValid: isValid);
   }
 
@@ -38,7 +42,7 @@ class AddTransactionController extends StateNotifier<AddTransactionState> {
     _validate();
   }
 
-  void setWallet(String value) {
+  void setWallet(WalletEntity value) {
     state = state.copyWith(wallet: value);
     _validate();
   }
@@ -53,7 +57,7 @@ class AddTransactionController extends StateNotifier<AddTransactionState> {
     _validate();
   }
 
-  void setCategory(String value) {
+  void setCategory(CategoryEntity value) {
     state = state.copyWith(category: value);
     _validate();
   }
@@ -63,23 +67,47 @@ class AddTransactionController extends StateNotifier<AddTransactionState> {
     _validate();
   }
 
-  Future<void> save(TransactionType type) async {
+  Future<void> save() async {
+    state = state.copyWith(submissionStatus: FormzSubmissionStatus.inProgress);
+    ref.listen(transactionsServiceProvider, (prev, next) {
+      if (prev?.value != next.value) {
+        state = state.copyWith(submissionStatus: FormzSubmissionStatus.success);
+      }
+    });
+
+    if (state.wallet == null) {
+      throw Exception('Wallet not selected');
+    }
+
     await _transactionService.saveTransaction(
       amount: state.amount.toString(),
+      title: state.name,
       date: state.date ?? DateTime.now(),
       description: state.description,
-      walletId: state.wallet,
-      categoryId: state.category,
-      type: type,
+      wallet: state.wallet!,
+      category: state.category,
+      type: state.type,
     );
   }
 
   void setType(TransactionType type) {
     state = state.copyWith(type: type);
   }
+
+  Future<void> init() async {
+    await ref.read(walletServiceProvider.notifier).getWallets();
+    await ref.read(categoryServiceProvider.notifier).getCategoryList();
+
+    final walletOptions = ref.watch(walletServiceProvider);
+    state = state.copyWith(
+      walletOptions: walletOptions,
+      wallet: walletOptions.value?.first,
+      categoryOptions: ref.watch(categoryServiceProvider),
+    );
+  }
 }
 
-final addTransactionControllerProvider =
-    StateNotifierProvider<AddTransactionController, AddTransactionState>(
-  AddTransactionController.new,
+final addTransactionControllerProvider = StateNotifierProvider.autoDispose<
+    AddTransactionController, AddTransactionState>(
+  (ref) => AddTransactionController(ref)..init(),
 );

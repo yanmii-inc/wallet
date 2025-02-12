@@ -87,7 +87,8 @@ extension BuildContextEntension<T> on BuildContext {
     );
   }
 
-  /// Generic function to show a platform-aware Material or Cupertino error dialog
+  /// Generic function to show a platform-aware Material
+  /// or Cupertino error dialog
   Future<void> showExceptionAlertDialog({
     required BuildContext context,
     required String title,

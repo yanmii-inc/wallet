@@ -15,7 +15,7 @@ final _authRoutesProvider = Provider(
         name: Routes.register.name,
         builder: (BuildContext context, GoRouterState state) =>
             const RegisterScreen(),
-      )
+      ),
     ],
   ),
 );

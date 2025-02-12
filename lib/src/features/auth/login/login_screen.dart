@@ -155,7 +155,7 @@ class _LoginInputSectionState extends ConsumerState<LoginInputSection> {
           next.submissionStatus == FormzSubmissionStatus.success;
 
       if (justAuthenticated) {
-        context.goNamed(Routes.main.name);
+        context.goNamed(MainTabRoute.transactions.name);
       }
     });
   }

@@ -18,9 +18,7 @@ final Provider<ShellRoute> _mainRouteProvider = Provider<ShellRoute>((ref) {
         path: MainTabRoute.wallets.path,
         parentNavigatorKey: _mainTabNavigatorKey,
         pageBuilder: (BuildContext context, GoRouterState state) =>
-            NoTransitionPage(
-          child: ContentScreen(title: MainTabRoute.wallets.label),
-        ),
+            const NoTransitionPage(child: WalletScreen()),
       ),
       GoRoute(
         path: MainTabRoute.report.path,

@@ -1,19 +1,18 @@
 // ignore: depend_on_referenced_packages
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:yanmii_wallet/src/common/data/sources/remote/config/network_exceptions.dart';
 
-part 'result.freezed.dart';
+part 'db_result.freezed.dart';
 
 @freezed
-class Result<T> with _$Result<T> {
+class DbResult<T> with _$DbResult<T> {
   /// This function is returning when it success, usually call it inside try
   /// of try...catch, so it will be safe to get data from this function.
-  const factory Result.success(T data) = Success<T>;
+  const factory DbResult.success(T data) = DbSuccess<T>;
 
   /// This function is returning when it failure, usually call it inside catch
   /// of try...catch, so it will be more helpful to get error from try catch.
-  const factory Result.failure(
-    NetworkExceptions error,
+  const factory DbResult.failure(
+    Object error,
     StackTrace stackTrace,
-  ) = Failure<T>;
+  ) = DbFailure<T>;
 }

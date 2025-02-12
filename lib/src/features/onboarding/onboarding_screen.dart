@@ -14,7 +14,7 @@ class OnboardingScreen extends ConsumerStatefulWidget {
 
   static const String _key = 'onboarding_screen';
   static const widgetKey = Key(_key);
-    static const onNextButtonKey = Key('next_button');
+  static const onNextButtonKey = Key('next_button');
 
   @override
   ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -109,7 +109,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     'Start',
                     onPressed: () {
                       ref.read(appServiceProvider).onboarded = true;
-                      context.goNamed(Routes.main.name);
+                      context.goNamed(MainTabRoute.transactions.name);
                     },
                   )
                 else

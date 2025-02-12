@@ -10,15 +10,15 @@ class ExampleRepository {
   final ExampleApi exampleApi;
 
   /// This just mocks the fetch request from REST API
-  Future<Result<List<Item>>> fetchItems() async {
+  Future<NetworkResult<List<Item>>> fetchItems() async {
     try {
       final response = await exampleApi.getItems();
 
       final list = ItemMapper.mapItemListRespoToItemList(response!.items);
 
-      return Result.success(list);
+      return NetworkResult.success(list);
     } catch (e, st) {
-      return Result.failure(
+      return NetworkResult.failure(
         NetworkExceptions.getException(e, st),
         st,
       );
@@ -26,12 +26,12 @@ class ExampleRepository {
   }
 
   /// This just mocks the fetch request from REST API
-  Future<Result<ItemResponse?>> getDetail(String id) async {
+  Future<NetworkResult<ItemResponse?>> getDetail(String id) async {
     try {
       final response = await exampleApi.getDetail(id);
-      return Result.success(response);
+      return NetworkResult.success(response);
     } catch (e, st) {
-      return Result.failure(
+      return NetworkResult.failure(
         NetworkExceptions.getException(e, st),
         st,
       );

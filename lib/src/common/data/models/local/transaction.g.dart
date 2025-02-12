@@ -9,27 +9,29 @@ part of 'transaction.dart';
 _$TransactionImpl _$$TransactionImplFromJson(Map<String, dynamic> json) =>
     _$TransactionImpl(
       date: json['date'] as String,
-      wallet: json['wallet'] as String,
       amount: (json['amount'] as num).toDouble(),
-      category: json['category'] as String,
-      type: $enumDecode(_$TransactionTypeEnumMap, json['type']),
+      title: json['title'] as String,
+      type: json['type'] as String? ?? 'expense',
       id: (json['id'] as num?)?.toInt() ?? null,
-      description: json['description'] as String?,
+      description: json['description'] as String? ?? null,
+      walletId: (json['wallet_id'] as num?)?.toInt() ?? null,
+      categoryId: (json['category_id'] as num?)?.toInt() ?? null,
+      wallet: json['wallet'] == null
+          ? null
+          : Wallet.fromJson(json['wallet'] as Map<String, dynamic>),
+      category: json['category'] == null
+          ? null
+          : Category.fromJson(json['category'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$TransactionImplToJson(_$TransactionImpl instance) =>
     <String, dynamic>{
       'date': instance.date,
-      'wallet': instance.wallet,
       'amount': instance.amount,
-      'category': instance.category,
-      'type': _$TransactionTypeEnumMap[instance.type]!,
+      'title': instance.title,
+      'type': instance.type,
       'id': instance.id,
       'description': instance.description,
+      'wallet_id': instance.walletId,
+      'category_id': instance.categoryId,
     };
-
-const _$TransactionTypeEnumMap = {
-  TransactionType.income: 'income',
-  TransactionType.expense: 'expense',
-  TransactionType.transfer: 'transfer',
-};

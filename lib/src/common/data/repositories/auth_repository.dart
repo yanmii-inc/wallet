@@ -22,7 +22,7 @@ class AuthRepository {
     yield hiveService.currentUser;
   }
 
-  Future<Result<User>> login(
+  Future<NetworkResult<User>> login(
     String email,
     String password,
   ) async {
@@ -38,16 +38,16 @@ class AuthRepository {
 
       hiveService.saveCurrentUser(user);
       await hiveService.saveUserToken(response.token);
-      return Result.success(user);
+      return NetworkResult.success(user);
     } catch (e, st) {
-      return Result.failure(
+      return NetworkResult.failure(
         NetworkExceptions.getException(e, st),
         st,
       );
     }
   }
 
-  Future<Result<User>> register(
+  Future<NetworkResult<User>> register(
     String email,
     String password,
     String password2,
@@ -62,9 +62,9 @@ class AuthRepository {
 
       hiveService.saveCurrentUser(user);
 
-      return Result.success(user);
+      return NetworkResult.success(user);
     } catch (e, st) {
-      return Result.failure(
+      return NetworkResult.failure(
         NetworkExceptions.getException(e, st),
         st,
       );

@@ -18,7 +18,7 @@ final _launchRoutesProvider = Provider(
         name: Routes.splash.name,
         builder: (BuildContext context, GoRouterState state) =>
             const SplashScreen(),
-      )
+      ),
     ],
   ),
 );

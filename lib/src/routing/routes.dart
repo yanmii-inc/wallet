@@ -8,12 +8,12 @@ import 'package:yanmii_wallet/src/common/services/auth_service.dart';
 import 'package:yanmii_wallet/src/features/auth/login/login_screen.dart';
 import 'package:yanmii_wallet/src/features/auth/logout/logout_button.dart';
 import 'package:yanmii_wallet/src/features/auth/register/register_screen.dart';
-import 'package:yanmii_wallet/src/features/main/home/home_screen.dart';
 import 'package:yanmii_wallet/src/features/main/main_screen.dart';
 import 'package:yanmii_wallet/src/features/onboarding/onboarding_screen.dart';
 import 'package:yanmii_wallet/src/features/splash/splash_screen.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/add/add_transaction_screen.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/transactions_screen.dart';
+import 'package:yanmii_wallet/src/features/wallet/presentation/wallet_screen.dart';
 import 'package:yanmii_wallet/src/logging/analytics.dart';
 import 'package:yanmii_wallet/src/utils/extensions/string_extension.dart';
 
@@ -37,7 +37,7 @@ final Provider<GoRouter> goRouterProvider = Provider<GoRouter>((ref) {
   final authService = ref.watch(authServiceProvider);
 
   return GoRouter(
-    initialLocation: Routes.main.path,
+    initialLocation: MainTabRoute.transactions.path,
     navigatorKey: _rootNavigatorKey,
     debugLogDiagnostics: true,
     redirect: (BuildContext context, GoRouterState state) async {
@@ -46,7 +46,6 @@ final Provider<GoRouter> goRouterProvider = Provider<GoRouter>((ref) {
 
       final goingToInit = state.matchedLocation == Routes.splash.path;
       final goingToOnboard = state.matchedLocation == Routes.onboarding.path;
-      final goingToMain = state.matchedLocation == Routes.main.path;
 
       if (!initialized && !goingToInit) {
         return Routes.splash.path;
@@ -55,8 +54,6 @@ final Provider<GoRouter> goRouterProvider = Provider<GoRouter>((ref) {
       if (initialized && !onboarded && !goingToOnboard) {
         return Routes.onboarding.path;
       }
-
-      if (goingToMain) return MainTabRoute.transactions.path;
 
       return null;
     },
@@ -71,8 +68,9 @@ final Provider<GoRouter> goRouterProvider = Provider<GoRouter>((ref) {
         pageBuilder: (BuildContext context, GoRouterState state) {
           final typeArg = state.pathParameters['type']!;
           final type = TransactionType.values.firstWhere(
-              (element) => element.name == typeArg,
-              orElse: () => TransactionType.expense);
+            (element) => element.name == typeArg,
+            orElse: () => TransactionType.expense,
+          );
           return MaterialPage(child: AddTransactionScreen(type: type));
         },
       ),

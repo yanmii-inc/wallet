@@ -16,7 +16,7 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$TransactionsState {
-  AsyncValue<TransactionEntity?> get transactionItemEntity =>
+  AsyncValue<List<TransactionEntity>> get transactions =>
       throw _privateConstructorUsedError;
 
   /// Create a copy of TransactionsState
@@ -32,7 +32,7 @@ abstract class $TransactionsStateCopyWith<$Res> {
           TransactionsState value, $Res Function(TransactionsState) then) =
       _$TransactionsStateCopyWithImpl<$Res, TransactionsState>;
   @useResult
-  $Res call({AsyncValue<TransactionEntity?> transactionItemEntity});
+  $Res call({AsyncValue<List<TransactionEntity>> transactions});
 }
 
 /// @nodoc
@@ -50,13 +50,13 @@ class _$TransactionsStateCopyWithImpl<$Res, $Val extends TransactionsState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? transactionItemEntity = null,
+    Object? transactions = null,
   }) {
     return _then(_value.copyWith(
-      transactionItemEntity: null == transactionItemEntity
-          ? _value.transactionItemEntity
-          : transactionItemEntity // ignore: cast_nullable_to_non_nullable
-              as AsyncValue<TransactionEntity?>,
+      transactions: null == transactions
+          ? _value.transactions
+          : transactions // ignore: cast_nullable_to_non_nullable
+              as AsyncValue<List<TransactionEntity>>,
     ) as $Val);
   }
 }
@@ -69,7 +69,7 @@ abstract class _$$TransactionsStateImplCopyWith<$Res>
       __$$TransactionsStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({AsyncValue<TransactionEntity?> transactionItemEntity});
+  $Res call({AsyncValue<List<TransactionEntity>> transactions});
 }
 
 /// @nodoc
@@ -85,13 +85,13 @@ class __$$TransactionsStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? transactionItemEntity = null,
+    Object? transactions = null,
   }) {
     return _then(_$TransactionsStateImpl(
-      transactionItemEntity: null == transactionItemEntity
-          ? _value.transactionItemEntity
-          : transactionItemEntity // ignore: cast_nullable_to_non_nullable
-              as AsyncValue<TransactionEntity?>,
+      transactions: null == transactions
+          ? _value.transactions
+          : transactions // ignore: cast_nullable_to_non_nullable
+              as AsyncValue<List<TransactionEntity>>,
     ));
   }
 }
@@ -100,15 +100,15 @@ class __$$TransactionsStateImplCopyWithImpl<$Res>
 
 class _$TransactionsStateImpl implements _TransactionsState {
   const _$TransactionsStateImpl(
-      {this.transactionItemEntity = const AsyncValue.data(null)});
+      {this.transactions = const AsyncLoading<List<TransactionEntity>>()});
 
   @override
   @JsonKey()
-  final AsyncValue<TransactionEntity?> transactionItemEntity;
+  final AsyncValue<List<TransactionEntity>> transactions;
 
   @override
   String toString() {
-    return 'TransactionsState(transactionItemEntity: $transactionItemEntity)';
+    return 'TransactionsState(transactions: $transactions)';
   }
 
   @override
@@ -116,12 +116,12 @@ class _$TransactionsStateImpl implements _TransactionsState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$TransactionsStateImpl &&
-            (identical(other.transactionItemEntity, transactionItemEntity) ||
-                other.transactionItemEntity == transactionItemEntity));
+            (identical(other.transactions, transactions) ||
+                other.transactions == transactions));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, transactionItemEntity);
+  int get hashCode => Object.hash(runtimeType, transactions);
 
   /// Create a copy of TransactionsState
   /// with the given fields replaced by the non-null parameter values.
@@ -135,11 +135,11 @@ class _$TransactionsStateImpl implements _TransactionsState {
 
 abstract class _TransactionsState implements TransactionsState {
   const factory _TransactionsState(
-          {final AsyncValue<TransactionEntity?> transactionItemEntity}) =
+          {final AsyncValue<List<TransactionEntity>> transactions}) =
       _$TransactionsStateImpl;
 
   @override
-  AsyncValue<TransactionEntity?> get transactionItemEntity;
+  AsyncValue<List<TransactionEntity>> get transactions;
 
   /// Create a copy of TransactionsState
   /// with the given fields replaced by the non-null parameter values.

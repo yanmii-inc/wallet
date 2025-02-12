@@ -5,7 +5,6 @@ enum Routes {
   splash,
   login,
   register,
-  main,
   transactions,
   transactionsAdd;
 

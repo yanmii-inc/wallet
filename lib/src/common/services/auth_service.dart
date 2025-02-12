@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yanmii_wallet/src/common/data/repositories/auth_repository.dart';
-import 'package:yanmii_wallet/src/common/data/sources/remote/config/result.dart';
+import 'package:yanmii_wallet/src/common/data/sources/remote/config/network_result.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/user.dart';
 import 'package:yanmii_wallet/src/common/domain/enums/auth_status.dart';
 
@@ -10,7 +10,7 @@ class AuthService extends ChangeNotifier {
 
   final AuthRepository authRepository;
 
-  Future<Result<User>> login(String email, String password) {
+  Future<NetworkResult<User>> login(String email, String password) {
     final result = authRepository.login(email, password);
     return result;
   }

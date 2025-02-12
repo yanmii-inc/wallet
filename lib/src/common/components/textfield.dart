@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CommonTextfield extends StatelessWidget {
   final String label;
@@ -11,6 +12,7 @@ class CommonTextfield extends StatelessWidget {
   final VoidCallback? onEditingComplete;
   final VoidCallback? onTap;
   final bool obscureText;
+  final List<TextInputFormatter>? inputFormatters;
 
   final TextInputType inputType;
 
@@ -25,6 +27,7 @@ class CommonTextfield extends StatelessWidget {
     this.value,
     this.focusNode,
     this.hintText,
+    this.inputFormatters,
     this.onChanged,
     this.onTap,
     this.obscureText = false,
@@ -43,6 +46,7 @@ class CommonTextfield extends StatelessWidget {
       keyboardType: inputType,
       validator: validator,
       onChanged: onChanged,
+      inputFormatters: inputFormatters,
       obscureText: obscureText,
       initialValue: value,
       onEditingComplete: onEditingComplete,

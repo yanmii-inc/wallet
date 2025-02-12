@@ -1,4 +1,5 @@
 // ignore_for_file: comment_references
+import 'package:easy_localization/easy_localization.dart';
 
 extension StringExtension on String {
   /// Use this extension to tagging the hardcoded text
@@ -12,6 +13,11 @@ extension StringExtension on String {
   /// ["A", "B", "C"] -> toString() -> "[ABC]"
   /// ["A", "B", "C"] -> toString() -> "[ABC]" -> trimList -> "ABC"
   String get trimList => replaceAll('[', '').replaceAll(']', '');
+
+  String get thousand {
+    final formatter = NumberFormat('#,##,###');
+    return formatter.format(int.parse(replaceAll(',', '')));
+  }
 
   double? get thousandToDouble => double.tryParse(replaceAll(',', ''));
 
