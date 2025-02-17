@@ -7,7 +7,7 @@ final Provider<GoRoute> _transactionRouteProvider = Provider<GoRoute>(
       name: MainTabRoute.transactions.name,
       parentNavigatorKey: _mainTabNavigatorKey,
       pageBuilder: (BuildContext context, GoRouterState state) =>
-          NoTransitionPage(child: TransactionsScreen()),
+          const NoTransitionPage(child: TransactionsScreen()),
     );
   },
 );

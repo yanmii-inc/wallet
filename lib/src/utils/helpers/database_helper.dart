@@ -7,7 +7,7 @@ import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
   static const _databaseName = 'pocketlog.db';
-  static const _databaseVersion = 6;
+  static const _databaseVersion = 7;
 
   static Database? _database;
 
@@ -22,7 +22,7 @@ class DatabaseHelper {
     final directory = await getApplicationDocumentsDirectory();
     final path = join(directory.path, _databaseName);
 
-    log('datavase path _initDatabase: $path');
+    log('database path: $path');
 
     return openDatabase(
       path,
@@ -33,6 +33,7 @@ class DatabaseHelper {
             id INTEGER PRIMARY KEY,
             date TEXT,
             wallet_id INTEGER,
+            dest_wallet_id INTEGER,
             amount REAL NOT NULL,
             title REAL NOT NULL,
             category_id INTEGER,
@@ -61,7 +62,14 @@ class DatabaseHelper {
         ''');
         await _seedDatabase(db);
       },
-      onUpgrade: (db, oldVersion, newVersion) {},
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 7) {
+          await db.execute('''
+            ALTER TABLE transactions
+            ADD COLUMN dest_wallet_id INTEGER
+          ''');
+        }
+      },
     );
   }
 

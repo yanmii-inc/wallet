@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:yanmii_wallet/src/common/data/models/local/transaction.dart'
@@ -16,6 +18,8 @@ class TransactionRepository {
     try {
       final db = await _db;
 
+      log('value.toJson() ${value.toJson()}');
+
       final id = await db.insert('transactions', value.toJson());
 
       return DbResult.success(id);
@@ -24,14 +28,29 @@ class TransactionRepository {
     }
   }
 
-  Future<DbResult<List<model.Transaction>>> getTransactionList({
-    DateTime? date,
-  }) async {
+  Future<int?> getDateCounts() async {
+    final db = await _db;
+    final result = await db.rawQuery('''
+      SELECT (julianday(DATE('now')) - julianday(DATE(MIN(date)))) + 1 AS days_diff
+      FROM transactions;
+    ''');
+
+    if (result.isEmpty) return null;
+
+    try {
+      return (result.first['days_diff']! as double).toInt();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<DbResult<List<model.Transaction>>> getTransactionList(
+      {DateTime? date}) async {
+    log('getTransactions ${date?.toIso8601String()}');
     try {
       final db = await _db;
 
-      final result = await db.rawQuery(
-        '''
+      const query = '''
       SELECT 
           t.id AS id, t.amount, t.type, t.date, t.title, t.description, t.category_id,
           w.id AS wallet_id, w.name AS wallet_name, w.logo AS wallet_logo,
@@ -39,8 +58,12 @@ class TransactionRepository {
           FROM transactions t
           LEFT JOIN wallets w ON t.wallet_id = w.id
           LEFT JOIN categories c ON t.category_id = c.id
+          WHERE DATE(date) = DATE(?)
           ORDER BY t.created_at;
-      ''',
+      ''';
+      final result = await db.rawQuery(
+        query,
+        [date?.toIso8601String()],
       );
 
       final formattedResult = result.map((row) {
@@ -57,10 +80,11 @@ class TransactionRepository {
             'name': row['wallet_name'],
             'logo': row['wallet_logo'],
           },
-          'category': {
-            'id': row['category_id'],
-            'label': row['category_label'],
-          },
+          if (row['category_id'] != null && row['category_label'] != null)
+            'category': {
+              'id': row['category_id'],
+              'label': row['category_label'],
+            },
         };
       }).toList();
 

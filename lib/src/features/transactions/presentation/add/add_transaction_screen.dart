@@ -9,17 +9,20 @@ import 'package:yanmii_wallet/src/common/data/models/type.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/category_entity.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/wallet_entity.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/add/add_transaction_controller.dart';
-import 'package:yanmii_wallet/src/features/transactions/presentation/widgets/wallet_picker.dart';
+import 'package:yanmii_wallet/src/features/transactions/presentation/list/wallet_picker.dart';
+import 'package:yanmii_wallet/src/features/transactions/presentation/transactions_controller.dart';
 import 'package:yanmii_wallet/src/utils/extensions/datetime_extension.dart';
 import 'package:yanmii_wallet/src/utils/extensions/string_extension.dart';
 
 class AddTransactionScreen extends ConsumerStatefulWidget {
   const AddTransactionScreen({
     required this.type,
+    required this.date,
     super.key,
   });
 
   final TransactionType type;
+  final DateTime date;
 
   @override
   ConsumerState<AddTransactionScreen> createState() =>
@@ -30,6 +33,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
   final _dateTextController = TextEditingController();
   final _timeTextController = TextEditingController();
   final _walletTextController = TextEditingController();
+  final _destWalletTextController = TextEditingController();
 
   AddTransactionController get _controller =>
       ref.read(addTransactionControllerProvider.notifier);
@@ -37,12 +41,12 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
   @override
   void initState() {
     super.initState();
-    _dateTextController.text = DateTime.now().toDayDdMmYyyy;
-    _timeTextController.text = DateTime.now().toHhMm;
+    _dateTextController.text = widget.date.toDayDdMmYyyy;
+    _timeTextController.text = widget.date.toHhMm;
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _controller
-        ..setDate(DateTime.now())
+        ..setDate(widget.date)
         ..setTime(TimeOfDay.now())
         ..setType(widget.type);
     });
@@ -55,17 +59,24 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
     ref.listen(addTransactionControllerProvider, (previous, next) {
       if (next.submissionStatus == FormzSubmissionStatus.success &&
           previous?.submissionStatus == FormzSubmissionStatus.inProgress) {
+        ref
+            .read(transactionsControllerProvider.notifier)
+            .getTransactions(widget.date);
         context.pop();
-      }
-
-      if (next.wallet != null) {
-        _walletTextController.text = next.wallet!.name;
       }
     });
 
+    final walletOptions =
+        ref.watch(addTransactionControllerProvider).walletOptions.value ?? [];
     final categoryOptions =
         ref.watch(addTransactionControllerProvider).categoryOptions;
     final categories = categoryOptions.value ?? [];
+    final wallet = ref.watch(addTransactionControllerProvider).wallet;
+    final destWallet = ref.watch(addTransactionControllerProvider).destWallet;
+    final selectedWallets = [
+      if (wallet != null) wallet,
+      if (destWallet != null) destWallet,
+    ];
 
     return Scaffold(
       appBar: AppBar(
@@ -141,18 +152,23 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
             ),
             Gap.h16,
             CommonTextfield(
-              label: 'Dompet'.hardcoded,
+              label: 'Dompet asal'.hardcoded,
               controller: _walletTextController,
               suffixIcon: const Icon(Icons.arrow_drop_down),
-              onTap: () async {
-                final wallet = await showModalBottomSheet<WalletEntity?>(
+              onTap: () {
+                showModalBottomSheet<WalletEntity?>(
                   context: context,
-                  builder: (BuildContext context) => const WalletPicker(),
+                  builder: (BuildContext context) => WalletPicker(
+                    options: walletOptions,
+                    selectedWallets: selectedWallets,
+                    onSelected: (wallet) {
+                      ref
+                          .read(addTransactionControllerProvider.notifier)
+                          .setWallet(wallet);
+                      _walletTextController.text = wallet.name;
+                    },
+                  ),
                 );
-
-                if (wallet != null) {
-                  _walletTextController.text = wallet.name;
-                }
               },
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -162,6 +178,35 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
               },
             ),
             Gap.h16,
+            if (state.type == TransactionType.transfer) ...[
+              CommonTextfield(
+                label: 'Dompet tujuan'.hardcoded,
+                controller: _destWalletTextController,
+                suffixIcon: const Icon(Icons.arrow_drop_down),
+                onTap: () {
+                  showModalBottomSheet<WalletEntity?>(
+                    context: context,
+                    builder: (BuildContext context) => WalletPicker(
+                      selectedWallets: selectedWallets,
+                      options: walletOptions,
+                      onSelected: (wallet) {
+                        ref
+                            .read(addTransactionControllerProvider.notifier)
+                            .setDestWallet(wallet);
+                        _destWalletTextController.text = wallet.name;
+                      },
+                    ),
+                  );
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter some text';
+                  }
+                  return null;
+                },
+              ),
+              Gap.h16,
+            ],
             CommonTextfield(
               label: 'Jumlah'.hardcoded,
               inputType: TextInputType.number,
@@ -170,7 +215,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                   locale: 'id_ID',
                   symbol: '',
                   decimalDigits: 0,
-                )
+                ),
               ],
               onChanged: (value) => _controller.setAmount(int.parse(value)),
               validator: (value) {
@@ -181,56 +226,58 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
               },
             ),
             Gap.h16,
-            CommonTextfield(
-              label: 'Judul'.hardcoded,
-              onChanged: (value) => _controller.setName(value),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
-            ),
-            Gap.h16,
-            Autocomplete<CategoryEntity>(
-              optionsBuilder: (value) {
-                return categories.where(
-                  (category) => category.label
-                      .toLowerCase()
-                      .contains(value.text.toLowerCase()),
-                );
-              },
-              fieldViewBuilder:
-                  (context, controller, focusNode, onFieldSubmitted) {
-                controller.addListener(() {
-                  final text = controller.text;
-                  if (!categories.any((element) => element.label == text)) {
-                    _controller.setCategory(CategoryEntity(label: text));
+            if (state.type != TransactionType.transfer) ...[
+              CommonTextfield(
+                label: 'Judul'.hardcoded,
+                onChanged: (value) => _controller.setName(value),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter some text';
                   }
-                });
-                return TextField(
-                  controller: controller,
-                  focusNode: focusNode,
-                  onSubmitted: (value) {
-                    onFieldSubmitted.call();
-                  },
-                );
-              },
-              displayStringForOption: (option) => option.label,
-              onSelected: (value) => _controller.setCategory(value),
-            ),
-            Gap.h16,
-            CommonTextfield(
-              label: 'Keterangan',
-              onChanged: (value) => _controller.setDescription(value),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
+                  return null;
+                },
+              ),
+              Gap.h16,
+              Autocomplete<CategoryEntity>(
+                optionsBuilder: (value) {
+                  return categories.where(
+                    (category) => category.label
+                        .toLowerCase()
+                        .contains(value.text.toLowerCase()),
+                  );
+                },
+                fieldViewBuilder:
+                    (context, controller, focusNode, onFieldSubmitted) {
+                  controller.addListener(() {
+                    final text = controller.text;
+                    if (!categories.any((element) => element.label == text)) {
+                      _controller.setCategory(CategoryEntity(label: text));
+                    }
+                  });
+                  return TextField(
+                    controller: controller,
+                    focusNode: focusNode,
+                    onSubmitted: (value) {
+                      onFieldSubmitted.call();
+                    },
+                  );
+                },
+                displayStringForOption: (option) => option.label,
+                onSelected: (value) => _controller.setCategory(value),
+              ),
+              Gap.h16,
+              CommonTextfield(
+                label: 'Keterangan',
+                onChanged: (value) => _controller.setDescription(value),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter some text';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+            ],
           ],
         ),
       ),

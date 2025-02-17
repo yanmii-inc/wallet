@@ -3,20 +3,33 @@ import 'package:yanmii_wallet/src/features/transactions/application/transactions
 import 'package:yanmii_wallet/src/features/transactions/presentation/transactions_state.dart';
 
 class TransactionsController extends StateNotifier<TransactionsState> {
-  TransactionsController(this.ref) : super(const TransactionsState());
+  TransactionsController(this.ref)
+      : super(TransactionsState(selectedDate: DateTime.now()));
   final Ref ref;
 
-  Future<void> getTransactions() async {
-    await ref.read(transactionsServiceProvider.notifier).getTransactionList();
+  void forward(DateTime date) {
+    state = state.copyWith(selectedDate: date.add(const Duration(days: 1)));
+  }
 
+  void backward(DateTime date) {
+    state =
+        state.copyWith(selectedDate: date.subtract(const Duration(days: 1)));
+  }
+
+  Future<void> getTransactions(DateTime day) async {
+    await ref
+        .read(transactionsServiceProvider)
+        .getTransactionList(state.selectedDate);
     if (mounted) {
-      state =
-          state.copyWith(transactions: ref.watch(transactionsServiceProvider));
+      state = state.copyWith(
+        transactions:
+            AsyncData(ref.watch(transactionsServiceProvider).transactions),
+      );
     }
   }
 }
 
-final transactionsControllerProvider = StateNotifierProvider.autoDispose<
-    TransactionsController, TransactionsState>(
-  (ref) => TransactionsController(ref)..getTransactions(),
+final transactionsControllerProvider =
+    StateNotifierProvider<TransactionsController, TransactionsState>(
+  (ref) => TransactionsController(ref)..getTransactions(DateTime.now()),
 );

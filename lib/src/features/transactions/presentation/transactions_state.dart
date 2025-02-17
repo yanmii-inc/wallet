@@ -7,6 +7,7 @@ part 'transactions_state.freezed.dart';
 @freezed
 class TransactionsState with _$TransactionsState {
   const factory TransactionsState({
+    required DateTime selectedDate,
     @Default(AsyncLoading<List<TransactionEntity>>())
     AsyncValue<List<TransactionEntity>> transactions,
   }) = _TransactionsState;

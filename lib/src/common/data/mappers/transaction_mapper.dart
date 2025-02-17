@@ -20,9 +20,11 @@ class TransactionMapper {
             data.wallet == null ? null : mapWalletToWalletEntity(data.wallet!),
         amount: data.amount,
         name: data.title,
-        category: data.category == null
-            ? null
-            : mapCategoryToCategoryEntity(data.category),
+        category: data.type != TransactionType.transfer.name
+            ? (data.category == null
+                ? null
+                : mapCategoryToCategoryEntity(data.category))
+            : const CategoryEntity(label: 'Transfer'),
         type: TransactionType.values.firstWhere(
           (element) => element.name == data.type,
           orElse: () => TransactionType.expense,

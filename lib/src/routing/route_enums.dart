@@ -5,7 +5,6 @@ enum Routes {
   splash,
   login,
   register,
-  transactions,
   transactionsAdd;
 
   String get path => '/${name.toKebabCase}';

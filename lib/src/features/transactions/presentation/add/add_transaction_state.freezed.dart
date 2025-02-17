@@ -20,6 +20,7 @@ mixin _$AddTransactionState {
   AsyncValue<List<WalletEntity>> get walletOptions =>
       throw _privateConstructorUsedError;
   WalletEntity? get wallet => throw _privateConstructorUsedError;
+  WalletEntity? get destWallet => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   int get amount => throw _privateConstructorUsedError;
   AsyncValue<List<CategoryEntity>> get categoryOptions =>
@@ -48,6 +49,7 @@ abstract class $AddTransactionStateCopyWith<$Res> {
       {DateTime? date,
       AsyncValue<List<WalletEntity>> walletOptions,
       WalletEntity? wallet,
+      WalletEntity? destWallet,
       String name,
       int amount,
       AsyncValue<List<CategoryEntity>> categoryOptions,
@@ -58,6 +60,7 @@ abstract class $AddTransactionStateCopyWith<$Res> {
       FormzSubmissionStatus? submissionStatus});
 
   $WalletEntityCopyWith<$Res>? get wallet;
+  $WalletEntityCopyWith<$Res>? get destWallet;
   $CategoryEntityCopyWith<$Res>? get category;
 }
 
@@ -79,6 +82,7 @@ class _$AddTransactionStateCopyWithImpl<$Res, $Val extends AddTransactionState>
     Object? date = freezed,
     Object? walletOptions = null,
     Object? wallet = freezed,
+    Object? destWallet = freezed,
     Object? name = null,
     Object? amount = null,
     Object? categoryOptions = null,
@@ -100,6 +104,10 @@ class _$AddTransactionStateCopyWithImpl<$Res, $Val extends AddTransactionState>
       wallet: freezed == wallet
           ? _value.wallet
           : wallet // ignore: cast_nullable_to_non_nullable
+              as WalletEntity?,
+      destWallet: freezed == destWallet
+          ? _value.destWallet
+          : destWallet // ignore: cast_nullable_to_non_nullable
               as WalletEntity?,
       name: null == name
           ? _value.name
@@ -154,6 +162,20 @@ class _$AddTransactionStateCopyWithImpl<$Res, $Val extends AddTransactionState>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
+  $WalletEntityCopyWith<$Res>? get destWallet {
+    if (_value.destWallet == null) {
+      return null;
+    }
+
+    return $WalletEntityCopyWith<$Res>(_value.destWallet!, (value) {
+      return _then(_value.copyWith(destWallet: value) as $Val);
+    });
+  }
+
+  /// Create a copy of AddTransactionState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
   $CategoryEntityCopyWith<$Res>? get category {
     if (_value.category == null) {
       return null;
@@ -177,6 +199,7 @@ abstract class _$$AddTransactionStateImplCopyWith<$Res>
       {DateTime? date,
       AsyncValue<List<WalletEntity>> walletOptions,
       WalletEntity? wallet,
+      WalletEntity? destWallet,
       String name,
       int amount,
       AsyncValue<List<CategoryEntity>> categoryOptions,
@@ -188,6 +211,8 @@ abstract class _$$AddTransactionStateImplCopyWith<$Res>
 
   @override
   $WalletEntityCopyWith<$Res>? get wallet;
+  @override
+  $WalletEntityCopyWith<$Res>? get destWallet;
   @override
   $CategoryEntityCopyWith<$Res>? get category;
 }
@@ -208,6 +233,7 @@ class __$$AddTransactionStateImplCopyWithImpl<$Res>
     Object? date = freezed,
     Object? walletOptions = null,
     Object? wallet = freezed,
+    Object? destWallet = freezed,
     Object? name = null,
     Object? amount = null,
     Object? categoryOptions = null,
@@ -229,6 +255,10 @@ class __$$AddTransactionStateImplCopyWithImpl<$Res>
       wallet: freezed == wallet
           ? _value.wallet
           : wallet // ignore: cast_nullable_to_non_nullable
+              as WalletEntity?,
+      destWallet: freezed == destWallet
+          ? _value.destWallet
+          : destWallet // ignore: cast_nullable_to_non_nullable
               as WalletEntity?,
       name: null == name
           ? _value.name
@@ -275,6 +305,7 @@ class _$AddTransactionStateImpl
       {this.date = null,
       this.walletOptions = const AsyncLoading<List<WalletEntity>>(),
       this.wallet = null,
+      this.destWallet = null,
       this.name = '',
       this.amount = 0,
       this.categoryOptions = const AsyncLoading<List<CategoryEntity>>(),
@@ -293,6 +324,9 @@ class _$AddTransactionStateImpl
   @override
   @JsonKey()
   final WalletEntity? wallet;
+  @override
+  @JsonKey()
+  final WalletEntity? destWallet;
   @override
   @JsonKey()
   final String name;
@@ -320,7 +354,7 @@ class _$AddTransactionStateImpl
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AddTransactionState(date: $date, walletOptions: $walletOptions, wallet: $wallet, name: $name, amount: $amount, categoryOptions: $categoryOptions, category: $category, description: $description, type: $type, isFormValid: $isFormValid, submissionStatus: $submissionStatus)';
+    return 'AddTransactionState(date: $date, walletOptions: $walletOptions, wallet: $wallet, destWallet: $destWallet, name: $name, amount: $amount, categoryOptions: $categoryOptions, category: $category, description: $description, type: $type, isFormValid: $isFormValid, submissionStatus: $submissionStatus)';
   }
 
   @override
@@ -331,6 +365,7 @@ class _$AddTransactionStateImpl
       ..add(DiagnosticsProperty('date', date))
       ..add(DiagnosticsProperty('walletOptions', walletOptions))
       ..add(DiagnosticsProperty('wallet', wallet))
+      ..add(DiagnosticsProperty('destWallet', destWallet))
       ..add(DiagnosticsProperty('name', name))
       ..add(DiagnosticsProperty('amount', amount))
       ..add(DiagnosticsProperty('categoryOptions', categoryOptions))
@@ -350,6 +385,8 @@ class _$AddTransactionStateImpl
             (identical(other.walletOptions, walletOptions) ||
                 other.walletOptions == walletOptions) &&
             (identical(other.wallet, wallet) || other.wallet == wallet) &&
+            (identical(other.destWallet, destWallet) ||
+                other.destWallet == destWallet) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.amount, amount) || other.amount == amount) &&
             (identical(other.categoryOptions, categoryOptions) ||
@@ -371,6 +408,7 @@ class _$AddTransactionStateImpl
       date,
       walletOptions,
       wallet,
+      destWallet,
       name,
       amount,
       categoryOptions,
@@ -395,6 +433,7 @@ abstract class _AddTransactionState implements AddTransactionState {
           {final DateTime? date,
           final AsyncValue<List<WalletEntity>> walletOptions,
           final WalletEntity? wallet,
+          final WalletEntity? destWallet,
           final String name,
           final int amount,
           final AsyncValue<List<CategoryEntity>> categoryOptions,
@@ -411,6 +450,8 @@ abstract class _AddTransactionState implements AddTransactionState {
   AsyncValue<List<WalletEntity>> get walletOptions;
   @override
   WalletEntity? get wallet;
+  @override
+  WalletEntity? get destWallet;
   @override
   String get name;
   @override

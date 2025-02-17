@@ -15,6 +15,7 @@ class AddTransactionState with _$AddTransactionState {
     @Default(AsyncLoading<List<WalletEntity>>())
     AsyncValue<List<WalletEntity>> walletOptions,
     @Default(null) WalletEntity? wallet,
+    @Default(null) WalletEntity? destWallet,
     @Default('') String name,
     @Default(0) int amount,
     @Default(AsyncLoading<List<CategoryEntity>>())

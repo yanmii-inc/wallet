@@ -63,15 +63,22 @@ final Provider<GoRouter> goRouterProvider = Provider<GoRouter>((ref) {
       ref.watch(_launchRoutesProvider),
       ref.watch(_authRoutesProvider),
       GoRoute(
-        path: '${Routes.transactions.path}/add/:type',
+        path: '${MainTabRoute.transactions.path}/add/:type/:date',
         name: Routes.transactionsAdd.name,
         pageBuilder: (BuildContext context, GoRouterState state) {
           final typeArg = state.pathParameters['type']!;
+          final dateArg = state.pathParameters['date']!;
           final type = TransactionType.values.firstWhere(
             (element) => element.name == typeArg,
             orElse: () => TransactionType.expense,
           );
-          return MaterialPage(child: AddTransactionScreen(type: type));
+          final dateTime = DateTime.parse(dateArg);
+          return MaterialPage(
+            child: AddTransactionScreen(
+              type: type,
+              date: dateTime,
+            ),
+          );
         },
       ),
       ref.watch(_mainRouteProvider),
