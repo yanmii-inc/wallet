@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:yanmii_wallet/src/app/constants/constants.dart';
+
 import 'package:yanmii_wallet/src/utils/extensions/build_context_extension/theme_extension.dart';
 
 class CommonButton extends StatelessWidget {
@@ -16,7 +16,7 @@ class CommonButton extends StatelessWidget {
         text,
         key: key,
         onPressed: onPressed,
-        height: height,
+        height: height ?? 48,
         isDisabled: isDisabled ?? false,
         isLoading: isLoading ?? false,
         fontSize: fontSize,
@@ -27,7 +27,7 @@ class CommonButton extends StatelessWidget {
     required this.onPressed,
     super.key,
     this.icon,
-    this.height = 42,
+    this.height = 48,
     this.isLoading = false,
     this.fontSize = 16,
     this.isDisabled = false,
@@ -48,7 +48,7 @@ class CommonButton extends StatelessWidget {
         key: key,
         icon: icon,
         onPressed: onPressed,
-        height: height,
+        height: height ?? 48,
         isDisabled: isDisabled ?? false,
         isLoading: isLoading ?? false,
         fontSize: fontSize,
@@ -101,7 +101,7 @@ class ButtonText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: context.theme.textTheme.buttonText,
+      style: context.theme.textTheme.labelMedium,
     );
   }
 }

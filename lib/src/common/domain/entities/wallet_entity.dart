@@ -8,5 +8,6 @@ class WalletEntity with _$WalletEntity {
     required int id,
     required String name,
     @Default(null) String? logo,
+    @Default(0) int balance,
   }) = _WalletEntity;
 }

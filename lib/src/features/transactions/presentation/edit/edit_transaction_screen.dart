@@ -7,80 +7,108 @@ import 'package:yanmii_wallet/src/common/components/textfield.dart';
 import 'package:yanmii_wallet/src/common/data/models/type.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/category_entity.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/wallet_entity.dart';
-import 'package:yanmii_wallet/src/features/transactions/presentation/add/add_transaction_controller.dart';
+import 'package:yanmii_wallet/src/features/auth/login/login_screen.dart';
+import 'package:yanmii_wallet/src/features/main/home/home_screen.dart';
+import 'package:yanmii_wallet/src/features/transactions/presentation/edit/edit_transaction_controller.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/list/wallet_picker.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/transactions_controller.dart';
+import 'package:yanmii_wallet/src/utils/extensions/build_context_extension/text_styles.dart';
 import 'package:yanmii_wallet/src/utils/extensions/build_context_extension/theme_extension.dart';
 import 'package:yanmii_wallet/src/utils/extensions/datetime_extension.dart';
+import 'package:yanmii_wallet/src/utils/extensions/num_extension.dart';
 import 'package:yanmii_wallet/src/utils/extensions/string_extension.dart';
 
-class AddTransactionScreen extends ConsumerStatefulWidget {
-  const AddTransactionScreen({
-    required this.type,
-    required this.date,
+class EditTransactionScreen extends ConsumerStatefulWidget {
+  const EditTransactionScreen({
+    required this.id,
     super.key,
   });
-
-  final TransactionType type;
-  final DateTime date;
+  final int id;
 
   @override
-  ConsumerState<AddTransactionScreen> createState() =>
+  ConsumerState<EditTransactionScreen> createState() =>
       _AddTransactionScreenState();
 }
 
-class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
+class _AddTransactionScreenState extends ConsumerState<EditTransactionScreen> {
   final _dateTextController = TextEditingController();
   final _timeTextController = TextEditingController();
   final _walletTextController = TextEditingController();
   final _destWalletTextController = TextEditingController();
+  final _nameTextController = TextEditingController();
+  final _amountTextController = TextEditingController();
+  final _descriptionTextController = TextEditingController();
   final _categoryTextController = TextEditingController();
 
-  AddTransactionController get _controller =>
-      ref.read(addTransactionControllerProvider.notifier);
+  EditTransactionController get _controller =>
+      ref.read(editTransactionControllerProvider(widget.id).notifier);
 
   @override
   void initState() {
     super.initState();
-    _dateTextController.text = widget.date.toDayDdMmYyyy;
-    _timeTextController.text = widget.date.toHhMm;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      final transaction = ref
+          .read(editTransactionControllerProvider(widget.id).notifier)
+          .getTransactionById(widget.id);
+
+      final dateTime = transaction.date.toDateTime ?? DateTime.now();
       _controller
-        ..setDate(widget.date)
-        ..setTime(TimeOfDay.now())
-        ..setType(widget.type);
+        ..setDate(dateTime)
+        ..setTime(TimeOfDay.fromDateTime(dateTime))
+        ..setType(transaction.type)
+        ..setCategory(transaction.category!)
+        ..setName(transaction.name)
+        ..setAmount(transaction.amount.toString())
+        ..setType(transaction.type)
+        ..setDescription(transaction.description ?? '');
+
+      _dateTextController.text = dateTime.toDayDdMmYyyy;
+      _timeTextController.text = dateTime.toHhMm;
+      _walletTextController.text = transaction.wallet!.name;
+      _destWalletTextController.text = transaction.wallet!.name;
+      _nameTextController.text = transaction.name;
+      _amountTextController.text = transaction.amount.toDecimal;
+      _categoryTextController.text = transaction.category!.label;
+      _descriptionTextController.text = transaction.description ?? '';
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(addTransactionControllerProvider);
+    final state = ref.watch(editTransactionControllerProvider(widget.id));
 
-    ref.listen(addTransactionControllerProvider, (previous, next) {
+    ref.listen(editTransactionControllerProvider(widget.id), (previous, next) {
       if (next.submissionStatus == FormzSubmissionStatus.success &&
-          previous?.submissionStatus == FormzSubmissionStatus.inProgress) {
+          previous?.submissionStatus == FormzSubmissionStatus.inProgress &&
+          next.date != null) {
         ref
             .read(transactionsControllerProvider.notifier)
-            .getTransactions(widget.date);
+            .getTransactions(next.date!);
         context.pop();
       }
     });
 
-    final walletOptions =
-        ref.watch(addTransactionControllerProvider).walletOptions.value ?? [];
+    final walletOptions = ref
+            .watch(editTransactionControllerProvider(widget.id))
+            .walletOptions
+            .value ??
+        [];
     final categoryOptions =
-        ref.watch(addTransactionControllerProvider).categoryOptions;
+        ref.watch(editTransactionControllerProvider(widget.id)).categoryOptions;
     final categories = categoryOptions.value ?? [];
-    final wallet = ref.watch(addTransactionControllerProvider).wallet;
-    final destWallet = ref.watch(addTransactionControllerProvider).destWallet;
+    final wallet =
+        ref.watch(editTransactionControllerProvider(widget.id)).wallet;
+    final destWallet =
+        ref.watch(editTransactionControllerProvider(widget.id)).destWallet;
     final selectedWallets = [
       if (wallet != null) wallet,
       if (destWallet != null) destWallet,
     ];
+    final isIncome = state.type == TransactionType.income;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Transaction'.hardcoded),
+        title: Text('Edit Transaction'.hardcoded),
         actions: [
           IconButton(
             icon: const Icon(Icons.check),
@@ -92,19 +120,11 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
         padding: const EdgeInsets.all(16),
         child: ListView(
           children: [
-            SegmentedButton(
-              segments: TransactionType.values
-                  .map(
-                    (e) => ButtonSegment(
-                      value: e,
-                      label: Text(e.name.hardcoded),
-                    ),
-                  )
-                  .toList(),
-              selected: {state.type},
-              onSelectionChanged: (value) => _controller.setType(value.first),
+            Text(
+              '${state.type.name} Details'.toUpperCase(),
+              style: context.titleMedium,
             ),
-            Gap.h16,
+            Gap.h32,
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -152,26 +172,21 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
             ),
             Gap.h16,
             CommonTextfield(
-              label:
-                  'Dompet ${state.type == TransactionType.income ? 'tujuan' : 'asal'}'
-                      .hardcoded,
+              label: 'Dompet ${isIncome ? 'tujuan' : 'asal'}'.hardcoded,
               controller: _walletTextController,
               suffixIcon: const Icon(Icons.arrow_drop_down),
-              onTap: () {
-                showModalBottomSheet<WalletEntity?>(
-                  context: context,
-                  builder: (BuildContext context) => WalletPicker(
-                    options: walletOptions,
-                    selectedWallets: selectedWallets,
-                    onSelected: (wallet) {
-                      ref
-                          .read(addTransactionControllerProvider.notifier)
-                          .setWallet(wallet);
-                      _walletTextController.text = wallet.name;
-                    },
-                  ),
-                );
-              },
+              onTap: () => _showWalletPicker(
+                walletOptions: walletOptions,
+                selectedWallets: selectedWallets,
+                onSelected: (wallet) {
+                  ref
+                      .read(
+                        editTransactionControllerProvider(widget.id).notifier,
+                      )
+                      .setWallet(wallet);
+                  _walletTextController.text = wallet.name;
+                },
+              ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter some text';
@@ -185,24 +200,21 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                 label: 'Dompet tujuan'.hardcoded,
                 controller: _destWalletTextController,
                 suffixIcon: const Icon(Icons.arrow_drop_down),
-                onTap: () {
-                  showModalBottomSheet<WalletEntity?>(
-                    context: context,
-                    builder: (BuildContext context) => WalletPicker(
-                      selectedWallets: selectedWallets,
-                      options: walletOptions,
-                      onSelected: (wallet) {
-                        ref
-                            .read(addTransactionControllerProvider.notifier)
-                            .setDestWallet(wallet);
-                        _destWalletTextController.text = wallet.name;
-                      },
-                    ),
-                  );
-                },
+                onTap: () => _showWalletPicker(
+                  walletOptions: walletOptions,
+                  selectedWallets: selectedWallets,
+                  onSelected: (wallet) {
+                    ref
+                        .read(
+                          editTransactionControllerProvider(widget.id).notifier,
+                        )
+                        .setDestWallet(wallet);
+                    _destWalletTextController.text = wallet.name;
+                  },
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter some text';
+                    return 'Please select a wallet';
                   }
                   return null;
                 },
@@ -212,11 +224,12 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
             CommonTextfield(
               label: 'Jumlah'.hardcoded,
               inputType: TextInputType.number,
+              controller: _amountTextController,
               inputFormatters: [AppConstants.idrCurrencyFormatter],
               onChanged: (value) => _controller.setAmount(value),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
+                  return 'Please enter some amount';
                 }
                 return null;
               },
@@ -226,6 +239,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
               CommonTextfield(
                 label: 'Judul'.hardcoded,
                 onChanged: (value) => _controller.setName(value),
+                controller: _nameTextController,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter some text';
@@ -255,18 +269,28 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
               Gap.h16,
               CommonTextfield(
                 label: 'Keterangan',
+                controller: _descriptionTextController,
                 onChanged: (value) => _controller.setDescription(value),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter some text';
-                  }
-                  return null;
-                },
               ),
               const SizedBox(height: 16),
             ],
           ],
         ),
+      ),
+    );
+  }
+
+  void _showWalletPicker({
+    required List<WalletEntity> walletOptions,
+    required ValueChanged<WalletEntity> onSelected,
+    List<WalletEntity>? selectedWallets,
+  }) {
+    showModalBottomSheet<WalletEntity?>(
+      context: context,
+      builder: (BuildContext context) => WalletPicker(
+        selectedWallets: selectedWallets,
+        options: walletOptions,
+        onSelected: onSelected,
       ),
     );
   }

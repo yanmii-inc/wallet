@@ -10,12 +10,13 @@ part 'transaction.g.dart';
 class Transaction with _$Transaction {
   const factory Transaction({
     required String date,
-    required double amount,
+    required int amount,
     required String title,
     @Default('expense') String type,
     @Default(null) int? id,
     @Default(null) String? description,
     @Default(null) @JsonKey(name: 'wallet_id') int? walletId,
+    @Default(null) @JsonKey(name: 'dest_wallet_id') int? destWalletId,
     @Default(null) @JsonKey(name: 'category_id') int? categoryId,
     @JsonKey(includeToJson: false, includeIfNull: false)
     @Default(null)

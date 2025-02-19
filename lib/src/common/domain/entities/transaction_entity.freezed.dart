@@ -18,7 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$TransactionEntity {
   String get date => throw _privateConstructorUsedError;
   WalletEntity? get wallet => throw _privateConstructorUsedError;
-  double get amount => throw _privateConstructorUsedError;
+  int get amount => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   CategoryEntity? get category => throw _privateConstructorUsedError;
   TransactionType get type => throw _privateConstructorUsedError;
@@ -41,7 +41,7 @@ abstract class $TransactionEntityCopyWith<$Res> {
   $Res call(
       {String date,
       WalletEntity? wallet,
-      double amount,
+      int amount,
       String name,
       CategoryEntity? category,
       TransactionType type,
@@ -88,7 +88,7 @@ class _$TransactionEntityCopyWithImpl<$Res, $Val extends TransactionEntity>
       amount: null == amount
           ? _value.amount
           : amount // ignore: cast_nullable_to_non_nullable
-              as double,
+              as int,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -152,7 +152,7 @@ abstract class _$$TransactionEntityImplCopyWith<$Res>
   $Res call(
       {String date,
       WalletEntity? wallet,
-      double amount,
+      int amount,
       String name,
       CategoryEntity? category,
       TransactionType type,
@@ -199,7 +199,7 @@ class __$$TransactionEntityImplCopyWithImpl<$Res>
       amount: null == amount
           ? _value.amount
           : amount // ignore: cast_nullable_to_non_nullable
-              as double,
+              as int,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -242,7 +242,7 @@ class _$TransactionEntityImpl implements _TransactionEntity {
   @override
   final WalletEntity? wallet;
   @override
-  final double amount;
+  final int amount;
   @override
   final String name;
   @override
@@ -294,7 +294,7 @@ abstract class _TransactionEntity implements TransactionEntity {
   const factory _TransactionEntity(
       {required final String date,
       required final WalletEntity? wallet,
-      required final double amount,
+      required final int amount,
       required final String name,
       required final CategoryEntity? category,
       required final TransactionType type,
@@ -306,7 +306,7 @@ abstract class _TransactionEntity implements TransactionEntity {
   @override
   WalletEntity? get wallet;
   @override
-  double get amount;
+  int get amount;
   @override
   String get name;
   @override

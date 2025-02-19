@@ -1,6 +1,8 @@
 // * themes
 import 'dart:ui';
 
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
+
 export '../themes/themes.dart';
 // * enums
 export 'enums/enums.dart';
@@ -29,4 +31,10 @@ class AppConstants {
   // size
   static const double kMobileScreenWidth = 390;
   static const double kMobileScreenHeight = 844;
+
+  static final idrCurrencyFormatter = CurrencyTextInputFormatter.currency(
+    locale: 'id_ID',
+    symbol: '',
+    decimalDigits: 0,
+  );
 }

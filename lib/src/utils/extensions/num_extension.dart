@@ -11,14 +11,22 @@ extension NumExtension on num {
       );
 }
 
-extension IntExtension on double {
+extension IntExtension on int {
   String get toIdr {
-    final formatter = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ');
+    final formatter = NumberFormat.currency(
+      locale: 'id_ID',
+      symbol: 'Rp ',
+      decimalDigits: 0,
+    );
     return formatter.format(this);
   }
 
   String get toDecimal {
-    final formatter = NumberFormat.currency(locale: 'id_ID', symbol: '');
+    final formatter = NumberFormat.currency(
+      locale: 'id_ID',
+      symbol: '',
+      decimalDigits: 0,
+    );
     return formatter.format(this);
   }
 }

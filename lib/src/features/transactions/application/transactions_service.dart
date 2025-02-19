@@ -22,7 +22,7 @@ class TransactionsService {
 
   List<TransactionEntity> transactions = [];
 
-  Future<void> saveTransaction({
+  Future<void> createTransaction({
     required String title,
     required String amount,
     required DateTime date,
@@ -30,6 +30,7 @@ class TransactionsService {
     required WalletEntity wallet,
     required TransactionType type,
     required CategoryEntity? category,
+    WalletEntity? destWallet,
   }) async {
     int? categoryId;
 
@@ -48,12 +49,13 @@ class TransactionsService {
 
     try {
       await _insertTransaction(
-        amount: double.parse(amount),
+        amount: int.parse(amount),
         date: date.toIso8601String(),
         description: description,
         walletId: wallet.id,
         categoryId: categoryId,
         type: type.name,
+        destWalletId: destWallet?.id,
         title: title,
       );
     } catch (e, st) {
@@ -84,18 +86,20 @@ class TransactionsService {
 
   Future<void> _insertTransaction({
     required String title,
-    required double amount,
+    required int amount,
     required String date,
     required String description,
     required int? walletId,
     required String type,
     required int? categoryId,
+    int? destWalletId,
   }) async {
     final transaction = Transaction(
       amount: amount,
       date: date,
       description: description,
       walletId: walletId,
+      destWalletId: destWalletId,
       categoryId: categoryId,
       type: type,
       title: title,
@@ -127,6 +131,66 @@ class TransactionsService {
   Future<List<DateTime>> getPageDates() async {
     final count = await _transactionRepository.getDateCounts();
     return _getRecentDates(count ?? 1);
+  }
+
+  Future<void> updateTransaction({
+    required int id,
+    required String amount,
+    required String title,
+    required DateTime date,
+    required String description,
+    required WalletEntity wallet,
+    required TransactionType type,
+    CategoryEntity? category,
+    WalletEntity? destWallet,
+  }) async {
+    int? categoryId;
+
+    if (category != null) {
+      if (category.id == null) {
+        final result = await _categoryRepository
+            .createCategory(Category(label: category.label));
+        result.when(
+          success: (data) => categoryId = data,
+          failure: (error, stackTrace) {},
+        );
+      } else {
+        categoryId = category.id;
+      }
+    }
+
+    final value = Transaction(
+      id: id,
+      amount: int.parse(amount),
+      title: title,
+      date: date.toIso8601String(),
+      description: description,
+      walletId: wallet.id,
+      destWalletId: destWallet?.id,
+      categoryId: categoryId,
+      type: type.name,
+    );
+
+    final result = await _transactionRepository.updateTransaction(value);
+
+    result.when(
+      success: (data) {
+        final mapper = ref.read(transactionMapperProvider);
+
+        final transactionEntity =
+            mapper.mapTransactionToTransactionEntity(value);
+        transactions = [
+          ...transactions.map((transaction) {
+            if (transaction.id == transactionEntity.id) {
+              return transactionEntity;
+            } else {
+              return transaction;
+            }
+          }),
+        ];
+      },
+      failure: (_, stackTrace) {},
+    );
   }
 }
 

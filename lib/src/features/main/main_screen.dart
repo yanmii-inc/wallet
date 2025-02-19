@@ -39,8 +39,8 @@ class MainScreen extends ConsumerWidget {
         currentIndex: MainTabRoute.values
             .indexWhere((element) => element.path == location),
         onTap: (index) {
-          // final path = MainTabRoute.values[index].path;
-          // context.go(path);
+          final path = MainTabRoute.values[index].path;
+          context.go(path);
         },
       ),
     );

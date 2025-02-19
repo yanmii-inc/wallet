@@ -20,7 +20,7 @@ class MyApp extends ConsumerWidget {
       routeInformationProvider: routers.routeInformationProvider,
       localizationsDelegates: context.localizationDelegates,
       title: AppConfig.appName.value,
-      theme: AppTheme.light,
+      theme: AppTheme.defaultTheme,
       builder: (context, child) {
         final isProdVariant = F.flavor == Flavor.prod;
         return _FlavorBanner(
@@ -28,7 +28,6 @@ class MyApp extends ConsumerWidget {
           child: child,
         );
       },
-      darkTheme: AppTheme.dark,
       themeMode: themeMode,
     );
   }

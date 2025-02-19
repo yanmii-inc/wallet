@@ -20,9 +20,11 @@ Wallet _$WalletFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Wallet {
-  int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
+  int? get id => throw _privateConstructorUsedError;
   String? get logo => throw _privateConstructorUsedError;
+  @JsonKey(includeToJson: false)
+  int get balance => throw _privateConstructorUsedError;
 
   /// Serializes this Wallet to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -38,7 +40,11 @@ abstract class $WalletCopyWith<$Res> {
   factory $WalletCopyWith(Wallet value, $Res Function(Wallet) then) =
       _$WalletCopyWithImpl<$Res, Wallet>;
   @useResult
-  $Res call({int id, String name, String? logo});
+  $Res call(
+      {String name,
+      int? id,
+      String? logo,
+      @JsonKey(includeToJson: false) int balance});
 }
 
 /// @nodoc
@@ -56,23 +62,28 @@ class _$WalletCopyWithImpl<$Res, $Val extends Wallet>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
     Object? name = null,
+    Object? id = freezed,
     Object? logo = freezed,
+    Object? balance = null,
   }) {
     return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as int,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
       logo: freezed == logo
           ? _value.logo
           : logo // ignore: cast_nullable_to_non_nullable
               as String?,
+      balance: null == balance
+          ? _value.balance
+          : balance // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 }
@@ -84,7 +95,11 @@ abstract class _$$WalletImplCopyWith<$Res> implements $WalletCopyWith<$Res> {
       __$$WalletImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, String name, String? logo});
+  $Res call(
+      {String name,
+      int? id,
+      String? logo,
+      @JsonKey(includeToJson: false) int balance});
 }
 
 /// @nodoc
@@ -100,23 +115,28 @@ class __$$WalletImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
     Object? name = null,
+    Object? id = freezed,
     Object? logo = freezed,
+    Object? balance = null,
   }) {
     return _then(_$WalletImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as int,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
       logo: freezed == logo
           ? _value.logo
           : logo // ignore: cast_nullable_to_non_nullable
               as String?,
+      balance: null == balance
+          ? _value.balance
+          : balance // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -124,22 +144,30 @@ class __$$WalletImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$WalletImpl implements _Wallet {
-  const _$WalletImpl({required this.id, required this.name, this.logo = null});
+  const _$WalletImpl(
+      {required this.name,
+      this.id = null,
+      this.logo = null,
+      @JsonKey(includeToJson: false) this.balance = 0});
 
   factory _$WalletImpl.fromJson(Map<String, dynamic> json) =>
       _$$WalletImplFromJson(json);
 
   @override
-  final int id;
-  @override
   final String name;
   @override
   @JsonKey()
+  final int? id;
+  @override
+  @JsonKey()
   final String? logo;
+  @override
+  @JsonKey(includeToJson: false)
+  final int balance;
 
   @override
   String toString() {
-    return 'Wallet(id: $id, name: $name, logo: $logo)';
+    return 'Wallet(name: $name, id: $id, logo: $logo, balance: $balance)';
   }
 
   @override
@@ -147,14 +175,15 @@ class _$WalletImpl implements _Wallet {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$WalletImpl &&
-            (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.logo, logo) || other.logo == logo));
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.logo, logo) || other.logo == logo) &&
+            (identical(other.balance, balance) || other.balance == balance));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, logo);
+  int get hashCode => Object.hash(runtimeType, name, id, logo, balance);
 
   /// Create a copy of Wallet
   /// with the given fields replaced by the non-null parameter values.
@@ -174,18 +203,22 @@ class _$WalletImpl implements _Wallet {
 
 abstract class _Wallet implements Wallet {
   const factory _Wallet(
-      {required final int id,
-      required final String name,
-      final String? logo}) = _$WalletImpl;
+      {required final String name,
+      final int? id,
+      final String? logo,
+      @JsonKey(includeToJson: false) final int balance}) = _$WalletImpl;
 
   factory _Wallet.fromJson(Map<String, dynamic> json) = _$WalletImpl.fromJson;
 
   @override
-  int get id;
-  @override
   String get name;
   @override
+  int? get id;
+  @override
   String? get logo;
+  @override
+  @JsonKey(includeToJson: false)
+  int get balance;
 
   /// Create a copy of Wallet
   /// with the given fields replaced by the non-null parameter values.

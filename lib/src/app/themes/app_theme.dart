@@ -1,148 +1,62 @@
 import 'package:flutter/material.dart';
-import 'package:yanmii_wallet/gen/fonts.gen.dart';
-import 'package:yanmii_wallet/src/app/themes/foundation/colors.dart';
-import 'package:yanmii_wallet/src/app/themes/foundation/typography.dart';
+import 'package:yanmii_wallet/src/app/constants/constants.dart';
 
 class AppTheme {
-  static ColorScheme lightColorScheme = ColorScheme.light(
-    primary: LightColors.primaryColor,
-    surface: LightColors.neutralColor[1]!,
-    onSurface: LightColors.neutralColor[9]!,
-    // define more colors
-  );
+  static const lightColors = ColorScheme.light();
 
-  static ColorScheme darkColorScheme = ColorScheme.dark(
-    primary: DarkColors.primaryColor,
-    surface: DarkColors.neutralColor[1]!,
-    onSurface: DarkColors.neutralColor[9]!,
-    // define more colors
-  );
+  static const darkColors = ColorScheme.dark();
 
-  static TextTheme lightTypography = AppTypography(
-    colorScheme: lightColorScheme,
-    primaryFont: FontFamily.dMSans,
-    secondaryFont: FontFamily.dMMono,
-    // TODO: define your fonts
-  ).toTextTheme();
+  static const lightTypography = AppTypography(colorScheme: lightColors);
 
-  static TextTheme darkTypography = AppTypography(
-    colorScheme: darkColorScheme,
-    primaryFont: FontFamily.dMSans,
-    secondaryFont: FontFamily.dMMono,
-    // TODO: define your fonts
-  ).toTextTheme();
+  static const darkTypography = AppTypography(colorScheme: darkColors);
 
-  static final ThemeData light = ThemeData(
-    colorScheme: lightColorScheme,
-    primaryColor: LightColors.primaryColor,
-    appBarTheme: AppBarTheme(
-      backgroundColor: lightColorScheme.surface,
-      elevation: 0,
-      titleTextStyle: lightTypography.labelSmall,
-    ),
+  static final ThemeData defaultTheme = ThemeData(
+    useMaterial3: true,
     brightness: Brightness.light,
-    inputDecorationTheme: InputDecorationTheme(
-      contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-      border: const OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(12)),
-      ),
-      errorBorder: const OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(12)),
-        borderSide: BorderSide(color: LightColors.errorColor),
-      ),
-      errorStyle:
-          lightTypography.labelSmall?.copyWith(color: LightColors.errorColor),
-    ),
-    floatingActionButtonTheme: const FloatingActionButtonThemeData(
-      backgroundColor: LightColors.primaryColor,
-    ),
-    extensions: <ThemeExtension<dynamic>>[
-      AppColors(
-        buttonTextColor: LightColors.neutralColor[9],
-        warningColor: LightColors.warningColor,
-      ),
-      // more themeextensions here
-    ],
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ButtonStyle(
-        backgroundColor: WidgetStateProperty.resolveWith<Color>(
-          (states) {
-            if (states.contains(WidgetState.pressed)) {
-              return LightColors.primaryColor[7]!;
-            } else {
-              return LightColors.primaryColor;
-            }
-          },
-        ),
-        minimumSize: WidgetStateProperty.resolveWith<Size>(
-          (states) => const Size(100, 42),
-        ),
-        shape: WidgetStateProperty.resolveWith<OutlinedBorder>(
-          (states) =>
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-      ),
-    ),
-    dialogTheme: const DialogTheme(),
-    textTheme: lightTypography,
-    // more theme data here
-  );
-
-  static final ThemeData dark = ThemeData(
-    colorScheme: darkColorScheme,
-    primaryColor: DarkColors.primaryColor,
-    appBarTheme: AppBarTheme(
-      backgroundColor: darkColorScheme.surface,
-      elevation: 0,
-      titleTextStyle: darkTypography.titleSmall,
-    ),
     inputDecorationTheme: const InputDecorationTheme(
-      contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-      isDense: true,
+      contentPadding: EdgeInsets.symmetric(
+        vertical: 20,
+        horizontal: 16,
+      ),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(12)),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(12)),
-        borderSide: BorderSide(color: DarkColors.errorColor),
+        borderRadius: BorderRadius.all(
+          Radius.circular(12),
+        ),
       ),
     ),
-    extensions: <ThemeExtension<dynamic>>[
-      AppColors(
-        buttonTextColor: LightColors.neutralColor[9],
-        warningColor: DarkColors.warningColor,
-      ),
-    ],
-    floatingActionButtonTheme: const FloatingActionButtonThemeData(
-      backgroundColor: DarkColors.primaryColor,
-    ),
+    textTheme: lightTypography.toTextTheme(),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
-        backgroundColor: WidgetStateProperty.resolveWith<Color>(
-          (states) {
-            if (states.contains(WidgetState.pressed)) {
-              return DarkColors.primaryColor[7]!;
-            } else {
-              return DarkColors.primaryColor;
-            }
-          },
-        ),
-        minimumSize: WidgetStateProperty.resolveWith<Size>(
-          (states) => const Size(100, 42),
-        ),
-        shape: WidgetStateProperty.resolveWith<OutlinedBorder>(
-          (states) =>
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+          if (states.contains(WidgetState.disabled)) {
+            return LightColors.neutralColor;
+          }
+          if (states.contains(WidgetState.hovered)) {
+            return LightColors.primaryColor.shade400;
+          } else if (states.contains(WidgetState.focused)) {
+            return LightColors.primaryColor.shade400;
+          }
+          return LightColors.primaryColor;
+        }),
+        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       ),
     ),
-    dialogTheme: const DialogTheme(),
-    textTheme: darkTypography,
-    // more theme data here
   );
-}
 
-extension ThemeExtended on TextTheme {
-  TextStyle get buttonText =>
-      labelLarge!.copyWith(color: LightColors.neutralColor[9]);
+  static final ThemeData darkTheme = ThemeData(
+    useMaterial3: true,
+    brightness: Brightness.dark,
+    inputDecorationTheme: const InputDecorationTheme(
+      contentPadding: EdgeInsets.symmetric(
+        vertical: 20,
+        horizontal: 16,
+      ),
+      border: OutlineInputBorder(),
+    ),
+    textTheme: darkTypography.toTextTheme(),
+  );
 }

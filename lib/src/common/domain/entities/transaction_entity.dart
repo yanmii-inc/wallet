@@ -11,7 +11,7 @@ class TransactionEntity with _$TransactionEntity {
   const factory TransactionEntity({
     required String date,
     required WalletEntity? wallet,
-    required double amount,
+    required int amount,
     required String name,
     required CategoryEntity? category,
     required TransactionType type,

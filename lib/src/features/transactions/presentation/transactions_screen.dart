@@ -42,6 +42,13 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen>
       end: Offset.zero,
     ).animate(_animationController);
 
+    Future.delayed(Duration.zero, () {
+      _animationController
+        ..reset()
+        ..forward();
+      _controller.getTransactions(DateTime.now());
+    });
+
     super.initState();
   }
 
@@ -66,29 +73,25 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen>
     return Scaffold(
       appBar: AppBar(
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
           children: [
+            IconButton(
+              onPressed: () {
+                _controller.backward(selectedDate);
+              },
+              icon: const Icon(Icons.arrow_back),
+            ),
             Expanded(
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      _controller.backward(selectedDate);
-                    },
-                    icon: const Icon(Icons.arrow_back),
-                  ),
-                  Text(DateFormat('EEEE, MMM d, y').format(selectedDate)),
-                  IconButton(
-                    onPressed: () {
-                      _controller.forward(selectedDate);
-                    },
-                    icon: const Icon(Icons.arrow_forward),
-                  ),
-                ],
+              child: Text(
+                DateFormat('EEEE, MMM d, y', 'id_ID').format(selectedDate),
+                textAlign: TextAlign.center,
               ),
             ),
-            IconButton(onPressed: () {}, icon: const Icon(Icons.download)),
-            IconButton(onPressed: () {}, icon: const Icon(Icons.history)),
+            IconButton(
+              onPressed: () {
+                _controller.forward(selectedDate);
+              },
+              icon: const Icon(Icons.arrow_forward),
+            ),
           ],
         ),
       ),

@@ -12,6 +12,7 @@ import 'package:yanmii_wallet/src/features/main/main_screen.dart';
 import 'package:yanmii_wallet/src/features/onboarding/onboarding_screen.dart';
 import 'package:yanmii_wallet/src/features/splash/splash_screen.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/add/add_transaction_screen.dart';
+import 'package:yanmii_wallet/src/features/transactions/presentation/edit/edit_transaction_screen.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/transactions_screen.dart';
 import 'package:yanmii_wallet/src/features/wallet/presentation/wallet_screen.dart';
 import 'package:yanmii_wallet/src/logging/analytics.dart';
@@ -79,6 +80,14 @@ final Provider<GoRouter> goRouterProvider = Provider<GoRouter>((ref) {
               date: dateTime,
             ),
           );
+        },
+      ),
+      GoRoute(
+        path: '${MainTabRoute.transactions.path}/edit/:id',
+        name: Routes.transactionsEdit.name,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          final id = state.pathParameters['id']!;
+          return MaterialPage(child: EditTransactionScreen(id: int.parse(id)));
         },
       ),
       ref.watch(_mainRouteProvider),

@@ -31,5 +31,5 @@ class TransactionsController extends StateNotifier<TransactionsState> {
 
 final transactionsControllerProvider =
     StateNotifierProvider<TransactionsController, TransactionsState>(
-  (ref) => TransactionsController(ref)..getTransactions(DateTime.now()),
+  TransactionsController.new,
 );

@@ -5,16 +5,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:formz/formz.dart';
 import 'package:yanmii_wallet/src/common/data/models/type.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/category_entity.dart';
+import 'package:yanmii_wallet/src/common/domain/entities/transaction_entity.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/wallet_entity.dart';
 import 'package:yanmii_wallet/src/features/transactions/application/category_service.dart';
 import 'package:yanmii_wallet/src/features/transactions/application/transactions_service.dart';
-import 'package:yanmii_wallet/src/features/transactions/presentation/add/add_transaction_state.dart';
+import 'package:yanmii_wallet/src/features/transactions/presentation/edit/edit_transaction_state.dart';
 import 'package:yanmii_wallet/src/features/wallet/application/wallet_service.dart';
 
-class AddTransactionController extends StateNotifier<AddTransactionState> {
-  AddTransactionController(this.ref) : super(const AddTransactionState());
+class EditTransactionController extends StateNotifier<EditTransactionState> {
+  EditTransactionController(this.ref, this.transactionId)
+      : super(const EditTransactionState());
 
   final Ref ref;
+  final int transactionId;
 
   TransactionsService get _transactionService =>
       ref.read(transactionsServiceProvider);
@@ -64,7 +67,6 @@ class AddTransactionController extends StateNotifier<AddTransactionState> {
 
   void setDestWallet(WalletEntity value) {
     state = state.copyWith(destWallet: value);
-
     _setTransactionName();
     _validate();
   }
@@ -98,13 +100,13 @@ class AddTransactionController extends StateNotifier<AddTransactionState> {
     }
 
     try {
-      await _transactionService.createTransaction(
+      await _transactionService.updateTransaction(
+        id: transactionId,
         amount: state.amount.toString(),
         title: state.name,
         date: state.date ?? DateTime.now(),
         description: state.description,
         wallet: state.wallet!,
-        destWallet: state.destWallet,
         category: state.category,
         type: state.type,
       );
@@ -139,9 +141,14 @@ class AddTransactionController extends StateNotifier<AddTransactionState> {
       state = state.copyWith(name: transactionName);
     }
   }
+
+  TransactionEntity getTransactionById(int id) {
+    final transactions = ref.watch(transactionsServiceProvider).transactions;
+    return transactions.firstWhere((element) => element.id == id);
+  }
 }
 
-final addTransactionControllerProvider = StateNotifierProvider.autoDispose<
-    AddTransactionController, AddTransactionState>(
-  (ref) => AddTransactionController(ref)..init(),
+final editTransactionControllerProvider = StateNotifierProvider.family
+    .autoDispose<EditTransactionController, EditTransactionState, int>(
+  (ref, id) => EditTransactionController(ref, id)..init(),
 );

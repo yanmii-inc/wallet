@@ -19,6 +19,7 @@ mixin _$WalletEntity {
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String? get logo => throw _privateConstructorUsedError;
+  int get balance => throw _privateConstructorUsedError;
 
   /// Create a copy of WalletEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -33,7 +34,7 @@ abstract class $WalletEntityCopyWith<$Res> {
           WalletEntity value, $Res Function(WalletEntity) then) =
       _$WalletEntityCopyWithImpl<$Res, WalletEntity>;
   @useResult
-  $Res call({int id, String name, String? logo});
+  $Res call({int id, String name, String? logo, int balance});
 }
 
 /// @nodoc
@@ -54,6 +55,7 @@ class _$WalletEntityCopyWithImpl<$Res, $Val extends WalletEntity>
     Object? id = null,
     Object? name = null,
     Object? logo = freezed,
+    Object? balance = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -68,6 +70,10 @@ class _$WalletEntityCopyWithImpl<$Res, $Val extends WalletEntity>
           ? _value.logo
           : logo // ignore: cast_nullable_to_non_nullable
               as String?,
+      balance: null == balance
+          ? _value.balance
+          : balance // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 }
@@ -80,7 +86,7 @@ abstract class _$$WalletEntityImplCopyWith<$Res>
       __$$WalletEntityImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, String name, String? logo});
+  $Res call({int id, String name, String? logo, int balance});
 }
 
 /// @nodoc
@@ -99,6 +105,7 @@ class __$$WalletEntityImplCopyWithImpl<$Res>
     Object? id = null,
     Object? name = null,
     Object? logo = freezed,
+    Object? balance = null,
   }) {
     return _then(_$WalletEntityImpl(
       id: null == id
@@ -113,6 +120,10 @@ class __$$WalletEntityImplCopyWithImpl<$Res>
           ? _value.logo
           : logo // ignore: cast_nullable_to_non_nullable
               as String?,
+      balance: null == balance
+          ? _value.balance
+          : balance // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -121,7 +132,10 @@ class __$$WalletEntityImplCopyWithImpl<$Res>
 
 class _$WalletEntityImpl implements _WalletEntity {
   const _$WalletEntityImpl(
-      {required this.id, required this.name, this.logo = null});
+      {required this.id,
+      required this.name,
+      this.logo = null,
+      this.balance = 0});
 
   @override
   final int id;
@@ -130,10 +144,13 @@ class _$WalletEntityImpl implements _WalletEntity {
   @override
   @JsonKey()
   final String? logo;
+  @override
+  @JsonKey()
+  final int balance;
 
   @override
   String toString() {
-    return 'WalletEntity(id: $id, name: $name, logo: $logo)';
+    return 'WalletEntity(id: $id, name: $name, logo: $logo, balance: $balance)';
   }
 
   @override
@@ -143,11 +160,12 @@ class _$WalletEntityImpl implements _WalletEntity {
             other is _$WalletEntityImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.logo, logo) || other.logo == logo));
+            (identical(other.logo, logo) || other.logo == logo) &&
+            (identical(other.balance, balance) || other.balance == balance));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, logo);
+  int get hashCode => Object.hash(runtimeType, id, name, logo, balance);
 
   /// Create a copy of WalletEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -162,7 +180,8 @@ abstract class _WalletEntity implements WalletEntity {
   const factory _WalletEntity(
       {required final int id,
       required final String name,
-      final String? logo}) = _$WalletEntityImpl;
+      final String? logo,
+      final int balance}) = _$WalletEntityImpl;
 
   @override
   int get id;
@@ -170,6 +189,8 @@ abstract class _WalletEntity implements WalletEntity {
   String get name;
   @override
   String? get logo;
+  @override
+  int get balance;
 
   /// Create a copy of WalletEntity
   /// with the given fields replaced by the non-null parameter values.

@@ -33,9 +33,10 @@ class TransactionMapper {
       );
 
   WalletEntity mapWalletToWalletEntity(Wallet data) => WalletEntity(
-        id: data.id,
+        id: data.id!,
         name: data.name,
         logo: data.logo,
+        balance: data.balance,
       );
 
   CategoryEntity mapCategoryToCategoryEntity(Category? category) =>

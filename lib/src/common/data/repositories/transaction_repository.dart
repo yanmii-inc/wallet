@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:yanmii_wallet/src/common/data/models/local/transaction.dart'
     as model;
-import 'package:yanmii_wallet/src/common/data/models/type.dart';
 import 'package:yanmii_wallet/src/common/data/sources/sources.dart';
 import 'package:yanmii_wallet/src/utils/helpers/database_helper.dart';
 
@@ -17,7 +16,6 @@ class TransactionRepository {
   Future<DbResult<int>> createTransaction(model.Transaction value) async {
     try {
       final db = await _db;
-
       log('value.toJson() ${value.toJson()}');
 
       final id = await db.insert('transactions', value.toJson());
@@ -44,8 +42,9 @@ class TransactionRepository {
     }
   }
 
-  Future<DbResult<List<model.Transaction>>> getTransactionList(
-      {DateTime? date}) async {
+  Future<DbResult<List<model.Transaction>>> getTransactionList({
+    DateTime? date,
+  }) async {
     log('getTransactions ${date?.toIso8601String()}');
     try {
       final db = await _db;
@@ -98,38 +97,22 @@ class TransactionRepository {
 
   Future<void> deleteTransaction() async {}
 
-  Future<int> updateTransaction({
-    required int id,
-    required String amount,
-    required String title,
-    required String date,
-    required String description,
-    required int walletId,
-    required int categoryId,
-    required TransactionType type,
-  }) async {
-    final db = await _db;
+  Future<DbResult<int>> updateTransaction(model.Transaction value) async {
+    try {
+      final db = await _db;
 
-    final value = model.Transaction(
-      id: id,
-      amount: double.parse(amount),
-      title: title,
-      date: date,
-      description: description,
-      walletId: walletId,
-      categoryId: categoryId,
-      type: type.name,
-    );
+      final id = await db.update(
+        'transactions',
+        value.toJson(),
+        where: 'id = ?',
+        whereArgs: [value.id],
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
 
-    await db.update(
-      'transactions',
-      value.toJson(),
-      where: 'id = ?',
-      whereArgs: [value.id],
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-
-    return id;
+      return DbResult.success(id);
+    } catch (e, st) {
+      return DbResult.failure(e, st);
+    }
   }
 }
 
