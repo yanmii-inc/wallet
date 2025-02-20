@@ -5,6 +5,8 @@ import 'package:sqflite/sqflite.dart';
 import 'package:yanmii_wallet/src/common/data/models/local/transaction.dart'
     as model;
 import 'package:yanmii_wallet/src/common/data/sources/sources.dart';
+import 'package:yanmii_wallet/src/utils/extensions/build_context_extension/popups.dart';
+import 'package:yanmii_wallet/src/utils/extensions/string_extension.dart';
 import 'package:yanmii_wallet/src/utils/helpers/database_helper.dart';
 
 class TransactionRepository {
@@ -53,9 +55,11 @@ class TransactionRepository {
       SELECT 
           t.id AS id, t.amount, t.type, t.date, t.title, t.description, t.category_id,
           w.id AS wallet_id, w.name AS wallet_name, w.logo AS wallet_logo,
+          dw.id AS dest_wallet_id, dw.name AS dest_wallet_name, dw.logo AS dest_wallet_logo,
           c.id AS category_id, c.label AS category_label
           FROM transactions t
           LEFT JOIN wallets w ON t.wallet_id = w.id
+          LEFT JOIN wallets dw ON t.dest_wallet_id = dw.id
           LEFT JOIN categories c ON t.category_id = c.id
           WHERE DATE(date) = DATE(?)
           ORDER BY t.created_at;
@@ -64,6 +68,8 @@ class TransactionRepository {
         query,
         [date?.toIso8601String()],
       );
+
+      log('result $result');
 
       final formattedResult = result.map((row) {
         return {
@@ -74,11 +80,18 @@ class TransactionRepository {
           'title': row['title'],
           'description': row['description'],
           'category_id': row['category_id'],
-          'wallet': {
-            'id': row['wallet_id'],
-            'name': row['wallet_name'],
-            'logo': row['wallet_logo'],
-          },
+          if (row['wallet_id'] != null && row['wallet_name'] != null)
+            'wallet': {
+              'id': row['wallet_id'],
+              'name': row['wallet_name'],
+              'logo': row['wallet_logo'],
+            },
+          if (row['dest_wallet_id'] != null && row['dest_wallet_name'] != null)
+            'dest_wallet': {
+              'id': row['dest_wallet_id'],
+              'name': row['dest_wallet_name'],
+              'logo': row['dest_wallet_logo'],
+            },
           if (row['category_id'] != null && row['category_label'] != null)
             'category': {
               'id': row['category_id'],
@@ -86,6 +99,8 @@ class TransactionRepository {
             },
         };
       }).toList();
+
+      // log('formattedResult $formattedResult');
 
       final list = formattedResult.map(model.Transaction.fromJson).toList();
 
@@ -95,7 +110,17 @@ class TransactionRepository {
     }
   }
 
-  Future<void> deleteTransaction() async {}
+  Future<DbResult<int>> delete(int id) async {
+    final db = await _db;
+
+    try {
+      final affected =
+          await db.delete('transactions', where: 'id = ?', whereArgs: [id]);
+      return DbResult.success(affected);
+    } catch (e, st) {
+      return DbResult.failure(e, st);
+    }
+  }
 
   Future<DbResult<int>> updateTransaction(model.Transaction value) async {
     try {

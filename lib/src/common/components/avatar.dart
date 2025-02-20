@@ -16,10 +16,13 @@ class NameAvatar extends StatelessWidget {
 
     if (nameParts.length == 1) {
       return nameParts.first
-          .substring(0, nameParts.first.length > 1 ? 2 : 1)
+          .substring(0, nameParts.first.length > 2 ? 3 : nameParts.first.length)
           .toUpperCase();
     } else {
-      return (nameParts[0][0] + nameParts[1][0]).toUpperCase();
+      return (nameParts[0][0] +
+              nameParts[1][0] +
+              (nameParts.length > 2 ? nameParts[2][0] : ''))
+          .toUpperCase();
     }
   }
 

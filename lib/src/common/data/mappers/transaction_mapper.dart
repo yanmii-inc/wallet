@@ -18,6 +18,9 @@ class TransactionMapper {
         date: data.date,
         wallet:
             data.wallet == null ? null : mapWalletToWalletEntity(data.wallet!),
+        destWallet: data.destWalletId == null
+            ? null
+            : mapWalletToWalletEntity(data.destWallet!),
         amount: data.amount,
         name: data.title,
         category: data.type != TransactionType.transfer.name

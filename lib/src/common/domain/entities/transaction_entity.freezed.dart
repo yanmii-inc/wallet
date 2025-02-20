@@ -18,6 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$TransactionEntity {
   String get date => throw _privateConstructorUsedError;
   WalletEntity? get wallet => throw _privateConstructorUsedError;
+  WalletEntity? get destWallet => throw _privateConstructorUsedError;
   int get amount => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   CategoryEntity? get category => throw _privateConstructorUsedError;
@@ -41,6 +42,7 @@ abstract class $TransactionEntityCopyWith<$Res> {
   $Res call(
       {String date,
       WalletEntity? wallet,
+      WalletEntity? destWallet,
       int amount,
       String name,
       CategoryEntity? category,
@@ -49,6 +51,7 @@ abstract class $TransactionEntityCopyWith<$Res> {
       String? description});
 
   $WalletEntityCopyWith<$Res>? get wallet;
+  $WalletEntityCopyWith<$Res>? get destWallet;
   $CategoryEntityCopyWith<$Res>? get category;
 }
 
@@ -69,6 +72,7 @@ class _$TransactionEntityCopyWithImpl<$Res, $Val extends TransactionEntity>
   $Res call({
     Object? date = null,
     Object? wallet = freezed,
+    Object? destWallet = freezed,
     Object? amount = null,
     Object? name = null,
     Object? category = freezed,
@@ -84,6 +88,10 @@ class _$TransactionEntityCopyWithImpl<$Res, $Val extends TransactionEntity>
       wallet: freezed == wallet
           ? _value.wallet
           : wallet // ignore: cast_nullable_to_non_nullable
+              as WalletEntity?,
+      destWallet: freezed == destWallet
+          ? _value.destWallet
+          : destWallet // ignore: cast_nullable_to_non_nullable
               as WalletEntity?,
       amount: null == amount
           ? _value.amount
@@ -130,6 +138,20 @@ class _$TransactionEntityCopyWithImpl<$Res, $Val extends TransactionEntity>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
+  $WalletEntityCopyWith<$Res>? get destWallet {
+    if (_value.destWallet == null) {
+      return null;
+    }
+
+    return $WalletEntityCopyWith<$Res>(_value.destWallet!, (value) {
+      return _then(_value.copyWith(destWallet: value) as $Val);
+    });
+  }
+
+  /// Create a copy of TransactionEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
   $CategoryEntityCopyWith<$Res>? get category {
     if (_value.category == null) {
       return null;
@@ -152,6 +174,7 @@ abstract class _$$TransactionEntityImplCopyWith<$Res>
   $Res call(
       {String date,
       WalletEntity? wallet,
+      WalletEntity? destWallet,
       int amount,
       String name,
       CategoryEntity? category,
@@ -161,6 +184,8 @@ abstract class _$$TransactionEntityImplCopyWith<$Res>
 
   @override
   $WalletEntityCopyWith<$Res>? get wallet;
+  @override
+  $WalletEntityCopyWith<$Res>? get destWallet;
   @override
   $CategoryEntityCopyWith<$Res>? get category;
 }
@@ -180,6 +205,7 @@ class __$$TransactionEntityImplCopyWithImpl<$Res>
   $Res call({
     Object? date = null,
     Object? wallet = freezed,
+    Object? destWallet = freezed,
     Object? amount = null,
     Object? name = null,
     Object? category = freezed,
@@ -195,6 +221,10 @@ class __$$TransactionEntityImplCopyWithImpl<$Res>
       wallet: freezed == wallet
           ? _value.wallet
           : wallet // ignore: cast_nullable_to_non_nullable
+              as WalletEntity?,
+      destWallet: freezed == destWallet
+          ? _value.destWallet
+          : destWallet // ignore: cast_nullable_to_non_nullable
               as WalletEntity?,
       amount: null == amount
           ? _value.amount
@@ -230,6 +260,7 @@ class _$TransactionEntityImpl implements _TransactionEntity {
   const _$TransactionEntityImpl(
       {required this.date,
       required this.wallet,
+      required this.destWallet,
       required this.amount,
       required this.name,
       required this.category,
@@ -241,6 +272,8 @@ class _$TransactionEntityImpl implements _TransactionEntity {
   final String date;
   @override
   final WalletEntity? wallet;
+  @override
+  final WalletEntity? destWallet;
   @override
   final int amount;
   @override
@@ -256,7 +289,7 @@ class _$TransactionEntityImpl implements _TransactionEntity {
 
   @override
   String toString() {
-    return 'TransactionEntity(date: $date, wallet: $wallet, amount: $amount, name: $name, category: $category, type: $type, id: $id, description: $description)';
+    return 'TransactionEntity(date: $date, wallet: $wallet, destWallet: $destWallet, amount: $amount, name: $name, category: $category, type: $type, id: $id, description: $description)';
   }
 
   @override
@@ -266,6 +299,8 @@ class _$TransactionEntityImpl implements _TransactionEntity {
             other is _$TransactionEntityImpl &&
             (identical(other.date, date) || other.date == date) &&
             (identical(other.wallet, wallet) || other.wallet == wallet) &&
+            (identical(other.destWallet, destWallet) ||
+                other.destWallet == destWallet) &&
             (identical(other.amount, amount) || other.amount == amount) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.category, category) ||
@@ -277,8 +312,8 @@ class _$TransactionEntityImpl implements _TransactionEntity {
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType, date, wallet, amount, name, category, type, id, description);
+  int get hashCode => Object.hash(runtimeType, date, wallet, destWallet, amount,
+      name, category, type, id, description);
 
   /// Create a copy of TransactionEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -294,6 +329,7 @@ abstract class _TransactionEntity implements TransactionEntity {
   const factory _TransactionEntity(
       {required final String date,
       required final WalletEntity? wallet,
+      required final WalletEntity? destWallet,
       required final int amount,
       required final String name,
       required final CategoryEntity? category,
@@ -305,6 +341,8 @@ abstract class _TransactionEntity implements TransactionEntity {
   String get date;
   @override
   WalletEntity? get wallet;
+  @override
+  WalletEntity? get destWallet;
   @override
   int get amount;
   @override

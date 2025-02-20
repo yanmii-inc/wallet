@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:yanmii_wallet/src/app/constants/constants.dart';
 import 'package:yanmii_wallet/src/common/components/avatar.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/transactions_controller.dart';
@@ -35,27 +38,47 @@ class _TransactionDaySectionState
           itemCount: data.length,
           itemBuilder: (context, index) {
             final item = data[index];
-            return ListTile(
-              titleAlignment: ListTileTitleAlignment.center,
-              dense: true,
-              leading: NameAvatar(name: item.wallet!.name),
-              title: Text(
-                item.category != null ? item.category!.label : item.name,
-                style: context.textTheme.titleSmall!
-                    .copyWith(fontWeight: FontWeight.bold),
-              ),
-              subtitle: Text(item.name),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
+            return Slidable(
+              key: const ValueKey(0),
+              startActionPane: ActionPane(
+                motion: const ScrollMotion(),
+                dismissible: DismissiblePane(onDismissed: () {}),
                 children: [
-                  Text(item.amount.toIdr),
-                  Gap.w8,
-                  const Icon(Icons.arrow_forward_ios),
+                  SlidableAction(
+                    onPressed: (context) {
+                      ref
+                          .read(transactionsControllerProvider.notifier)
+                          .delete(item);
+                    },
+                    backgroundColor: context.theme.colorScheme.error,
+                    foregroundColor: Colors.white,
+                    icon: Icons.delete,
+                    label: 'Delete',
+                  ),
                 ],
               ),
-              onTap: () => context.pushNamed(
-                Routes.transactionsEdit.name,
-                pathParameters: {'id': item.id!.toString()},
+              child: ListTile(
+                titleAlignment: ListTileTitleAlignment.center,
+                dense: true,
+                leading: NameAvatar(name: item.wallet?.name ?? '?'),
+                title: Text(
+                  item.category != null ? item.category!.label : item.name,
+                  style: context.textTheme.titleSmall!
+                      .copyWith(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text(item.name),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(item.amount.toIdr),
+                    Gap.w8,
+                    const Icon(Icons.arrow_forward_ios),
+                  ],
+                ),
+                onTap: () => context.pushNamed(
+                  Routes.transactionsEdit.name,
+                  pathParameters: {'id': item.id!.toString()},
+                ),
               ),
             );
           },

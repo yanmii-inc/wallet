@@ -23,6 +23,9 @@ class Transaction with _$Transaction {
     Wallet? wallet,
     @JsonKey(includeToJson: false, includeIfNull: false)
     @Default(null)
+    Wallet? destWallet,
+    @JsonKey(includeToJson: false, includeIfNull: false)
+    @Default(null)
     Category? category,
   }) = _Transaction;
 

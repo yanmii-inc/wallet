@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:formz/formz.dart';
@@ -10,6 +12,7 @@ import 'package:yanmii_wallet/src/common/domain/entities/wallet_entity.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/add/add_transaction_controller.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/list/wallet_picker.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/transactions_controller.dart';
+import 'package:yanmii_wallet/src/features/wallet/presentation/wallet_controller.dart';
 import 'package:yanmii_wallet/src/utils/extensions/build_context_extension/theme_extension.dart';
 import 'package:yanmii_wallet/src/utils/extensions/datetime_extension.dart';
 import 'package:yanmii_wallet/src/utils/extensions/string_extension.dart';
@@ -63,6 +66,14 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
             .read(transactionsControllerProvider.notifier)
             .getTransactions(widget.date);
         context.pop();
+      }
+
+      if (next.wallet != null) {
+        _walletTextController.text = next.wallet!.name;
+      }
+
+      if (next.destWallet != null) {
+        _destWalletTextController.text = next.destWallet!.name;
       }
     });
 
@@ -167,7 +178,6 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                       ref
                           .read(addTransactionControllerProvider.notifier)
                           .setWallet(wallet);
-                      _walletTextController.text = wallet.name;
                     },
                   ),
                 );
@@ -195,7 +205,6 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                         ref
                             .read(addTransactionControllerProvider.notifier)
                             .setDestWallet(wallet);
-                        _destWalletTextController.text = wallet.name;
                       },
                     ),
                   );

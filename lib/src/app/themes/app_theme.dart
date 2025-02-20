@@ -15,7 +15,7 @@ class AppTheme {
     brightness: Brightness.light,
     inputDecorationTheme: const InputDecorationTheme(
       contentPadding: EdgeInsets.symmetric(
-        vertical: 20,
+        vertical: 16,
         horizontal: 16,
       ),
       border: OutlineInputBorder(
@@ -52,7 +52,7 @@ class AppTheme {
     brightness: Brightness.dark,
     inputDecorationTheme: const InputDecorationTheme(
       contentPadding: EdgeInsets.symmetric(
-        vertical: 20,
+        vertical: 16,
         horizontal: 16,
       ),
       border: OutlineInputBorder(),

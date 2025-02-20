@@ -20,6 +20,9 @@ _$TransactionImpl _$$TransactionImplFromJson(Map<String, dynamic> json) =>
       wallet: json['wallet'] == null
           ? null
           : Wallet.fromJson(json['wallet'] as Map<String, dynamic>),
+      destWallet: json['destWallet'] == null
+          ? null
+          : Wallet.fromJson(json['destWallet'] as Map<String, dynamic>),
       category: json['category'] == null
           ? null
           : Category.fromJson(json['category'] as Map<String, dynamic>),

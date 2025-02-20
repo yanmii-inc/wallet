@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:formz/formz.dart';
@@ -64,8 +66,16 @@ class _AddTransactionScreenState extends ConsumerState<EditTransactionScreen> {
 
       _dateTextController.text = dateTime.toDayDdMmYyyy;
       _timeTextController.text = dateTime.toHhMm;
-      _walletTextController.text = transaction.wallet!.name;
-      _destWalletTextController.text = transaction.wallet!.name;
+
+      log('transaction.wallet ${transaction.wallet}');
+
+      if (transaction.wallet != null) {
+        _walletTextController.text = transaction.wallet!.name;
+      }
+      if (transaction.destWallet != null) {
+        _destWalletTextController.text = transaction.destWallet!.name;
+      }
+
       _nameTextController.text = transaction.name;
       _amountTextController.text = transaction.amount.toDecimal;
       _categoryTextController.text = transaction.category!.label;

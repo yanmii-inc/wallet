@@ -5,6 +5,7 @@ import 'package:yanmii_wallet/src/common/data/mappers/transaction_mapper.dart';
 import 'package:yanmii_wallet/src/common/data/models/local/wallet.dart';
 import 'package:yanmii_wallet/src/common/data/repositories/wallet_repository.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/wallet_entity.dart';
+import 'package:yanmii_wallet/src/features/wallet/presentation/wallet_controller.dart';
 
 class WalletService extends StateNotifier<AsyncValue<List<WalletEntity>>> {
   WalletService(this.ref) : super(const AsyncLoading());
@@ -68,11 +69,29 @@ class WalletService extends StateNotifier<AsyncValue<List<WalletEntity>>> {
                   return e;
                 }
               },
-            )
+            ),
           ],
         );
       },
       failure: (error, stackTrace) => state = AsyncError(error, stackTrace),
+    );
+  }
+
+  Future<int> checkTransaction(int walletId) {
+    return _walletRepository.checkTransaction(walletId);
+  }
+
+  Future<void> deleteWallet(int id, {DeletionActions? action}) async {
+    final result = await _walletRepository.deleteWallet(id, action: action);
+
+    result.when(
+      success: (data) {
+        state.value?.removeWhere((element) => element.id != id);
+        state = AsyncData(state.value ?? []);
+      },
+      failure: (error, stackTrace) {
+        state = AsyncError(error, stackTrace);
+      },
     );
   }
 }

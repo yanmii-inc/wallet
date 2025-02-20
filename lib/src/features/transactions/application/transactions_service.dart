@@ -192,6 +192,19 @@ class TransactionsService {
       failure: (_, stackTrace) {},
     );
   }
+
+  Future<void> deleteTransaction(TransactionEntity transaction) async {
+    final result = await _transactionRepository.delete(transaction.id!);
+
+    result.when(
+      success: (_) {
+        transactions.removeWhere((element) => element.id == transaction.id);
+      },
+      failure: (_, stackTrace) {
+        log('Error removing transaction', stackTrace: stackTrace);
+      },
+    );
+  }
 }
 
 final transactionsServiceProvider = Provider<TransactionsService>(
