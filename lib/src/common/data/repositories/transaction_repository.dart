@@ -1,12 +1,13 @@
 import 'dart:developer';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:yanmii_wallet/src/common/data/models/local/category_total.dart';
+import 'package:yanmii_wallet/src/common/data/models/local/monthly_balance.dart';
 import 'package:yanmii_wallet/src/common/data/models/local/transaction.dart'
     as model;
 import 'package:yanmii_wallet/src/common/data/sources/sources.dart';
-import 'package:yanmii_wallet/src/utils/extensions/build_context_extension/popups.dart';
-import 'package:yanmii_wallet/src/utils/extensions/string_extension.dart';
 import 'package:yanmii_wallet/src/utils/helpers/database_helper.dart';
 
 class TransactionRepository {
@@ -69,8 +70,6 @@ class TransactionRepository {
         [date?.toIso8601String()],
       );
 
-      log('result $result');
-
       final formattedResult = result.map((row) {
         return {
           'id': row['id'],
@@ -99,8 +98,6 @@ class TransactionRepository {
             },
         };
       }).toList();
-
-      // log('formattedResult $formattedResult');
 
       final list = formattedResult.map(model.Transaction.fromJson).toList();
 
@@ -136,6 +133,78 @@ class TransactionRepository {
 
       return DbResult.success(id);
     } catch (e, st) {
+      return DbResult.failure(e, st);
+    }
+  }
+
+  Future<DbResult<List<MonthlyBalance>>> getMonthlyRecap() async {
+    final db = await _db;
+    try {
+      final result = await db.rawQuery('''
+        SELECT 
+          CAST(STRFTIME('%Y', t.date) AS INT) AS year,
+          CAST(STRFTIME('%m', t.date) AS INT) AS month, 
+          SUM(CASE WHEN t.type = 'expense' AND t.amount > 0 THEN t.amount ELSE 0 END) AS total_expense,
+          SUM(CASE WHEN t.type = 'income' AND t.amount > 0 THEN t.amount ELSE 0 END) AS total_income,
+          SUM(CASE WHEN t.type = 'income' AND t.amount > 0 THEN t.amount ELSE 0 END) - 
+          SUM(CASE WHEN t.type = 'expense' AND t.amount > 0 THEN t.amount ELSE 0 END) AS monthly_balance,
+          (SELECT SUM(CASE WHEN t2.type = 'income' AND t2.amount > 0 THEN t2.amount ELSE 0 END) - 
+                  SUM(CASE WHEN t2.type = 'expense' AND t2.amount > 0 THEN t2.amount ELSE 0 END) 
+          FROM transactions t2 
+          WHERE STRFTIME('%Y', t2.date) <= STRFTIME('%Y', t.date) AND 
+                STRFTIME('%m', t2.date) <= STRFTIME('%m', t.date)) AS running_balance
+        FROM 
+          transactions t
+        GROUP BY 
+          STRFTIME('%Y', t.date), 
+          STRFTIME('%m', t.date)
+        ORDER BY 
+          year, month;
+      ''');
+
+      log('result $result');
+
+      final data = result.map(MonthlyBalance.fromJson).toList();
+
+      return DbResult.success(data);
+    } catch (e, st) {
+      return DbResult.failure(e, st);
+    }
+  }
+
+  Future<DbResult<List<CategoryTotal>>> getCategoryTotals(DateTime date) async {
+    final db = await _db;
+    log('getCategoryTotals $date');
+
+    final query = '''
+        SELECT 
+          c.id AS id,
+          c.label AS label, 
+          SUM(t.amount) as total
+        FROM 
+          transactions t
+          INNER JOIN categories c ON t.category_id = c.id
+        WHERE 
+          t.type == 'expense' AND
+          STRFTIME('%Y-%m', t.date) = '${DateFormat('yyyy-MM').format(date)}'
+        GROUP BY 
+          c.id, c.label
+          ''';
+
+    log(query);
+
+    try {
+      final result = await db.rawQuery(
+        query,
+        [],
+      );
+
+      final categories = result.map(CategoryTotal.fromJson).toList();
+      log('$categories ${categories.length}');
+
+      return DbResult.success(categories);
+    } catch (e, st) {
+      log('getCategoryTotals $e', error: e, stackTrace: st);
       return DbResult.failure(e, st);
     }
   }

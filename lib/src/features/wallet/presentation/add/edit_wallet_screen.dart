@@ -1,6 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -103,7 +102,7 @@ class _EditWalletDialogState extends ConsumerState<EditWalletDialog> {
                       context.pop();
                     }
                   } else {
-                    ref
+                    await ref
                         .read(walletControllerProvider.notifier)
                         .deleteWallet(widget.wallet);
                     context.pop();

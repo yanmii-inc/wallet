@@ -6,7 +6,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:yanmii_wallet/src/app/constants/constants.dart';
 import 'package:yanmii_wallet/src/common/components/button.dart';
 import 'package:yanmii_wallet/src/common/components/textfield.dart';
-import 'package:yanmii_wallet/src/common/domain/entities/wallet_entity.dart';
 import 'package:yanmii_wallet/src/routing/routes.dart';
 import 'package:yanmii_wallet/src/utils/extensions/string_extension.dart';
 

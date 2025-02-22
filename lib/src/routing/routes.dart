@@ -10,6 +10,8 @@ import 'package:yanmii_wallet/src/features/auth/logout/logout_button.dart';
 import 'package:yanmii_wallet/src/features/auth/register/register_screen.dart';
 import 'package:yanmii_wallet/src/features/main/main_screen.dart';
 import 'package:yanmii_wallet/src/features/onboarding/onboarding_screen.dart';
+import 'package:yanmii_wallet/src/features/report/presentation/detailed_report_screen.dart';
+import 'package:yanmii_wallet/src/features/report/presentation/report_screen.dart';
 import 'package:yanmii_wallet/src/features/splash/splash_screen.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/add/add_transaction_screen.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/edit/edit_transaction_screen.dart';

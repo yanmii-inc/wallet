@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yanmii_wallet/src/utils/color_utils.dart';
 
 class NameAvatar extends StatelessWidget {
   const NameAvatar({
@@ -26,24 +27,11 @@ class NameAvatar extends StatelessWidget {
     }
   }
 
-  Color _getColorFromName(String name) {
-    final colors = [
-      Colors.red,
-      Colors.blue,
-      Colors.green,
-      Colors.orange,
-      Colors.purple,
-      Colors.teal,
-    ];
-    final hash = name.codeUnits.fold(0, (prev, element) => prev + element);
-    return colors[hash % colors.length];
-  }
-
   @override
   Widget build(BuildContext context) {
     return CircleAvatar(
       radius: size / 2,
-      backgroundColor: _getColorFromName(name),
+      backgroundColor: ColorUtils.getColorFromName(name),
       child: Text(
         _getInitials(name),
         style: TextStyle(

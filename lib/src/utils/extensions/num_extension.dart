@@ -21,12 +21,18 @@ extension IntExtension on int {
     return formatter.format(this);
   }
 
-  String get toDecimal {
+  String toDecimal(BuildContext context) {
     final formatter = NumberFormat.currency(
-      locale: 'id_ID',
+      locale: context.locale.toLanguageTag(),
       symbol: '',
       decimalDigits: 0,
     );
+    return formatter.format(this);
+  }
+
+  String toCompact(BuildContext context) {
+    final formatter =
+        NumberFormat.compact(locale: context.locale.toLanguageTag());
     return formatter.format(this);
   }
 }

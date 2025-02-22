@@ -5,5 +5,13 @@ extension DateTimeExtension on DateTime {
         'EEEE, dd MMM yyyy',
       ).format(this);
 
+  String get toMmmYyyy => DateFormat(
+        'MMMM yyyy',
+      ).format(this);
+
+  String get toDdMmYyyy => DateFormat(
+        'dd MMM yyyy',
+      ).format(this);
+
   String get toHhMm => DateFormat('HH:mm').format(this);
 }

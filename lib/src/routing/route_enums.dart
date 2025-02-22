@@ -8,6 +8,7 @@ enum Routes {
   transactionsAdd,
   transactionsEdit,
   walletsAdd,
+  detailedReport,
   ;
 
   String get path => '/${name.toKebabCase}';

@@ -9,8 +9,6 @@ import 'package:yanmii_wallet/src/common/components/textfield.dart';
 import 'package:yanmii_wallet/src/common/data/models/type.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/category_entity.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/wallet_entity.dart';
-import 'package:yanmii_wallet/src/features/auth/login/login_screen.dart';
-import 'package:yanmii_wallet/src/features/main/home/home_screen.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/edit/edit_transaction_controller.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/list/wallet_picker.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/transactions_controller.dart';
@@ -77,7 +75,7 @@ class _AddTransactionScreenState extends ConsumerState<EditTransactionScreen> {
       }
 
       _nameTextController.text = transaction.name;
-      _amountTextController.text = transaction.amount.toDecimal;
+      _amountTextController.text = transaction.amount.toDecimal(context);
       _categoryTextController.text = transaction.category!.label;
       _descriptionTextController.text = transaction.description ?? '';
     });

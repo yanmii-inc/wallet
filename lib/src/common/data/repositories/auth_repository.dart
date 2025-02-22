@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yanmii_wallet/src/common/data/mappers/user_mapper.dart';
 import 'package:yanmii_wallet/src/common/data/models/requests/login_request.dart';
+import 'package:yanmii_wallet/src/common/data/sources/local/hive_service.dart';
 import 'package:yanmii_wallet/src/common/data/sources/sources.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/user.dart';
 import 'package:yanmii_wallet/src/utils/delay.dart';

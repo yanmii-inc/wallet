@@ -80,7 +80,7 @@ class WalletRepository {
     try {
       final db = await _db;
       final result = await db.query('transactions',
-          where: 'wallet_id = ? OR dest_wallet_id = ?', whereArgs: [id, id]);
+          where: 'wallet_id = ? OR dest_wallet_id = ?', whereArgs: [id, id],);
       return result.length;
     } catch (e) {
       rethrow;

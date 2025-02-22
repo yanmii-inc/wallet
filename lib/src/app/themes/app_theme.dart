@@ -13,6 +13,7 @@ class AppTheme {
   static final ThemeData defaultTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
+    scaffoldBackgroundColor: LightColors.neutralColor[1],
     inputDecorationTheme: const InputDecorationTheme(
       contentPadding: EdgeInsets.symmetric(
         vertical: 16,
