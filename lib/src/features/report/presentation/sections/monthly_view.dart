@@ -6,6 +6,8 @@ class _MonthlyView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final months = ref.watch(monthlyControllerProvider).months;
+    final showCumulativeBalance =
+        ref.watch(monthlyControllerProvider).showCumulativeBalance;
     return Expanded(
       child: months.when(
         data: (data) => ListView.separated(
@@ -88,19 +90,20 @@ class _MonthItem extends ConsumerWidget {
               ),
             ],
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Running Balance:'.hardcoded),
-              Text(
-                month.runningBalance.toIdr,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green,
+          if (state.showCumulativeBalance)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Running Balance:'.hardcoded),
+                Text(
+                  month.runningBalance.toIdr,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
         ],
       ),
     );

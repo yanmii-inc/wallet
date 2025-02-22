@@ -174,7 +174,6 @@ class TransactionRepository {
 
   Future<DbResult<List<CategoryTotal>>> getCategoryTotals(DateTime date) async {
     final db = await _db;
-    log('getCategoryTotals $date');
 
     final query = '''
         SELECT 
@@ -190,8 +189,6 @@ class TransactionRepository {
         GROUP BY 
           c.id, c.label
           ''';
-
-    log(query);
 
     try {
       final result = await db.rawQuery(

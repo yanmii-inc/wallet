@@ -18,6 +18,7 @@ import 'package:yanmii_wallet/src/utils/extensions/datetime_extension.dart';
 import 'package:yanmii_wallet/src/utils/extensions/num_extension.dart';
 import 'package:yanmii_wallet/src/utils/extensions/string_extension.dart';
 import 'package:yanmii_wallet/src/utils/extensions/widget_extension.dart';
+import 'package:yanmii_wallet/src/utils/helpers/shared_preference_helper.dart';
 
 part 'sections/monthly_view.dart';
 
@@ -52,15 +53,14 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              showGeneralDialog(
+              showAdaptiveDialog(
                 context: context,
-                pageBuilder: (context, animation, secondaryAnimation) {
-                  return const ReportSettingsDialog();
-                },
+                barrierDismissible: true,
+                builder: (context) => const ReportSettingsDialog(),
               );
             },
             icon: const Icon(Icons.settings),
-          )
+          ),
         ],
       ),
       body: Column(
@@ -99,21 +99,27 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
             ViewMode.monthly => const _MonthlyView(),
             // TODO: Handle this case.
             ViewMode.custom => DetailedView(DateTime.now()),
-          }
+          },
         ],
       ),
     );
   }
 }
 
-class ReportSettingsDialog extends StatelessWidget {
-  const ReportSettingsDialog({
-    super.key,
-  });
+class ReportSettingsDialog extends StatefulWidget {
+  const ReportSettingsDialog({super.key});
+
+  @override
+  State<ReportSettingsDialog> createState() => _ReportSettingsDialogState();
+}
+
+class _ReportSettingsDialogState extends State<ReportSettingsDialog> {
+  bool _showCumulativeBalance = true;
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      child: Container(
+      child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -128,34 +134,64 @@ class ReportSettingsDialog extends StatelessWidget {
                     children: [
                       Expanded(child: Text('Tanggal mulai'.hardcoded)),
                       Gap.w8,
-                      DropdownMenu(
-                        width: 100,
-                        inputDecorationTheme:
-                            context.theme.inputDecorationTheme,
-                        enableFilter: true,
-                        dropdownMenuEntries:
-                            List.generate(30, (index) => index + 1)
-                                .map(
-                                  (e) => DropdownMenuEntry(
-                                    value: e,
-                                    label: e.toString(),
-                                  ),
-                                )
-                                .toList(),
-                        onSelected: (value) {},
+                      FutureBuilder<int>(
+                        builder: (
+                          BuildContext context,
+                          AsyncSnapshot<int> snapshot,
+                        ) {
+                          return DropdownMenu<int>(
+                            width: 100,
+                            initialSelection: snapshot.data ?? 1,
+                            inputDecorationTheme:
+                                context.theme.inputDecorationTheme,
+                            enableFilter: true,
+                            dropdownMenuEntries:
+                                List.generate(30, (index) => index + 1)
+                                    .map(
+                                      (e) => DropdownMenuEntry(
+                                        value: e,
+                                        label: e.toString(),
+                                      ),
+                                    )
+                                    .toList(),
+                            onSelected: (value) {
+                              if (value == null) return;
+                              SharedPreferencesHelper.saveInt(
+                                AppConstants.startDateKey,
+                                value,
+                              );
+                            },
+                          );
+                        },
+                        future: SharedPreferencesHelper.getInt(
+                            AppConstants.startDateKey),
                       ),
                     ],
                   ),
                   Gap.h16,
-                  Row(
-                    children: [
-                      Text('Tampilkan saldo kumulatif'.hardcoded).expand,
-                      Switch(
-                        value: true,
-                        onChanged: (value) {},
-                      ),
-                    ],
-                  )
+                  FutureBuilder<bool>(
+                    future: SharedPreferencesHelper.getBool(
+                        AppConstants.showCumulativeBalanceKey),
+                    builder: (context, snapshot) {
+                      return Row(
+                        children: [
+                          Text('Tampilkan saldo kumulatif'.hardcoded).expand,
+                          Switch(
+                            value: snapshot.data ?? false,
+                            onChanged: (value) async {
+                              await SharedPreferencesHelper.saveBool(
+                                'show_cumulative_balance',
+                                value,
+                              );
+                              setState(() {
+                                _showCumulativeBalance = value;
+                              });
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  ),
                 ],
               ),
             ),

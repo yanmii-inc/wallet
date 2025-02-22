@@ -10,5 +10,6 @@ class MonthlyViewState with _$MonthlyViewState {
   const factory MonthlyViewState({
     @Default(AsyncLoading<List<MonthlyBalanceEntity>>())
     AsyncValue<List<MonthlyBalanceEntity>> months,
+    @Default(false) bool showCumulativeBalance,
   }) = _MonthlyViewState;
 }

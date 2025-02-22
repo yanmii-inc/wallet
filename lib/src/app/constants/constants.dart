@@ -37,4 +37,7 @@ class AppConstants {
     symbol: '',
     decimalDigits: 0,
   );
+
+  static const showCumulativeBalanceKey = 'show_cumulative_balance';
+  static const startDateKey = 'start_date';
 }

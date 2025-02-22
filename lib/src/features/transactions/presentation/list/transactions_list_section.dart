@@ -49,7 +49,6 @@ class _TransactionDaySectionState
 
 class _TransactionItemTile extends StatefulWidget {
   const _TransactionItemTile({
-    super.key,
     required this.ref,
     required this.item,
   });
