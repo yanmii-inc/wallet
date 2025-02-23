@@ -22,6 +22,7 @@ mixin _$MonthlyBalanceEntity {
   int get totalIncome => throw _privateConstructorUsedError;
   int get monthlyBalance => throw _privateConstructorUsedError;
   int get runningBalance => throw _privateConstructorUsedError;
+  bool get showRunningBalance => throw _privateConstructorUsedError;
 
   /// Create a copy of MonthlyBalanceEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -42,7 +43,8 @@ abstract class $MonthlyBalanceEntityCopyWith<$Res> {
       int totalExpense,
       int totalIncome,
       int monthlyBalance,
-      int runningBalance});
+      int runningBalance,
+      bool showRunningBalance});
 }
 
 /// @nodoc
@@ -67,6 +69,7 @@ class _$MonthlyBalanceEntityCopyWithImpl<$Res,
     Object? totalIncome = null,
     Object? monthlyBalance = null,
     Object? runningBalance = null,
+    Object? showRunningBalance = null,
   }) {
     return _then(_value.copyWith(
       startDate: null == startDate
@@ -93,6 +96,10 @@ class _$MonthlyBalanceEntityCopyWithImpl<$Res,
           ? _value.runningBalance
           : runningBalance // ignore: cast_nullable_to_non_nullable
               as int,
+      showRunningBalance: null == showRunningBalance
+          ? _value.showRunningBalance
+          : showRunningBalance // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -111,7 +118,8 @@ abstract class _$$MonthlyBalanceEntityImplCopyWith<$Res>
       int totalExpense,
       int totalIncome,
       int monthlyBalance,
-      int runningBalance});
+      int runningBalance,
+      bool showRunningBalance});
 }
 
 /// @nodoc
@@ -133,6 +141,7 @@ class __$$MonthlyBalanceEntityImplCopyWithImpl<$Res>
     Object? totalIncome = null,
     Object? monthlyBalance = null,
     Object? runningBalance = null,
+    Object? showRunningBalance = null,
   }) {
     return _then(_$MonthlyBalanceEntityImpl(
       startDate: null == startDate
@@ -159,6 +168,10 @@ class __$$MonthlyBalanceEntityImplCopyWithImpl<$Res>
           ? _value.runningBalance
           : runningBalance // ignore: cast_nullable_to_non_nullable
               as int,
+      showRunningBalance: null == showRunningBalance
+          ? _value.showRunningBalance
+          : showRunningBalance // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -172,7 +185,8 @@ class _$MonthlyBalanceEntityImpl implements _MonthlyBalanceEntity {
       required this.totalExpense,
       required this.totalIncome,
       required this.monthlyBalance,
-      required this.runningBalance});
+      required this.runningBalance,
+      required this.showRunningBalance});
 
   @override
   final DateTime startDate;
@@ -186,10 +200,12 @@ class _$MonthlyBalanceEntityImpl implements _MonthlyBalanceEntity {
   final int monthlyBalance;
   @override
   final int runningBalance;
+  @override
+  final bool showRunningBalance;
 
   @override
   String toString() {
-    return 'MonthlyBalanceEntity(startDate: $startDate, endDate: $endDate, totalExpense: $totalExpense, totalIncome: $totalIncome, monthlyBalance: $monthlyBalance, runningBalance: $runningBalance)';
+    return 'MonthlyBalanceEntity(startDate: $startDate, endDate: $endDate, totalExpense: $totalExpense, totalIncome: $totalIncome, monthlyBalance: $monthlyBalance, runningBalance: $runningBalance, showRunningBalance: $showRunningBalance)';
   }
 
   @override
@@ -207,12 +223,14 @@ class _$MonthlyBalanceEntityImpl implements _MonthlyBalanceEntity {
             (identical(other.monthlyBalance, monthlyBalance) ||
                 other.monthlyBalance == monthlyBalance) &&
             (identical(other.runningBalance, runningBalance) ||
-                other.runningBalance == runningBalance));
+                other.runningBalance == runningBalance) &&
+            (identical(other.showRunningBalance, showRunningBalance) ||
+                other.showRunningBalance == showRunningBalance));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, startDate, endDate, totalExpense,
-      totalIncome, monthlyBalance, runningBalance);
+      totalIncome, monthlyBalance, runningBalance, showRunningBalance);
 
   /// Create a copy of MonthlyBalanceEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -232,7 +250,8 @@ abstract class _MonthlyBalanceEntity implements MonthlyBalanceEntity {
       required final int totalExpense,
       required final int totalIncome,
       required final int monthlyBalance,
-      required final int runningBalance}) = _$MonthlyBalanceEntityImpl;
+      required final int runningBalance,
+      required final bool showRunningBalance}) = _$MonthlyBalanceEntityImpl;
 
   @override
   DateTime get startDate;
@@ -246,6 +265,8 @@ abstract class _MonthlyBalanceEntity implements MonthlyBalanceEntity {
   int get monthlyBalance;
   @override
   int get runningBalance;
+  @override
+  bool get showRunningBalance;
 
   /// Create a copy of MonthlyBalanceEntity
   /// with the given fields replaced by the non-null parameter values.

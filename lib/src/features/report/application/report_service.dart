@@ -1,10 +1,12 @@
 import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:yanmii_wallet/src/app/constants/constants.dart';
 import 'package:yanmii_wallet/src/common/data/repositories/transaction_repository.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/monthly_balance_entity.dart';
 import 'package:yanmii_wallet/src/features/report/domain/entities/report_entity.dart';
 import 'package:yanmii_wallet/src/features/report/domain/mapper/report_mapper.dart';
+import 'package:yanmii_wallet/src/utils/helpers/shared_preference_helper.dart';
 
 class ReportService {
   ReportService(this.ref, this.transactionRepository);
@@ -35,12 +37,27 @@ class ReportService {
   }
 
   Future<void> getMonthlyRecap() async {
-    final result = await transactionRepository.getMonthlyRecap();
+    final startDate =
+        await SharedPreferencesHelper.getInt(AppConstants.startDateKey);
+    final showRunningBalance = await SharedPreferencesHelper.getBool(
+      AppConstants.showCumulativeBalanceKey,
+    );
+    log('startDate $startDate');
+    final result =
+        await transactionRepository.getMonthlyRecap(startDate: startDate);
 
     result.when(
       success: (data) {
         final mapper = ref.read(reportMapperProvider);
-        monthlyBalances = data.map(mapper.toMonthlyBalanceEntity).toList();
+        monthlyBalances = data
+            .map(
+              (e) => mapper.toMonthlyBalanceEntity(
+                e,
+                startDate: startDate,
+                showRunningBalance: showRunningBalance,
+              ),
+            )
+            .toList();
         log('monthlyBalances $monthlyBalances');
       },
       failure: (e, st) {

@@ -18,23 +18,27 @@ class ReportMapper {
     );
   }
 
-  MonthlyBalanceEntity toMonthlyBalanceEntity(MonthlyBalance balance) {
+  MonthlyBalanceEntity toMonthlyBalanceEntity(MonthlyBalance balance,
+      {required int startDate, required bool showRunningBalance}) {
     final now = DateTime.now();
-    final startDate = DateTime(
+    final startDateTime = DateTime(
       balance.year ?? now.year,
       balance.month ?? now.month,
+      startDate,
     );
     final endDate = DateTime(
-      startDate.year,
-      startDate.month + 1,
+      startDateTime.year,
+      startDateTime.month + 1,
+      startDate,
     ).subtract(const Duration(days: 1));
     return MonthlyBalanceEntity(
       endDate: endDate,
-      startDate: startDate,
+      startDate: startDateTime,
       monthlyBalance: (balance.monthlyBalance ?? 0.0).toInt(),
       runningBalance: (balance.runningBalance ?? 0.0).toInt(),
       totalExpense: (balance.totalExpense ?? 0.0).toInt(),
       totalIncome: (balance.totalIncome ?? 0.0).toInt(),
+      showRunningBalance: showRunningBalance,
     );
   }
 }

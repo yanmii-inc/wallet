@@ -11,5 +11,6 @@ class MonthlyBalanceEntity with _$MonthlyBalanceEntity {
     required int totalIncome,
     required int monthlyBalance,
     required int runningBalance,
+    required bool showRunningBalance,
   }) = _MonthlyBalanceEntity;
 }

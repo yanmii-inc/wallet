@@ -137,10 +137,12 @@ class TransactionRepository {
     }
   }
 
-  Future<DbResult<List<MonthlyBalance>>> getMonthlyRecap() async {
+  Future<DbResult<List<MonthlyBalance>>> getMonthlyRecap(
+      {required int startDate}) async {
     final db = await _db;
     try {
-      final result = await db.rawQuery('''
+      final result = await db.rawQuery(
+        '''
         SELECT 
           CAST(STRFTIME('%Y', t.date) AS INT) AS year,
           CAST(STRFTIME('%m', t.date) AS INT) AS month, 
@@ -155,12 +157,16 @@ class TransactionRepository {
                 STRFTIME('%m', t2.date) <= STRFTIME('%m', t.date)) AS running_balance
         FROM 
           transactions t
+        WHERE STRFTIME('%Y', t.date) >= ? AND
+              STRFTIME('%m', t.date) >= ?
         GROUP BY 
           STRFTIME('%Y', t.date), 
           STRFTIME('%m', t.date)
         ORDER BY 
           year, month;
-      ''');
+      ''',
+        [startDate, startDate],
+      );
 
       log('result $result');
 
