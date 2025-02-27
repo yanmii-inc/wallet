@@ -1,15 +1,16 @@
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:formz/formz.dart';
 import 'package:yanmii_wallet/src/common/data/models/type.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/category_entity.dart';
-import 'package:yanmii_wallet/src/common/domain/entities/transaction_entity.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/wallet_entity.dart';
 import 'package:yanmii_wallet/src/features/transactions/application/category_service.dart';
 import 'package:yanmii_wallet/src/features/transactions/application/transactions_service.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/edit/edit_transaction_state.dart';
 import 'package:yanmii_wallet/src/features/wallet/application/wallet_service.dart';
+import 'package:yanmii_wallet/src/utils/extensions/string_extension.dart';
 
 class EditTransactionController extends StateNotifier<EditTransactionState> {
   EditTransactionController(this.ref, this.transactionId)
@@ -128,7 +129,6 @@ class EditTransactionController extends StateNotifier<EditTransactionState> {
     final categoryOptions = ref.watch(categoryServiceProvider);
     state = state.copyWith(
       walletOptions: walletOptions,
-      wallet: walletOptions.value?.first,
       categoryOptions: categoryOptions,
     );
   }
@@ -141,9 +141,21 @@ class EditTransactionController extends StateNotifier<EditTransactionState> {
     }
   }
 
-  TransactionEntity getTransactionById(int id) {
-    final transactions = ref.watch(transactionsServiceProvider).transactions;
-    return transactions.firstWhere((element) => element.id == id);
+  Future<void> getTransactionById(int id) async {
+    log('getTransactionById $id');
+    final transaction =
+        await ref.watch(transactionsServiceProvider).getTransactionById(id);
+    state = state.copyWith(
+      transaction: transaction,
+      wallet: transaction.wallet,
+      destWallet: transaction.destWallet,
+      type: transaction.type,
+      date: transaction.date.toDateTime,
+      amount: transaction.amount,
+      name: transaction.name,
+      description: transaction.description ?? '',
+      category: transaction.category,
+    );
   }
 }
 

@@ -24,7 +24,7 @@ class SharedPreferencesHelper {
     return prefs.getInt(key) ?? 0;
   }
 
-  static Future<void> saveBool(String key, bool value) async {
+  static Future<void> saveBool(String key, {required bool value}) async {
     final prefs = await _prefs;
     await prefs.setBool(key, value);
   }

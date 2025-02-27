@@ -98,7 +98,6 @@ class _EditWalletDialogState extends ConsumerState<EditWalletDialog> {
                     );
 
                     if ((confirmed ?? false) && mounted) {
-                      // ignore: use_build_context_synchronously
                       context.pop();
                     }
                   } else {

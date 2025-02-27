@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:yanmii_wallet/src/common/data/models/local/category_total.dart';
 import 'package:yanmii_wallet/src/common/data/models/local/monthly_balance.dart';
+import 'package:yanmii_wallet/src/common/data/models/local/title_total.dart';
 import 'package:yanmii_wallet/src/common/data/models/local/transaction.dart'
     as model;
 import 'package:yanmii_wallet/src/common/data/sources/sources.dart';
@@ -70,34 +71,7 @@ class TransactionRepository {
         [date?.toIso8601String()],
       );
 
-      final formattedResult = result.map((row) {
-        return {
-          'id': row['id'],
-          'amount': row['amount'],
-          'type': row['type'],
-          'date': row['date'],
-          'title': row['title'],
-          'description': row['description'],
-          'category_id': row['category_id'],
-          if (row['wallet_id'] != null && row['wallet_name'] != null)
-            'wallet': {
-              'id': row['wallet_id'],
-              'name': row['wallet_name'],
-              'logo': row['wallet_logo'],
-            },
-          if (row['dest_wallet_id'] != null && row['dest_wallet_name'] != null)
-            'dest_wallet': {
-              'id': row['dest_wallet_id'],
-              'name': row['dest_wallet_name'],
-              'logo': row['dest_wallet_logo'],
-            },
-          if (row['category_id'] != null && row['category_label'] != null)
-            'category': {
-              'id': row['category_id'],
-              'label': row['category_label'],
-            },
-        };
-      }).toList();
+      final formattedResult = result.map(_formatTransaction).toList();
 
       final list = formattedResult.map(model.Transaction.fromJson).toList();
 
@@ -137,8 +111,63 @@ class TransactionRepository {
     }
   }
 
-  Future<DbResult<List<MonthlyBalance>>> getMonthlyRecap(
-      {required int startDate}) async {
+  Future<DbResult<List<MonthlyBalance>>> getMonthlyRecaps({
+    required int startDate,
+  }) async {
+    final db = await _db;
+    try {
+      final now = DateTime.now();
+      final currentDay = now.day;
+
+      DateTime startDateTime;
+      if (currentDay < startDate) {
+        startDateTime = DateTime(now.year, now.month - 1, startDate);
+      } else {
+        startDateTime = DateTime(now.year, now.month, startDate);
+      }
+
+      const query = '''
+        SELECT 
+          CAST(STRFTIME('%Y', t.date) AS INT) AS year,
+          CAST(STRFTIME('%m', t.date) AS INT) AS month, 
+          SUM(CASE WHEN t.type = 'expense' AND t.amount > 0 THEN t.amount ELSE 0 END) AS total_expense,
+          SUM(CASE WHEN t.type = 'income' AND t.amount > 0 THEN t.amount ELSE 0 END) AS total_income,
+          SUM(CASE WHEN t.type = 'income' AND t.amount > 0 THEN t.amount ELSE 0 END) - 
+          SUM(CASE WHEN t.type = 'expense' AND t.amount > 0 THEN t.amount ELSE 0 END) AS monthly_balance,
+          (SELECT SUM(CASE WHEN t2.type = 'income' AND t2.amount > 0 THEN t2.amount ELSE 0 END) - 
+                  SUM(CASE WHEN t2.type = 'expense' AND t2.amount > 0 THEN t2.amount ELSE 0 END) 
+          FROM transactions t2 
+          WHERE DATE(t2.date) <= DATE(t.date)) AS running_balance
+        FROM 
+          transactions t
+        WHERE DATE(t.date) >= DATE(?)
+        GROUP BY 
+          STRFTIME('%Y', t.date), 
+          STRFTIME('%m', t.date)
+        ORDER BY 
+          year, month;
+      ''';
+
+      log('query $query ${startDateTime.toIso8601String()}');
+
+      final result = await db.rawQuery(
+        query,
+        [startDateTime.toIso8601String()],
+      );
+
+      log('result $result');
+
+      final data = result.map(MonthlyBalance.fromJson).toList();
+
+      return DbResult.success(data);
+    } catch (e, st) {
+      return DbResult.failure(e, st);
+    }
+  }
+
+  Future<DbResult<MonthlyBalance>> getDetailedRecapByMonth({
+    required DateTime startDate,
+  }) async {
     final db = await _db;
     try {
       final result = await db.rawQuery(
@@ -170,7 +199,7 @@ class TransactionRepository {
 
       log('result $result');
 
-      final data = result.map(MonthlyBalance.fromJson).toList();
+      final data = MonthlyBalance.fromJson(result.first);
 
       return DbResult.success(data);
     } catch (e, st) {
@@ -178,10 +207,18 @@ class TransactionRepository {
     }
   }
 
-  Future<DbResult<List<CategoryTotal>>> getCategoryTotals(DateTime date) async {
+  Future<DbResult<List<CategoryTotal>>> getCategoryTotals({
+    required DateTime startDateTime,
+    DateTime? endDateTime,
+  }) async {
     final db = await _db;
+    endDateTime ??= DateTime(
+      startDateTime.year,
+      startDateTime.month + 1,
+      startDateTime.day,
+    );
 
-    final query = '''
+    const query = '''
         SELECT 
           c.id AS id,
           c.label AS label, 
@@ -190,10 +227,50 @@ class TransactionRepository {
           transactions t
           INNER JOIN categories c ON t.category_id = c.id
         WHERE 
-          t.type == 'expense' AND
-          STRFTIME('%Y-%m', t.date) = '${DateFormat('yyyy-MM').format(date)}'
+          (t.type == 'expense' OR t.type == 'income') AND
+          STRFTIME('%Y-%m-%d', t.date) >= ? AND
+          STRFTIME('%Y-%m-%d', t.date) <= ?
         GROUP BY 
           c.id, c.label
+          ''';
+
+    log('query $query ${DateFormat('yyyy-MM-dd').format(startDateTime)} '
+        'to ${DateFormat('yyyy-MM-dd').format(endDateTime)}');
+
+    try {
+      final result = await db.rawQuery(
+        query,
+        [
+          DateFormat('yyyy-MM-dd').format(startDateTime),
+          DateFormat('yyyy-MM-dd').format(endDateTime),
+        ],
+      );
+
+      final categories = result.map(CategoryTotal.fromJson).toList();
+      return DbResult.success(categories);
+    } catch (e, st) {
+      log('getCategoryTotals $e', error: e, stackTrace: st);
+      return DbResult.failure(e, st);
+    }
+  }
+
+  Future<DbResult<List<TitleTotal>>> getTitleTransactions({
+    required DateTime startDateTime,
+    DateTime? endDateTime,
+  }) async {
+    final db = await _db;
+
+    final query = '''
+        SELECT 
+          t.id AS id,
+          t.title AS title,
+          SUM(t.amount) as total
+        FROM 
+          transactions t
+        WHERE 
+          t.type == 'expense' AND
+          STRFTIME('%Y-%m', t.date) = '${DateFormat('yyyy-MM').format(startDateTime)}'
+        GROUP BY t.title
           ''';
 
     try {
@@ -202,14 +279,148 @@ class TransactionRepository {
         [],
       );
 
-      final categories = result.map(CategoryTotal.fromJson).toList();
-      log('$categories ${categories.length}');
+      final titles = result.map(TitleTotal.fromJson).toList();
+      log('$titles ${titles.length}');
 
-      return DbResult.success(categories);
+      return DbResult.success(titles);
     } catch (e, st) {
       log('getCategoryTotals $e', error: e, stackTrace: st);
       return DbResult.failure(e, st);
     }
+  }
+
+  Future<DbResult<List<model.Transaction>>> getTransactionsByTitle(
+    String title, {
+    DateTime? startDate,
+    DateTime? endDate,
+  }) async {
+    final db = await _db;
+    endDate ??= DateTime(
+      startDate?.year ?? startDate?.year ?? DateTime.now().year,
+      (startDate?.month ?? startDate?.month ?? DateTime.now().month) + 1,
+      startDate?.day ?? startDate?.day ?? DateTime.now().day,
+    );
+    try {
+      const query = '''
+       SELECT 
+          t.id AS id, t.amount, t.type, t.date, t.title, t.description, t.category_id,
+          w.id AS wallet_id, w.name AS wallet_name, w.logo AS wallet_logo,
+          dw.id AS dest_wallet_id, dw.name AS dest_wallet_name, dw.logo AS dest_wallet_logo,
+          c.id AS category_id, c.label AS category_label
+          FROM transactions t
+          LEFT JOIN wallets w ON t.wallet_id = w.id
+          LEFT JOIN wallets dw ON t.dest_wallet_id = dw.id
+          LEFT JOIN categories c ON t.category_id = c.id WHERE t.title = ? AND t.date >= ? AND t.date <= ?
+        ''';
+      log('query $query $title '
+          '${startDate?.toIso8601String()} ${endDate.toIso8601String()}');
+      final result = await db.rawQuery(
+        query,
+        [title, startDate?.toIso8601String(), endDate.toIso8601String()],
+      );
+
+      final formattedResult = result.map(_formatTransaction).toList();
+
+      final list = formattedResult.map(model.Transaction.fromJson).toList();
+
+      return DbResult.success(list);
+    } catch (e, st) {
+      return DbResult.failure(e, st);
+    }
+  }
+
+  Future<DbResult<List<model.Transaction>>> getTransactionsByCategory(
+    int categoryId, {
+    DateTime? startDate,
+    DateTime? endDate,
+  }) async {
+    final db = await _db;
+    endDate ??= DateTime(
+      startDate?.year ?? DateTime.now().year,
+      (startDate?.month ?? DateTime.now().month) + 1,
+      startDate?.day ?? DateTime.now().day,
+    );
+    try {
+      const query = '''
+        SELECT 
+          t.id AS id, t.amount, t.type, t.date, t.title, t.description, t.category_id,
+          w.id AS wallet_id, w.name AS wallet_name, w.logo AS wallet_logo,
+          dw.id AS dest_wallet_id, dw.name AS dest_wallet_name, dw.logo AS dest_wallet_logo,
+          c.id AS category_id, c.label AS category_label
+          FROM transactions t
+          LEFT JOIN wallets w ON t.wallet_id = w.id
+          LEFT JOIN wallets dw ON t.dest_wallet_id = dw.id
+          LEFT JOIN categories c ON t.category_id = c.id
+          WHERE t.category_id = ? AND t.date >= ? AND t.date <= ?
+        ''';
+
+      final result = await db.rawQuery(
+        query,
+        [categoryId, startDate?.toIso8601String(), endDate.toIso8601String()],
+      );
+
+      final formattedResult = result.map(_formatTransaction).toList();
+
+      final list = formattedResult.map(model.Transaction.fromJson).toList();
+      return DbResult.success(list);
+    } catch (e, st) {
+      return DbResult.failure(e, st);
+    }
+  }
+
+  Future<model.Transaction?> getTransactionById(int id) async {
+    final db = await _db;
+    try {
+      const query = '''
+        SELECT 
+          t.*, w.id AS wallet_id, w.name AS wallet_name, w.logo AS wallet_logo,
+          dw.id AS dest_wallet_id, dw.name AS dest_wallet_name, dw.logo AS dest_wallet_logo,
+          c.id AS category_id, c.label AS category_label
+        FROM transactions t
+        LEFT JOIN wallets w ON t.wallet_id = w.id
+        LEFT JOIN wallets dw ON t.dest_wallet_id = dw.id
+        LEFT JOIN categories c ON t.category_id = c.id
+        WHERE t.id = ?
+      ''';
+      final result = await db.rawQuery(query, [id]);
+      if (result.isEmpty) return null;
+
+      final row = result.first;
+      final formattedResult = _formatTransaction(row);
+      return model.Transaction.fromJson(formattedResult);
+    } catch (e, st) {
+      log('Error getting transaction', error: e, stackTrace: st);
+      return null;
+    }
+  }
+
+  Map<String, dynamic> _formatTransaction(Map<String, dynamic> row) {
+    return {
+      'id': row['id'],
+      'amount': row['amount'],
+      'type': row['type'],
+      'date': row['date'],
+      'title': row['title'],
+      'description': row['description'],
+      'category_id': row['category_id'],
+      if (row['wallet_id'] != null && row['wallet_name'] != null)
+        'wallet': {
+          'id': row['wallet_id'],
+          'name': row['wallet_name'],
+          'logo': row['wallet_logo'],
+        },
+      if (row['dest_wallet_id'] != null && row['dest_wallet_name'] != null)
+        'dest_wallet': {
+          'id': row['dest_wallet_id'],
+          'name': row['dest_wallet_name'],
+          'logo': row['dest_wallet_logo'],
+        },
+      if (row['category_id'] != null && row['category_label'] != null)
+        'category': {
+          'id': row['category_id'],
+          'label': row['category_label'],
+        },
+    };
   }
 }
 

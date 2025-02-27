@@ -64,7 +64,7 @@ class TransactionsService {
     }
   }
 
-  Future<void> getTransactionList(DateTime date) async {
+  Future<void> getTransactionsByDate(DateTime date) async {
     final mapper = ref.read(transactionMapperProvider);
     final result = await _transactionRepository.getTransactionList(date: date);
 
@@ -204,6 +204,17 @@ class TransactionsService {
         log('Error removing transaction', stackTrace: stackTrace);
       },
     );
+  }
+
+  Future<TransactionEntity> getTransactionById(int id) async {
+    try {
+      final transaction = await _transactionRepository.getTransactionById(id);
+      final mapper = ref.read(transactionMapperProvider);
+      return mapper.mapTransactionToTransactionEntity(transaction!);
+    } catch (e) {
+      log('Error getting transaction by id', error: e);
+      rethrow;
+    }
   }
 }
 

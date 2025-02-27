@@ -72,7 +72,7 @@ class ReportSettingsDialog extends ConsumerWidget {
 
             await ref
                 .read(monthlyControllerProvider.notifier)
-                .getMonthlyRecap();
+                .getMonthlyRecaps();
             ref.invalidate(monthlySettingControllerProvider);
           },
           child: const Text('Save'),

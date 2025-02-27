@@ -20,7 +20,7 @@ class TransactionsController extends StateNotifier<TransactionsState> {
   Future<void> getTransactions(DateTime day) async {
     await ref
         .read(transactionsServiceProvider)
-        .getTransactionList(state.selectedDate);
+        .getTransactionsByDate(state.selectedDate);
     if (mounted) {
       state = state.copyWith(
         transactions:

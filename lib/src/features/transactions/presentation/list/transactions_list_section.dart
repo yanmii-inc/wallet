@@ -100,31 +100,39 @@ class _TransactionItemTileState extends State<_TransactionItemTile>
             ),
           ],
         ),
-        child: ListTile(
-          titleAlignment: ListTileTitleAlignment.center,
-          dense: true,
-          leading: NameAvatar(name: widget.item.wallet?.name ?? '?'),
-          title: Text(
-            widget.item.category != null
-                ? widget.item.category!.label
-                : widget.item.name,
-            style: context.textTheme.titleSmall!
-                .copyWith(fontWeight: FontWeight.bold),
-          ),
-          subtitle: Text(widget.item.name),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(widget.item.amount.toIdr),
-              Gap.w8,
-              const Icon(Icons.arrow_forward_ios),
-            ],
-          ),
-          onTap: () => context.pushNamed(
-            Routes.transactionsEdit.name,
-            pathParameters: {'id': widget.item.id!.toString()},
-          ),
-        ),
+        child: TransactionItemTile(item: widget.item),
+      ),
+    );
+  }
+}
+
+class TransactionItemTile extends StatelessWidget {
+  const TransactionItemTile({required this.item, super.key});
+  final TransactionEntity item;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      titleAlignment: ListTileTitleAlignment.center,
+      dense: true,
+      leading: NameAvatar(name: item.wallet?.name ?? '?'),
+      title: Text(
+        item.category != null ? item.category!.label : item.name,
+        style:
+            context.textTheme.titleSmall!.copyWith(fontWeight: FontWeight.bold),
+      ),
+      subtitle: Text(item.name),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(item.amount.toIdr),
+          Gap.w8,
+          const Icon(Icons.arrow_forward_ios),
+        ],
+      ),
+      onTap: () => context.pushNamed(
+        Routes.transactionsEdit.name,
+        pathParameters: {'id': item.id!.toString()},
       ),
     );
   }

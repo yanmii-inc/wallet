@@ -16,6 +16,7 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$DetailedViewState {
+  DateTime? get startDateTime => throw _privateConstructorUsedError;
   AsyncValue<List<ReportEntity>> get categories =>
       throw _privateConstructorUsedError;
 
@@ -32,7 +33,8 @@ abstract class $DetailedViewStateCopyWith<$Res> {
           DetailedViewState value, $Res Function(DetailedViewState) then) =
       _$DetailedViewStateCopyWithImpl<$Res, DetailedViewState>;
   @useResult
-  $Res call({AsyncValue<List<ReportEntity>> categories});
+  $Res call(
+      {DateTime? startDateTime, AsyncValue<List<ReportEntity>> categories});
 }
 
 /// @nodoc
@@ -50,9 +52,14 @@ class _$DetailedViewStateCopyWithImpl<$Res, $Val extends DetailedViewState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? startDateTime = freezed,
     Object? categories = null,
   }) {
     return _then(_value.copyWith(
+      startDateTime: freezed == startDateTime
+          ? _value.startDateTime
+          : startDateTime // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       categories: null == categories
           ? _value.categories
           : categories // ignore: cast_nullable_to_non_nullable
@@ -69,7 +76,8 @@ abstract class _$$DetailedViewStateImplCopyWith<$Res>
       __$$DetailedViewStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({AsyncValue<List<ReportEntity>> categories});
+  $Res call(
+      {DateTime? startDateTime, AsyncValue<List<ReportEntity>> categories});
 }
 
 /// @nodoc
@@ -85,9 +93,14 @@ class __$$DetailedViewStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? startDateTime = freezed,
     Object? categories = null,
   }) {
     return _then(_$DetailedViewStateImpl(
+      startDateTime: freezed == startDateTime
+          ? _value.startDateTime
+          : startDateTime // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       categories: null == categories
           ? _value.categories
           : categories // ignore: cast_nullable_to_non_nullable
@@ -100,15 +113,19 @@ class __$$DetailedViewStateImplCopyWithImpl<$Res>
 
 class _$DetailedViewStateImpl implements _DetailedViewState {
   const _$DetailedViewStateImpl(
-      {this.categories = const AsyncLoading<List<ReportEntity>>()});
+      {this.startDateTime = null,
+      this.categories = const AsyncLoading<List<ReportEntity>>()});
 
+  @override
+  @JsonKey()
+  final DateTime? startDateTime;
   @override
   @JsonKey()
   final AsyncValue<List<ReportEntity>> categories;
 
   @override
   String toString() {
-    return 'DetailedViewState(categories: $categories)';
+    return 'DetailedViewState(startDateTime: $startDateTime, categories: $categories)';
   }
 
   @override
@@ -116,12 +133,14 @@ class _$DetailedViewStateImpl implements _DetailedViewState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$DetailedViewStateImpl &&
+            (identical(other.startDateTime, startDateTime) ||
+                other.startDateTime == startDateTime) &&
             (identical(other.categories, categories) ||
                 other.categories == categories));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, categories);
+  int get hashCode => Object.hash(runtimeType, startDateTime, categories);
 
   /// Create a copy of DetailedViewState
   /// with the given fields replaced by the non-null parameter values.
@@ -135,9 +154,12 @@ class _$DetailedViewStateImpl implements _DetailedViewState {
 
 abstract class _DetailedViewState implements DetailedViewState {
   const factory _DetailedViewState(
-          {final AsyncValue<List<ReportEntity>> categories}) =
+          {final DateTime? startDateTime,
+          final AsyncValue<List<ReportEntity>> categories}) =
       _$DetailedViewStateImpl;
 
+  @override
+  DateTime? get startDateTime;
   @override
   AsyncValue<List<ReportEntity>> get categories;
 

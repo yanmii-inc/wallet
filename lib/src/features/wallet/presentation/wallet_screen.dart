@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yanmii_wallet/src/app/themes/themes.dart';
 import 'package:yanmii_wallet/src/common/components/avatar.dart';
 import 'package:yanmii_wallet/src/features/wallet/presentation/add/add_wallet_dialog.dart';
-import 'package:yanmii_wallet/src/features/wallet/presentation/add/edit_wallet_screen.dart';
+import 'package:yanmii_wallet/src/features/wallet/presentation/add/edit_wallet_dialog.dart';
 import 'package:yanmii_wallet/src/features/wallet/presentation/wallet_controller.dart';
 import 'package:yanmii_wallet/src/utils/extensions/build_context_extension/theme_extension.dart';
 import 'package:yanmii_wallet/src/utils/extensions/num_extension.dart';
@@ -31,6 +31,7 @@ class WalletScreen extends ConsumerWidget {
           isScrollControlled: true,
           showDragHandle: true,
           useSafeArea: true,
+          useRootNavigator: true,
           builder: (context) => AddWalletDialog(
             onSaved: (logo, name, balance) {
               log('logo $logo');
@@ -83,6 +84,7 @@ class WalletScreen extends ConsumerWidget {
                 context: context,
                 isScrollControlled: true,
                 showDragHandle: true,
+                useRootNavigator: true,
                 useSafeArea: true,
                 builder: (context) => EditWalletDialog(
                   wallet: data[index],

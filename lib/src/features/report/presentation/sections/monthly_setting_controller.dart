@@ -18,7 +18,7 @@ class MonthlySettingController extends StateNotifier<MonthlySettingState> {
   Future<void> save() async {
     await SharedPreferencesHelper.saveBool(
       AppConstants.showCumulativeBalanceKey,
-      state.showCumulativeBalance,
+      value: state.showCumulativeBalance,
     );
 
     await SharedPreferencesHelper.saveInt(

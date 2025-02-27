@@ -6,14 +6,15 @@ import 'package:yanmii_wallet/src/features/report/domain/entities/report_entity.
 import 'package:yanmii_wallet/src/features/report/presentation/sections/datailed_view_controller.dart';
 import 'package:yanmii_wallet/src/utils/color_utils.dart';
 import 'package:yanmii_wallet/src/utils/extensions/build_context_extension/theme_extension.dart';
+import 'package:yanmii_wallet/src/utils/extensions/datetime_extension.dart';
 import 'package:yanmii_wallet/src/utils/extensions/num_extension.dart';
 import 'package:yanmii_wallet/src/utils/extensions/string_extension.dart';
 import 'package:yanmii_wallet/src/utils/extensions/widget_extension.dart';
 
 class DetailedView extends ConsumerStatefulWidget {
-  const DetailedView(this.month, {super.key});
+  const DetailedView(this.startDateTime, {super.key});
 
-  final DateTime month;
+  final DateTime startDateTime;
 
   @override
   ConsumerState<DetailedView> createState() => _DetailedViewState();
@@ -25,7 +26,7 @@ class _DetailedViewState extends ConsumerState<DetailedView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref
           .read(detailedControllerProvider.notifier)
-          .getRealTimeReport(widget.month);
+          .getRealTimeReport(widget.startDateTime);
     });
     super.initState();
   }
@@ -33,7 +34,10 @@ class _DetailedViewState extends ConsumerState<DetailedView> {
   @override
   Widget build(BuildContext context) {
     final reports = ref.watch(detailedControllerProvider).categories;
-    ref.listen(detailedControllerProvider, (previous, next) {});
+    final startDateTime =
+        ref.watch(detailedControllerProvider).startDateTime ?? DateTime.now();
+    final startDate = startDateTime.toDdMmYyyy;
+    final endDate = startDateTime.add(const Duration(days: 30)).toDdMmYyyy;
     return reports.when(
       data: (transactions) {
         if (transactions.isEmpty) {
@@ -43,6 +47,8 @@ class _DetailedViewState extends ConsumerState<DetailedView> {
         return SingleChildScrollView(
           child: Column(
             children: [
+              Gap.h16,
+              Text('$startDate - $endDate'.hardcoded),
               Gap.h16,
               SfCircularChart(
                 series: [

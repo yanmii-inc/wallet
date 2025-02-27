@@ -11,7 +11,6 @@ import 'package:yanmii_wallet/src/common/domain/entities/wallet_entity.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/add/add_transaction_controller.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/list/wallet_picker.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/transactions_controller.dart';
-import 'package:yanmii_wallet/src/utils/extensions/build_context_extension/theme_extension.dart';
 import 'package:yanmii_wallet/src/utils/extensions/datetime_extension.dart';
 import 'package:yanmii_wallet/src/utils/extensions/string_extension.dart';
 
@@ -36,6 +35,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
   final _walletTextController = TextEditingController();
   final _destWalletTextController = TextEditingController();
   final _categoryTextController = TextEditingController();
+  final _searchController = SearchController();
 
   AddTransactionController get _controller =>
       ref.read(addTransactionControllerProvider.notifier);
@@ -86,6 +86,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
       if (wallet != null) wallet,
       if (destWallet != null) destWallet,
     ];
+    final isIncome = state.type == TransactionType.income;
 
     return Scaffold(
       appBar: AppBar(
@@ -161,9 +162,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
             ),
             Gap.h16,
             CommonTextfield(
-              label:
-                  'Dompet ${state.type == TransactionType.income ? 'tujuan' : 'asal'}'
-                      .hardcoded,
+              label: 'Dompet ${isIncome ? 'tujuan' : 'asal'}'.hardcoded,
               controller: _walletTextController,
               suffixIcon: const Icon(Icons.arrow_drop_down),
               onTap: () {
@@ -241,22 +240,36 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                 },
               ),
               Gap.h16,
-              DropdownMenu<CategoryEntity>(
-                controller: _categoryTextController,
-                inputDecorationTheme: context.theme.inputDecorationTheme,
-                requestFocusOnTap: true,
-                enableFilter: true,
-                enableSearch: false,
-                width: double.infinity,
-                dropdownMenuEntries: categories.map((e) {
-                  return DropdownMenuEntry(
-                    label: e.label,
-                    value: e,
+              SearchAnchor(
+                searchController: _searchController,
+                viewOnSubmitted: (value) {
+                  _controller.setCategory(CategoryEntity(label: value));
+                  _searchController.closeView(value);
+                  _categoryTextController.text = value;
+                },
+                builder: (context, controller) {
+                  return CommonTextfield(
+                    controller: _categoryTextController,
+                    label: 'Category'.hardcoded,
+                    suffixIcon: const Icon(Icons.search),
+                    onTap: () => controller.openView(),
                   );
-                }).toList(),
-                onSelected: (value) {
-                  value ??= CategoryEntity(label: _categoryTextController.text);
-                  _controller.setCategory(value);
+                },
+                suggestionsBuilder: (context, controller) {
+                  final keyword = controller.text.toLowerCase();
+                  return categories
+                      .where((category) =>
+                          category.label.toLowerCase().contains(keyword),)
+                      .map(
+                        (category) => ListTile(
+                          title: Text(category.label),
+                          onTap: () {
+                            _categoryTextController.text = category.label;
+                            _controller.setCategory(category);
+                            controller.closeView(category.label);
+                          },
+                        ),
+                      );
                 },
               ),
               Gap.h16,

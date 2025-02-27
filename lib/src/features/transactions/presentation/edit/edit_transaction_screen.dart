@@ -13,7 +13,6 @@ import 'package:yanmii_wallet/src/features/transactions/presentation/edit/edit_t
 import 'package:yanmii_wallet/src/features/transactions/presentation/list/wallet_picker.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/transactions_controller.dart';
 import 'package:yanmii_wallet/src/utils/extensions/build_context_extension/text_styles.dart';
-import 'package:yanmii_wallet/src/utils/extensions/build_context_extension/theme_extension.dart';
 import 'package:yanmii_wallet/src/utils/extensions/datetime_extension.dart';
 import 'package:yanmii_wallet/src/utils/extensions/num_extension.dart';
 import 'package:yanmii_wallet/src/utils/extensions/string_extension.dart';
@@ -39,6 +38,7 @@ class _AddTransactionScreenState extends ConsumerState<EditTransactionScreen> {
   final _amountTextController = TextEditingController();
   final _descriptionTextController = TextEditingController();
   final _categoryTextController = TextEditingController();
+  final _searchController = SearchController();
 
   EditTransactionController get _controller =>
       ref.read(editTransactionControllerProvider(widget.id).notifier);
@@ -47,37 +47,9 @@ class _AddTransactionScreenState extends ConsumerState<EditTransactionScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      final transaction = ref
+      ref
           .read(editTransactionControllerProvider(widget.id).notifier)
           .getTransactionById(widget.id);
-
-      final dateTime = transaction.date.toDateTime ?? DateTime.now();
-      _controller
-        ..setDate(dateTime)
-        ..setTime(TimeOfDay.fromDateTime(dateTime))
-        ..setType(transaction.type)
-        ..setCategory(transaction.category!)
-        ..setName(transaction.name)
-        ..setAmount(transaction.amount.toString())
-        ..setType(transaction.type)
-        ..setDescription(transaction.description ?? '');
-
-      _dateTextController.text = dateTime.toDayDdMmYyyy;
-      _timeTextController.text = dateTime.toHhMm;
-
-      log('transaction.wallet ${transaction.wallet}');
-
-      if (transaction.wallet != null) {
-        _walletTextController.text = transaction.wallet!.name;
-      }
-      if (transaction.destWallet != null) {
-        _destWalletTextController.text = transaction.destWallet!.name;
-      }
-
-      _nameTextController.text = transaction.name;
-      _amountTextController.text = transaction.amount.toDecimal(context);
-      _categoryTextController.text = transaction.category!.label;
-      _descriptionTextController.text = transaction.description ?? '';
     });
   }
 
@@ -86,12 +58,40 @@ class _AddTransactionScreenState extends ConsumerState<EditTransactionScreen> {
     final state = ref.watch(editTransactionControllerProvider(widget.id));
 
     ref.listen(editTransactionControllerProvider(widget.id), (previous, next) {
+      if (next.transaction != null && previous?.transaction == null) {
+        final transaction = next.transaction!;
+        final dateTime = transaction.date.toDateTime ?? DateTime.now();
+        _controller
+          ..setDate(dateTime)
+          ..setTime(TimeOfDay.fromDateTime(dateTime))
+          ..setType(transaction.type)
+          ..setCategory(transaction.category!)
+          ..setName(transaction.name)
+          ..setAmount(transaction.amount.toString())
+          ..setType(transaction.type)
+          ..setDescription(transaction.description ?? '');
+
+        _dateTextController.text = dateTime.toDayDdMmYyyy;
+        _timeTextController.text = dateTime.toHhMm;
+
+        log('transaction.wallet ${transaction.wallet}');
+
+        if (transaction.wallet != null) {
+          _walletTextController.text = transaction.wallet!.name;
+        }
+        if (transaction.destWallet != null) {
+          _destWalletTextController.text = transaction.destWallet!.name;
+        }
+
+        _nameTextController.text = transaction.name;
+        _amountTextController.text = transaction.amount.toDecimal(context);
+        _categoryTextController.text = transaction.category!.label;
+        _descriptionTextController.text = transaction.description ?? '';
+      }
+
       if (next.submissionStatus == FormzSubmissionStatus.success &&
           previous?.submissionStatus == FormzSubmissionStatus.inProgress &&
           next.date != null) {
-        ref
-            .read(transactionsControllerProvider.notifier)
-            .getTransactions(next.date!);
         context.pop();
       }
     });
@@ -256,22 +256,38 @@ class _AddTransactionScreenState extends ConsumerState<EditTransactionScreen> {
                 },
               ),
               Gap.h16,
-              DropdownMenu<CategoryEntity>(
-                controller: _categoryTextController,
-                inputDecorationTheme: context.theme.inputDecorationTheme,
-                requestFocusOnTap: true,
-                enableFilter: true,
-                enableSearch: false,
-                width: double.infinity,
-                dropdownMenuEntries: categories.map((e) {
-                  return DropdownMenuEntry(
-                    label: e.label,
-                    value: e,
+              SearchAnchor(
+                searchController: _searchController,
+                viewOnSubmitted: (value) {
+                  _controller.setCategory(CategoryEntity(label: value));
+                  _searchController.closeView(value);
+                  _categoryTextController.text = value;
+                },
+                builder: (context, controller) {
+                  return CommonTextfield(
+                    controller: _categoryTextController,
+                    label: 'Category'.hardcoded,
+                    suffixIcon: const Icon(Icons.search),
+                    onTap: () => controller.openView(),
                   );
-                }).toList(),
-                onSelected: (value) {
-                  value ??= CategoryEntity(label: _categoryTextController.text);
-                  _controller.setCategory(value);
+                },
+                suggestionsBuilder: (context, controller) {
+                  final keyword = controller.text.toLowerCase();
+                  return categories
+                      .where(
+                        (category) =>
+                            category.label.toLowerCase().contains(keyword),
+                      )
+                      .map(
+                        (category) => ListTile(
+                          title: Text(category.label),
+                          onTap: () {
+                            _categoryTextController.text = category.label;
+                            _controller.setCategory(category);
+                            controller.closeView(category.label);
+                          },
+                        ),
+                      );
                 },
               ),
               Gap.h16,

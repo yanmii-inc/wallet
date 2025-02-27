@@ -4,6 +4,7 @@ import 'package:formz/formz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:yanmii_wallet/src/common/data/models/type.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/category_entity.dart';
+import 'package:yanmii_wallet/src/common/domain/entities/transaction_entity.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/wallet_entity.dart';
 
 part 'edit_transaction_state.freezed.dart';
@@ -11,6 +12,7 @@ part 'edit_transaction_state.freezed.dart';
 @freezed
 class EditTransactionState with _$EditTransactionState {
   const factory EditTransactionState({
+    @Default(null) TransactionEntity? transaction,
     @Default(null) DateTime? date,
     @Default(AsyncLoading<List<WalletEntity>>())
     AsyncValue<List<WalletEntity>> walletOptions,

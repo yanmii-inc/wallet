@@ -16,6 +16,7 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$EditTransactionState {
+  TransactionEntity? get transaction => throw _privateConstructorUsedError;
   DateTime? get date => throw _privateConstructorUsedError;
   AsyncValue<List<WalletEntity>> get walletOptions =>
       throw _privateConstructorUsedError;
@@ -46,7 +47,8 @@ abstract class $EditTransactionStateCopyWith<$Res> {
       _$EditTransactionStateCopyWithImpl<$Res, EditTransactionState>;
   @useResult
   $Res call(
-      {DateTime? date,
+      {TransactionEntity? transaction,
+      DateTime? date,
       AsyncValue<List<WalletEntity>> walletOptions,
       WalletEntity? wallet,
       WalletEntity? destWallet,
@@ -59,6 +61,7 @@ abstract class $EditTransactionStateCopyWith<$Res> {
       bool isFormValid,
       FormzSubmissionStatus? submissionStatus});
 
+  $TransactionEntityCopyWith<$Res>? get transaction;
   $WalletEntityCopyWith<$Res>? get wallet;
   $WalletEntityCopyWith<$Res>? get destWallet;
   $CategoryEntityCopyWith<$Res>? get category;
@@ -80,6 +83,7 @@ class _$EditTransactionStateCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? transaction = freezed,
     Object? date = freezed,
     Object? walletOptions = null,
     Object? wallet = freezed,
@@ -94,6 +98,10 @@ class _$EditTransactionStateCopyWithImpl<$Res,
     Object? submissionStatus = freezed,
   }) {
     return _then(_value.copyWith(
+      transaction: freezed == transaction
+          ? _value.transaction
+          : transaction // ignore: cast_nullable_to_non_nullable
+              as TransactionEntity?,
       date: freezed == date
           ? _value.date
           : date // ignore: cast_nullable_to_non_nullable
@@ -149,6 +157,20 @@ class _$EditTransactionStateCopyWithImpl<$Res,
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
+  $TransactionEntityCopyWith<$Res>? get transaction {
+    if (_value.transaction == null) {
+      return null;
+    }
+
+    return $TransactionEntityCopyWith<$Res>(_value.transaction!, (value) {
+      return _then(_value.copyWith(transaction: value) as $Val);
+    });
+  }
+
+  /// Create a copy of EditTransactionState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
   $WalletEntityCopyWith<$Res>? get wallet {
     if (_value.wallet == null) {
       return null;
@@ -197,7 +219,8 @@ abstract class _$$EditTransactionStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {DateTime? date,
+      {TransactionEntity? transaction,
+      DateTime? date,
       AsyncValue<List<WalletEntity>> walletOptions,
       WalletEntity? wallet,
       WalletEntity? destWallet,
@@ -210,6 +233,8 @@ abstract class _$$EditTransactionStateImplCopyWith<$Res>
       bool isFormValid,
       FormzSubmissionStatus? submissionStatus});
 
+  @override
+  $TransactionEntityCopyWith<$Res>? get transaction;
   @override
   $WalletEntityCopyWith<$Res>? get wallet;
   @override
@@ -231,6 +256,7 @@ class __$$EditTransactionStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? transaction = freezed,
     Object? date = freezed,
     Object? walletOptions = null,
     Object? wallet = freezed,
@@ -245,6 +271,10 @@ class __$$EditTransactionStateImplCopyWithImpl<$Res>
     Object? submissionStatus = freezed,
   }) {
     return _then(_$EditTransactionStateImpl(
+      transaction: freezed == transaction
+          ? _value.transaction
+          : transaction // ignore: cast_nullable_to_non_nullable
+              as TransactionEntity?,
       date: freezed == date
           ? _value.date
           : date // ignore: cast_nullable_to_non_nullable
@@ -303,7 +333,8 @@ class _$EditTransactionStateImpl
     with DiagnosticableTreeMixin
     implements _EditTransactionState {
   const _$EditTransactionStateImpl(
-      {this.date = null,
+      {this.transaction = null,
+      this.date = null,
       this.walletOptions = const AsyncLoading<List<WalletEntity>>(),
       this.wallet = null,
       this.destWallet = null,
@@ -316,6 +347,9 @@ class _$EditTransactionStateImpl
       this.isFormValid = false,
       this.submissionStatus = FormzSubmissionStatus.initial});
 
+  @override
+  @JsonKey()
+  final TransactionEntity? transaction;
   @override
   @JsonKey()
   final DateTime? date;
@@ -355,7 +389,7 @@ class _$EditTransactionStateImpl
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'EditTransactionState(date: $date, walletOptions: $walletOptions, wallet: $wallet, destWallet: $destWallet, name: $name, amount: $amount, categoryOptions: $categoryOptions, category: $category, description: $description, type: $type, isFormValid: $isFormValid, submissionStatus: $submissionStatus)';
+    return 'EditTransactionState(transaction: $transaction, date: $date, walletOptions: $walletOptions, wallet: $wallet, destWallet: $destWallet, name: $name, amount: $amount, categoryOptions: $categoryOptions, category: $category, description: $description, type: $type, isFormValid: $isFormValid, submissionStatus: $submissionStatus)';
   }
 
   @override
@@ -363,6 +397,7 @@ class _$EditTransactionStateImpl
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty('type', 'EditTransactionState'))
+      ..add(DiagnosticsProperty('transaction', transaction))
       ..add(DiagnosticsProperty('date', date))
       ..add(DiagnosticsProperty('walletOptions', walletOptions))
       ..add(DiagnosticsProperty('wallet', wallet))
@@ -382,6 +417,8 @@ class _$EditTransactionStateImpl
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$EditTransactionStateImpl &&
+            (identical(other.transaction, transaction) ||
+                other.transaction == transaction) &&
             (identical(other.date, date) || other.date == date) &&
             (identical(other.walletOptions, walletOptions) ||
                 other.walletOptions == walletOptions) &&
@@ -406,6 +443,7 @@ class _$EditTransactionStateImpl
   @override
   int get hashCode => Object.hash(
       runtimeType,
+      transaction,
       date,
       walletOptions,
       wallet,
@@ -432,7 +470,8 @@ class _$EditTransactionStateImpl
 
 abstract class _EditTransactionState implements EditTransactionState {
   const factory _EditTransactionState(
-          {final DateTime? date,
+          {final TransactionEntity? transaction,
+          final DateTime? date,
           final AsyncValue<List<WalletEntity>> walletOptions,
           final WalletEntity? wallet,
           final WalletEntity? destWallet,
@@ -446,6 +485,8 @@ abstract class _EditTransactionState implements EditTransactionState {
           final FormzSubmissionStatus? submissionStatus}) =
       _$EditTransactionStateImpl;
 
+  @override
+  TransactionEntity? get transaction;
   @override
   DateTime? get date;
   @override
