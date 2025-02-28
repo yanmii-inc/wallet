@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/transaction_entity.dart';
 import 'package:yanmii_wallet/src/features/transactions/application/transactions_service.dart';
@@ -10,11 +12,13 @@ class TransactionsController extends StateNotifier<TransactionsState> {
 
   void forward(DateTime date) {
     state = state.copyWith(selectedDate: date.add(const Duration(days: 1)));
+    log('forward: ${state.selectedDate}');
   }
 
   void backward(DateTime date) {
     state =
         state.copyWith(selectedDate: date.subtract(const Duration(days: 1)));
+    log('backward: ${state.selectedDate}');
   }
 
   Future<void> getTransactions(DateTime day) async {

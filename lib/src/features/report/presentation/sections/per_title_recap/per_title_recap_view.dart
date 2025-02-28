@@ -41,7 +41,6 @@ class _DailyBreakdownViewState extends ConsumerState<PerTitleRecapView> {
       padding: const EdgeInsets.all(16),
       child: titleReports.when(
         data: (transactions) {
-          log('transactions $transactions');
           return ListView.separated(
             itemCount: transactions.length,
             separatorBuilder: (context, index) => Divider(

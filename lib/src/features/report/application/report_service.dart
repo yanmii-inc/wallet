@@ -107,7 +107,6 @@ class ReportService {
       success: (data) {
         transactions =
             data.map(mapper.mapTransactionToTransactionEntity).toList();
-        log('transactions == $transactions');
       },
       failure: (error, stackTrace) {
         log(
@@ -135,7 +134,6 @@ class ReportService {
       success: (data) {
         transactions =
             data.map(mapper.mapTransactionToTransactionEntity).toList();
-        log('transactions == $transactions');
       },
       failure: (error, stackTrace) {
         log(

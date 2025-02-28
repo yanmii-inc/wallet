@@ -11,7 +11,6 @@ import 'package:yanmii_wallet/src/common/domain/entities/category_entity.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/wallet_entity.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/edit/edit_transaction_controller.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/list/wallet_picker.dart';
-import 'package:yanmii_wallet/src/features/transactions/presentation/transactions_controller.dart';
 import 'package:yanmii_wallet/src/utils/extensions/build_context_extension/text_styles.dart';
 import 'package:yanmii_wallet/src/utils/extensions/datetime_extension.dart';
 import 'package:yanmii_wallet/src/utils/extensions/num_extension.dart';

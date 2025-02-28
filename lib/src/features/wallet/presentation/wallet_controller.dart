@@ -27,7 +27,7 @@ class WalletController extends StateNotifier<WalletState> {
 
   Future<int> checkTransaction(WalletEntity wallet) async {
     final count = await _walletService.checkTransaction(wallet.id);
-    log('transactions count: $count');
+
     return count;
   }
 

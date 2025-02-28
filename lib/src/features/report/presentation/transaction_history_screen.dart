@@ -38,8 +38,6 @@ class _TransactionHistoryScreenState
   void initState() {
     super.initState();
 
-    log('initState ${widget.type} ${widget.title} ${widget.categoryId}');
-
     if (widget.type == TransactionHistoryType.title && widget.title != null) {
       ref
           .read(transactionHistoryControllerProvider.notifier)
@@ -57,39 +55,40 @@ class _TransactionHistoryScreenState
     final transactions =
         ref.watch(transactionHistoryControllerProvider).transactions;
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Transaction History'.hardcoded),
-        ),
-        body: transactions.when(
-          data: (transactions) {
-            if (transactions.isEmpty) {
-              return const Center(child: Text('No transactions found'));
-            }
+      appBar: AppBar(
+        title: Text('Transaction History'.hardcoded),
+      ),
+      body: transactions.when(
+        data: (transactions) {
+          if (transactions.isEmpty) {
+            return const Center(child: Text('No transactions found'));
+          }
 
-            return GroupedListView<TransactionEntity, DateTime>(
-              elements: transactions,
-              groupBy: (transaction) =>
-                  DateUtils.dateOnly(DateTime.parse(transaction.date)),
-              order: GroupedListOrder.DESC,
-              useStickyGroupSeparators: true,
-              groupSeparatorBuilder: (DateTime date) => Container(
-                padding: const EdgeInsets.all(16),
-                color: Theme.of(context).colorScheme.surface,
-                child: Text(
-                  DateFormat('EEEE, MMMM d, y').format(date),
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
+          return GroupedListView<TransactionEntity, DateTime>(
+            elements: transactions,
+            groupBy: (transaction) =>
+                DateUtils.dateOnly(DateTime.parse(transaction.date)),
+            order: GroupedListOrder.DESC,
+            useStickyGroupSeparators: true,
+            groupSeparatorBuilder: (DateTime date) => Container(
+              padding: const EdgeInsets.all(16),
+              color: Theme.of(context).colorScheme.surface,
+              child: Text(
+                DateFormat('EEEE, MMMM d, y').format(date),
+                style: Theme.of(context).textTheme.titleMedium,
               ),
-              separator: Divider(
-                thickness: 4,
-                color: Theme.of(context).colorScheme.surface,
-              ),
-              itemBuilder: (context, transaction) =>
-                  TransactionItemTile(item: transaction),
-            );
-          },
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, stack) => Center(child: Text(error.toString())),
-        ),);
+            ),
+            separator: Divider(
+              thickness: 4,
+              color: Theme.of(context).colorScheme.surface,
+            ),
+            itemBuilder: (context, transaction) =>
+                TransactionItemTile(item: transaction),
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, stack) => Center(child: Text(error.toString())),
+      ),
+    );
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
@@ -7,7 +9,6 @@ import 'package:yanmii_wallet/src/features/transactions/presentation/list/transa
 import 'package:yanmii_wallet/src/features/transactions/presentation/transactions_controller.dart';
 import 'package:yanmii_wallet/src/routing/routes.dart';
 import 'package:yanmii_wallet/src/utils/extensions/string_extension.dart';
-import 'package:yanmii_wallet/src/common/components/auto_close_expandable_fab.dart';
 
 /// [TransactionsScreen] is a screen for Transactions
 class TransactionsScreen extends ConsumerStatefulWidget {
@@ -20,7 +21,7 @@ class TransactionsScreen extends ConsumerStatefulWidget {
 
 class _TransactionsScreenState extends ConsumerState<TransactionsScreen>
     with TickerProviderStateMixin {
-  final _key = GlobalKey<ExpandableFabState>();
+  final _fabKey = GlobalKey<ExpandableFabState>();
   TransactionsController get _controller =>
       ref.read(transactionsControllerProvider.notifier);
   bool _isForward = false;
@@ -71,121 +72,130 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen>
       },
     );
 
-    return GestureDetector(
-      onTap: () {
-        // Close FAB when tapping outside
-        _key.currentState?.toggle();
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: Row(
-            children: [
-              IconButton(
-                onPressed: () {
-                  _controller.backward(selectedDate);
-                },
-                icon: const Icon(Icons.arrow_back),
-              ),
-              Expanded(
-                child: Text(
-                  DateFormat('EEEE, MMM d, y', 'id_ID').format(selectedDate),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              IconButton(
-                onPressed: () {
-                  _controller.forward(selectedDate);
-                },
-                icon: const Icon(Icons.arrow_forward),
-              ),
-            ],
-          ),
-        ),
-        floatingActionButtonLocation: ExpandableFab.location,
-        floatingActionButton: AutoCloseExpandableFab(
-          icon: const Icon(Icons.add_card),
+    return Scaffold(
+      appBar: AppBar(
+        title: Row(
           children: [
-            Row(
-              children: [
-                const Text('Pengeluaran'),
-                const SizedBox(width: 20),
-                FloatingActionButton.small(
-                  heroTag: null,
-                  onPressed: () {
-                    _key.currentState?.toggle();
-                    context.pushNamed(
-                      Routes.transactionsAdd.name,
-                      pathParameters: {
-                        'type': TransactionType.expense.name,
-                        'date': selectedDate.toIso8601String(),
-                      },
-                    );
-                  },
-                  child: const Icon(Icons.shopping_bag),
-                ),
-              ],
+            IconButton(
+              onPressed: () {
+                _controller.backward(selectedDate);
+              },
+              icon: const Icon(Icons.arrow_back),
             ),
-            Row(
-              children: [
-                Text('Pemasukan'.hardcoded),
-                const SizedBox(width: 20),
-                FloatingActionButton.small(
-                  heroTag: null,
-                  onPressed: () {
-                    _key.currentState?.toggle();
-                    context.pushNamed(
-                      Routes.transactionsAdd.name,
-                      pathParameters: {
-                        'type': TransactionType.income.name,
-                        'date': selectedDate.toIso8601String(),
-                      },
-                    );
-                  },
-                  child: const Icon(Icons.receipt),
-                ),
-              ],
+            Expanded(
+              child: Text(
+                DateFormat('EEEE, MMM d, y', 'id_ID').format(selectedDate),
+                textAlign: TextAlign.center,
+              ),
             ),
-            Row(
-              children: [
-                const Text('Pindah Dana'),
-                const SizedBox(width: 20),
-                FloatingActionButton.small(
-                  heroTag: null,
-                  onPressed: () {
-                    _key.currentState?.toggle();
-                    context.pushNamed(
-                      Routes.transactionsAdd.name,
-                      pathParameters: {
-                        'type': TransactionType.transfer.name,
-                        'date': selectedDate.toIso8601String(),
-                      },
-                    );
-                  },
-                  child: const Icon(Icons.payment),
-                ),
-              ],
+            IconButton(
+              onPressed: () {
+                _controller.forward(selectedDate);
+              },
+              icon: const Icon(Icons.arrow_forward),
             ),
           ],
         ),
-        body: GestureDetector(
-          onPanUpdate: (details) {
-            if (details.delta.dx > 0) {
-              _isForward = false;
-            } else if (details.delta.dx < 0) {
-              _isForward = true;
-            }
-          },
-          onPanEnd: (details) {
-            if (_isForward) {
-              _controller.forward(selectedDate);
-            } else {
-              _controller.backward(selectedDate);
-            }
-          },
-          child: SlideTransition(
-            position: _isForward ? _animationForward : _animationBackward,
-            child: TransactionsListSection(key: ValueKey(selectedDate)),
+      ),
+      floatingActionButtonLocation: ExpandableFab.location,
+      floatingActionButton: ExpandableFab(
+        key: _fabKey,
+        type: ExpandableFabType.up,
+        childrenAnimation: ExpandableFabAnimation.none,
+        distance: 70,
+        openButtonBuilder: FloatingActionButtonBuilder(
+          size: 56,
+          builder: (context, onPressed, isOpen) => FloatingActionButton(
+            onPressed: onPressed,
+            child: const Icon(Icons.add_card),
           ),
+        ),
+        children: [
+          Row(
+            children: [
+              const Text('Pengeluaran'),
+              const SizedBox(width: 20),
+              FloatingActionButton.small(
+                heroTag: null,
+                onPressed: () {
+                  _fabKey.currentState?.toggle();
+                  context.pushNamed(
+                    Routes.transactionsAdd.name,
+                    pathParameters: {
+                      'type': TransactionType.expense.name,
+                      'date': selectedDate.toIso8601String(),
+                    },
+                  );
+                },
+                child: const Icon(Icons.shopping_bag),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Text('Pemasukan'.hardcoded),
+              const SizedBox(width: 20),
+              FloatingActionButton.small(
+                heroTag: null,
+                onPressed: () {
+                  _fabKey.currentState?.toggle();
+                  context.pushNamed(
+                    Routes.transactionsAdd.name,
+                    pathParameters: {
+                      'type': TransactionType.income.name,
+                      'date': selectedDate.toIso8601String(),
+                    },
+                  );
+                },
+                child: const Icon(Icons.receipt),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              const Text('Pindah Dana'),
+              const SizedBox(width: 20),
+              FloatingActionButton.small(
+                heroTag: null,
+                onPressed: () {
+                  _fabKey.currentState?.toggle();
+                  context.pushNamed(
+                    Routes.transactionsAdd.name,
+                    pathParameters: {
+                      'type': TransactionType.transfer.name,
+                      'date': selectedDate.toIso8601String(),
+                    },
+                  );
+                },
+                child: const Icon(Icons.payment),
+              ),
+            ],
+          ),
+        ],
+      ),
+      body: GestureDetector(
+        onPanUpdate: (details) {
+          if (details.delta.dx > 0) {
+            _isForward = false;
+          } else if (details.delta.dx < 0) {
+            _isForward = true;
+          }
+        },
+        onTap: () {
+          if (_fabKey.currentState?.isOpen ?? false) {
+            _fabKey.currentState?.toggle();
+          }
+        },
+        onPanEnd: (details) {
+          if (_isForward) {
+            _controller.forward(selectedDate);
+          } else {
+            _controller.backward(selectedDate);
+          }
+        },
+        child: SlideTransition(
+          position: _isForward ? _animationForward : _animationBackward,
+          child: TransactionsListSection(key: ValueKey(selectedDate)),
         ),
       ),
     );
