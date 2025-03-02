@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:formz/formz.dart';
@@ -15,7 +17,7 @@ class AddTransactionController extends StateNotifier<AddTransactionState> {
   final Ref ref;
 
   TransactionsService get _transactionService =>
-      ref.read(transactionsServiceProvider);
+      ref.read(transactionsServiceProvider.notifier);
 
   void _validate() {
     final isStandardTransaction = state.type != TransactionType.transfer &&
@@ -136,6 +138,36 @@ class AddTransactionController extends StateNotifier<AddTransactionState> {
           'Transfer from ${state.wallet!.name} to ${state.destWallet!.name}';
       state = state.copyWith(name: transactionName);
     }
+  }
+
+  Future<void> suggestCategory(String value) async {
+    final categories = await ref
+        .read(categoryServiceProvider.notifier)
+        .searchSuggestedCategories(value);
+    state = state.copyWith(suggestedCategoryOptions: AsyncData(categories));
+  }
+
+  Future<void> searchCategory(String value) async {
+    log('searchCategory: $value');
+    final categories =
+        await ref.read(categoryServiceProvider.notifier).searchCategory(value);
+    state = state.copyWith(suggestedCategoryOptions: AsyncData(categories));
+  }
+
+  Future<void> searchName(String value) async {
+    final names =
+        await ref.read(transactionsServiceProvider.notifier).searchName(value);
+    state = state.copyWith(
+      suggestedNames: AsyncData(names),
+    );
+  }
+
+  void clearNameSuggestion() {
+    state = state.copyWith(suggestedNames: const AsyncData([]));
+  }
+
+  void clearCategorySuggestion() {
+    state = state.copyWith(suggestedCategoryOptions: const AsyncData([]));
   }
 }
 

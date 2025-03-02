@@ -42,8 +42,20 @@ class TransactionMapper {
         balance: data.balance,
       );
 
+  Wallet mapWalletEntityToWallet(WalletEntity data) => Wallet(
+        id: data.id,
+        name: data.name,
+        logo: data.logo,
+        balance: data.balance,
+      );
+
   CategoryEntity mapCategoryToCategoryEntity(Category? category) =>
       CategoryEntity(
+        id: category?.id,
+        label: category?.label ?? '',
+      );
+
+  Category mapCategoryEntityToCategory(CategoryEntity? category) => Category(
         id: category?.id,
         label: category?.label ?? '',
       );

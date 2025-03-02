@@ -20,6 +20,8 @@ class CommonTextfield extends StatelessWidget {
 
   final FormFieldValidator<String>? validator;
 
+  final VoidCallback? onFocusLost;
+
   const CommonTextfield({
     required this.label,
     super.key,
@@ -35,27 +37,37 @@ class CommonTextfield extends StatelessWidget {
     this.inputType = TextInputType.text,
     this.validator,
     this.onEditingComplete,
+    this.onFocusLost,
   });
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      focusNode: focusNode,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-      keyboardType: inputType,
-      validator: validator,
-      onChanged: onChanged,
-      inputFormatters: inputFormatters,
-      obscureText: obscureText,
-      initialValue: value,
-      onEditingComplete: onEditingComplete,
-      decoration: InputDecoration(
-        labelText: label,
-        suffixIcon: suffixIcon,
+    return Focus(
+      onFocusChange: (hasFocus) {
+        if (!hasFocus) {
+          onFocusLost?.call();
+        }
+      },
+      child: TextFormField(
+        controller: controller,
+        focusNode: focusNode,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        keyboardType: inputType,
+        validator: validator,
+        onChanged: onChanged,
+        inputFormatters: inputFormatters,
+        obscureText: obscureText,
+        initialValue: value,
+        onEditingComplete: onEditingComplete,
+        decoration: InputDecoration(
+          labelText: label,
+          suffixIcon: suffixIcon,
+        ),
+        onTap: onTap,
+        onTapOutside: (event) {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
       ),
-      onTap: onTap,
-      onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
     );
   }
 }

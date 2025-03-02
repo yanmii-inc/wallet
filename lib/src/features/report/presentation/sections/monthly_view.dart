@@ -29,21 +29,19 @@ class _MonthlyViewState extends ConsumerState<MonthlyView> {
   @override
   Widget build(BuildContext context) {
     final months = ref.watch(monthlyControllerProvider).months;
-    return Expanded(
-      child: months.when(
-        data: (data) => ListView.separated(
-          separatorBuilder: (context, index) => Container(
-            height: 4,
-            width: double.infinity,
-            color: context.theme.colorScheme.surfaceContainer,
-          ),
-          shrinkWrap: true,
-          itemBuilder: (context, index) => _MonthItem(data[index]),
-          itemCount: data.length,
+    return months.when(
+      data: (data) => ListView.separated(
+        separatorBuilder: (context, index) => Container(
+          height: 4,
+          width: double.infinity,
+          color: context.theme.colorScheme.surfaceContainer,
         ),
-        error: (error, stackTrace) => Center(child: Text('Error: $error')),
-        loading: () => const Center(child: CircularProgressIndicator()),
+        shrinkWrap: true,
+        itemBuilder: (context, index) => _MonthItem(data[index]),
+        itemCount: data.length,
       ),
+      error: (error, stackTrace) => Center(child: Text('Error: $error')),
+      loading: () => const Center(child: CircularProgressIndicator()),
     );
   }
 }

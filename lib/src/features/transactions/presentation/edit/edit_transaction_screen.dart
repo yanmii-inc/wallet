@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:formz/formz.dart';
@@ -7,8 +5,9 @@ import 'package:go_router/go_router.dart';
 import 'package:yanmii_wallet/src/app/constants/constants.dart';
 import 'package:yanmii_wallet/src/common/components/textfield.dart';
 import 'package:yanmii_wallet/src/common/data/models/type.dart';
-import 'package:yanmii_wallet/src/common/domain/entities/category_entity.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/wallet_entity.dart';
+import 'package:yanmii_wallet/src/features/transactions/presentation/add/category_suggestion.dart';
+import 'package:yanmii_wallet/src/features/transactions/presentation/add/name_suggestion.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/edit/edit_transaction_controller.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/list/wallet_picker.dart';
 import 'package:yanmii_wallet/src/utils/extensions/build_context_extension/text_styles.dart';
@@ -73,8 +72,6 @@ class _AddTransactionScreenState extends ConsumerState<EditTransactionScreen> {
         _dateTextController.text = dateTime.toDayDdMmYyyy;
         _timeTextController.text = dateTime.toHhMm;
 
-        log('transaction.wallet ${transaction.wallet}');
-
         if (transaction.wallet != null) {
           _walletTextController.text = transaction.wallet!.name;
         }
@@ -93,6 +90,14 @@ class _AddTransactionScreenState extends ConsumerState<EditTransactionScreen> {
           next.date != null) {
         context.pop();
       }
+
+      if (next.name != previous?.name && mounted) {
+        _nameTextController.text = next.name;
+      }
+
+      if (next.category != previous?.category && mounted) {
+        _categoryTextController.text = next.category!.label;
+      }
     });
 
     final walletOptions = ref
@@ -102,7 +107,6 @@ class _AddTransactionScreenState extends ConsumerState<EditTransactionScreen> {
         [];
     final categoryOptions =
         ref.watch(editTransactionControllerProvider(widget.id)).categoryOptions;
-    final categories = categoryOptions.value ?? [];
     final wallet =
         ref.watch(editTransactionControllerProvider(widget.id)).wallet;
     final destWallet =
@@ -112,6 +116,8 @@ class _AddTransactionScreenState extends ConsumerState<EditTransactionScreen> {
       if (destWallet != null) destWallet,
     ];
     final isIncome = state.type == TransactionType.income;
+    final suggestedNames = state.suggestedNames.value ?? [];
+    final suggestedCategoryOptions = state.suggestedCategoryOptions.value;
 
     return Scaffold(
       appBar: AppBar(
@@ -245,7 +251,17 @@ class _AddTransactionScreenState extends ConsumerState<EditTransactionScreen> {
             if (state.type != TransactionType.transfer) ...[
               CommonTextfield(
                 label: 'Judul'.hardcoded,
-                onChanged: (value) => _controller.setName(value),
+                onChanged: (value) {
+                  _controller.setName(value);
+
+                  if (value.length >= 3) {
+                    _controller
+                      ..searchName(value)
+                      ..suggestCategory(value);
+                  } else {
+                    _controller.clearNameSuggestion();
+                  }
+                },
                 controller: _nameTextController,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -254,39 +270,32 @@ class _AddTransactionScreenState extends ConsumerState<EditTransactionScreen> {
                   return null;
                 },
               ),
+              NameSuggestion(
+                state.suggestedNames.value ?? [],
+                onPressed: (name) {
+                  _controller
+                    ..setName(name)
+                    ..clearNameSuggestion();
+
+                  if (suggestedCategoryOptions != null &&
+                      suggestedCategoryOptions.isNotEmpty) {
+                    _controller.setCategory(suggestedCategoryOptions.first);
+                  }
+                },
+              ),
               Gap.h16,
-              SearchAnchor(
-                searchController: _searchController,
-                viewOnSubmitted: (value) {
-                  _controller.setCategory(CategoryEntity(label: value));
-                  _searchController.closeView(value);
-                  _categoryTextController.text = value;
+              CommonTextfield(
+                controller: _categoryTextController,
+                label: 'Category'.hardcoded,
+                suffixIcon: const Icon(Icons.search),
+                onTap: () {
+                  _controller.suggestCategory(_categoryTextController.text);
                 },
-                builder: (context, controller) {
-                  return CommonTextfield(
-                    controller: _categoryTextController,
-                    label: 'Category'.hardcoded,
-                    suffixIcon: const Icon(Icons.search),
-                    onTap: () => controller.openView(),
-                  );
-                },
-                suggestionsBuilder: (context, controller) {
-                  final keyword = controller.text.toLowerCase();
-                  return categories
-                      .where(
-                        (category) =>
-                            category.label.toLowerCase().contains(keyword),
-                      )
-                      .map(
-                        (category) => ListTile(
-                          title: Text(category.label),
-                          onTap: () {
-                            _categoryTextController.text = category.label;
-                            _controller.setCategory(category);
-                            controller.closeView(category.label);
-                          },
-                        ),
-                      );
+              ),
+              CategorySuggestion(
+                state.suggestedCategoryOptions.value ?? [],
+                onPressed: (category) {
+                  _controller.setCategory(category);
                 },
               ),
               Gap.h16,

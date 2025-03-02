@@ -63,6 +63,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen>
       (previous, next) {
         if (previous == null) return;
         if (previous.selectedDate != next.selectedDate) {
+          log('selectedDate: ${next.selectedDate}');
           _isForward = next.selectedDate.isAfter(previous.selectedDate);
           _animationController
             ..reset()
@@ -195,7 +196,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen>
         },
         child: SlideTransition(
           position: _isForward ? _animationForward : _animationBackward,
-          child: TransactionsListSection(key: ValueKey(selectedDate)),
+          child: TransactionsListSection(),
         ),
       ),
     );

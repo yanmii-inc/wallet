@@ -47,6 +47,40 @@ class CategoryService extends StateNotifier<AsyncValue<List<CategoryEntity>>> {
       },
     );
   }
+
+  Future<List<CategoryEntity>> searchSuggestedCategories(String keyword) async {
+    final mapper = ref.read(transactionMapperProvider);
+    final result = await _categoryRepository.searchSuggestedCategories(keyword);
+
+    return result.when(
+      success: (data) {
+        final categories =
+            data.map(mapper.mapCategoryToCategoryEntity).toList();
+
+        return categories;
+      },
+      failure: (error, stackTrace) {
+        return [];
+      },
+    );
+  }
+
+  Future<List<CategoryEntity>> searchCategory(String keyword) async {
+    final mapper = ref.read(transactionMapperProvider);
+    final result = await _categoryRepository.getCategories(keyword: keyword);
+
+    return result.when(
+      success: (data) {
+        final categories =
+            data.map(mapper.mapCategoryToCategoryEntity).toList();
+
+        return categories;
+      },
+      failure: (error, stackTrace) {
+        return [];
+      },
+    );
+  }
 }
 
 final categoryServiceProvider =

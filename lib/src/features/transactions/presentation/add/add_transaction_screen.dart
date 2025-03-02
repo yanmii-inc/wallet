@@ -1,3 +1,4 @@
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,10 +10,12 @@ import 'package:yanmii_wallet/src/common/data/models/type.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/category_entity.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/wallet_entity.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/add/add_transaction_controller.dart';
+import 'package:yanmii_wallet/src/features/transactions/presentation/add/name_suggestion.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/list/wallet_picker.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/transactions_controller.dart';
 import 'package:yanmii_wallet/src/utils/extensions/datetime_extension.dart';
 import 'package:yanmii_wallet/src/utils/extensions/string_extension.dart';
+import 'package:yanmii_wallet/src/features/transactions/presentation/add/category_suggestion.dart';
 
 class AddTransactionScreen extends ConsumerStatefulWidget {
   const AddTransactionScreen({
@@ -35,7 +38,20 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
   final _walletTextController = TextEditingController();
   final _destWalletTextController = TextEditingController();
   final _categoryTextController = TextEditingController();
-  final _searchController = SearchController();
+  final _nameTextController = TextEditingController();
+
+  // All focus nodes
+  final _nameFocusNode = FocusNode();
+  final _categoryFocusNode = FocusNode();
+  final _amountFocusNode = FocusNode();
+  final _descriptionFocusNode = FocusNode();
+  final _categoryTextFocusNode = FocusNode();
+  final _dateTextFocusNode = FocusNode();
+  final _timeTextFocusNode = FocusNode();
+  final _walletTextFocusNode = FocusNode();
+  final _destWalletTextFocusNode = FocusNode();
+
+  FocusNode? _previousFocus;
 
   AddTransactionController get _controller =>
       ref.read(addTransactionControllerProvider.notifier);
@@ -51,6 +67,60 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
         ..setTime(TimeOfDay.now())
         ..setType(widget.type);
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FocusManager.instance.addListener(_handleFocusChange);
+    });
+  }
+
+  bool isRelevantTextInput(FocusNode? focus) {
+    return focus == _dateTextFocusNode ||
+        focus == _timeTextFocusNode ||
+        focus == _walletTextFocusNode ||
+        focus == _destWalletTextFocusNode ||
+        focus == _categoryTextFocusNode ||
+        focus == _descriptionFocusNode ||
+        focus == _nameFocusNode ||
+        focus == _amountFocusNode;
+  }
+
+  void _handleFocusChange() {
+    final currentFocus = FocusManager.instance.primaryFocus;
+
+    if (!isRelevantTextInput(currentFocus)) return;
+
+    if (_previousFocus == _nameFocusNode && currentFocus != _nameFocusNode) {
+      _controller.clearNameSuggestion();
+    }
+
+    if (_previousFocus == _categoryFocusNode &&
+        currentFocus != _categoryFocusNode) {
+      _controller.clearCategorySuggestion();
+    }
+
+    _previousFocus = currentFocus;
+  }
+
+  @override
+  void dispose() {
+    _previousFocus = null;
+    _nameFocusNode.dispose();
+    _categoryFocusNode.dispose();
+    _amountFocusNode.dispose();
+    _descriptionFocusNode.dispose();
+    _categoryTextFocusNode.dispose();
+    _dateTextFocusNode.dispose();
+    _timeTextFocusNode.dispose();
+    _walletTextFocusNode.dispose();
+    _destWalletTextFocusNode.dispose();
+
+    _categoryTextController.dispose();
+    _nameTextController.dispose();
+    _dateTextController.dispose();
+    _walletTextController.dispose();
+    _destWalletTextController.dispose();
+    FocusManager.instance.removeListener(_handleFocusChange);
+    super.dispose();
   }
 
   @override
@@ -60,9 +130,6 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
     ref.listen(addTransactionControllerProvider, (previous, next) {
       if (next.submissionStatus == FormzSubmissionStatus.success &&
           previous?.submissionStatus == FormzSubmissionStatus.inProgress) {
-        ref
-            .read(transactionsControllerProvider.notifier)
-            .getTransactions(widget.date);
         context.pop();
       }
 
@@ -73,13 +140,18 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
       if (next.destWallet != null) {
         _destWalletTextController.text = next.destWallet!.name;
       }
+
+      if (next.name != previous?.name && mounted) {
+        _nameTextController.text = next.name;
+      }
+
+      if (next.category != previous?.category && mounted) {
+        _categoryTextController.text = next.category!.label;
+      }
     });
 
     final walletOptions =
         ref.watch(addTransactionControllerProvider).walletOptions.value ?? [];
-    final categoryOptions =
-        ref.watch(addTransactionControllerProvider).categoryOptions;
-    final categories = categoryOptions.value ?? [];
     final wallet = ref.watch(addTransactionControllerProvider).wallet;
     final destWallet = ref.watch(addTransactionControllerProvider).destWallet;
     final selectedWallets = [
@@ -87,7 +159,8 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
       if (destWallet != null) destWallet,
     ];
     final isIncome = state.type == TransactionType.income;
-
+    final suggestedNames = state.suggestedNames.value ?? [];
+    final suggestedCategoryOptions = state.suggestedCategoryOptions.value;
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Transaction'.hardcoded),
@@ -100,108 +173,85 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
-        child: ListView(
-          children: [
-            SegmentedButton(
-              segments: TransactionType.values
-                  .map(
-                    (e) => ButtonSegment(
-                      value: e,
-                      label: Text(e.name.hardcoded),
-                    ),
-                  )
-                  .toList(),
-              selected: {state.type},
-              onSelectionChanged: (value) => _controller.setType(value.first),
-            ),
-            Gap.h16,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Expanded(
-                  child: CommonTextfield(
-                    controller: _dateTextController,
-                    label: 'Tanggal'.hardcoded,
-                    onTap: () async {
-                      final pickedDate = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(2020),
-                        lastDate: DateTime(2030),
-                      );
-                      if (pickedDate != null) {
-                        _controller.setDate(pickedDate);
-                        if (mounted) {
-                          _dateTextController.text = pickedDate.toDayDdMmYyyy;
+        child: Form(
+          child: ListView(
+            children: [
+              SegmentedButton(
+                segments: TransactionType.values
+                    .map(
+                      (e) => ButtonSegment(
+                        value: e,
+                        label: Text(e.name.hardcoded),
+                      ),
+                    )
+                    .toList(),
+                selected: {state.type},
+                onSelectionChanged: (value) => _controller.setType(value.first),
+              ),
+              Gap.h16,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: CommonTextfield(
+                      focusNode: _dateTextFocusNode,
+                      controller: _dateTextController,
+                      label: 'Tanggal'.hardcoded,
+                      onTap: () async {
+                        final pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2020),
+                          lastDate: DateTime(2030),
+                        );
+                        if (pickedDate != null) {
+                          _controller.setDate(pickedDate);
+                          if (mounted) {
+                            _dateTextController.text = pickedDate.toDayDdMmYyyy;
+                          }
                         }
-                      }
-                    },
+                      },
+                    ),
                   ),
-                ),
-                Gap.w12,
-                SizedBox(
-                  width: 150,
-                  child: CommonTextfield(
-                    controller: _timeTextController,
-                    label: 'Jam'.hardcoded,
-                    onTap: () async {
-                      final pickedTime = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                        initialEntryMode: TimePickerEntryMode.input,
-                      );
-                      if (pickedTime != null) {
-                        _timeTextController.text =
-                            '${pickedTime.hour}:${pickedTime.minute}';
-                        _controller.setTime(pickedTime);
-                      }
-                    },
+                  Gap.w12,
+                  SizedBox(
+                    width: 150,
+                    child: CommonTextfield(
+                      focusNode: _timeTextFocusNode,
+                      controller: _timeTextController,
+                      label: 'Jam'.hardcoded,
+                      onTap: () async {
+                        final pickedTime = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.now(),
+                          initialEntryMode: TimePickerEntryMode.input,
+                        );
+                        if (pickedTime != null) {
+                          _timeTextController.text =
+                              '${pickedTime.hour}:${pickedTime.minute}';
+                          _controller.setTime(pickedTime);
+                        }
+                      },
+                    ),
                   ),
-                ),
-              ],
-            ),
-            Gap.h16,
-            CommonTextfield(
-              label: 'Dompet ${isIncome ? 'tujuan' : 'asal'}'.hardcoded,
-              controller: _walletTextController,
-              suffixIcon: const Icon(Icons.arrow_drop_down),
-              onTap: () {
-                showModalBottomSheet<WalletEntity?>(
-                  context: context,
-                  builder: (BuildContext context) => WalletPicker(
-                    options: walletOptions,
-                    selectedWallets: selectedWallets,
-                    onSelected: (wallet) {
-                      ref
-                          .read(addTransactionControllerProvider.notifier)
-                          .setWallet(wallet);
-                    },
-                  ),
-                );
-              },
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
-            ),
-            Gap.h16,
-            if (state.type == TransactionType.transfer) ...[
+                ],
+              ),
+              Gap.h16,
               CommonTextfield(
-                label: 'Dompet tujuan'.hardcoded,
-                controller: _destWalletTextController,
+                label: 'Dompet ${isIncome ? 'tujuan' : 'asal'}'.hardcoded,
+                controller: _walletTextController,
+                focusNode: _walletTextFocusNode,
                 suffixIcon: const Icon(Icons.arrow_drop_down),
                 onTap: () {
                   showModalBottomSheet<WalletEntity?>(
                     context: context,
                     builder: (BuildContext context) => WalletPicker(
-                      selectedWallets: selectedWallets,
                       options: walletOptions,
+                      selectedWallets: selectedWallets,
                       onSelected: (wallet) {
                         ref
                             .read(addTransactionControllerProvider.notifier)
-                            .setDestWallet(wallet);
+                            .setWallet(wallet);
                       },
                     ),
                   );
@@ -214,24 +264,40 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                 },
               ),
               Gap.h16,
-            ],
-            CommonTextfield(
-              label: 'Jumlah'.hardcoded,
-              inputType: TextInputType.number,
-              inputFormatters: [AppConstants.idrCurrencyFormatter],
-              onChanged: (value) => _controller.setAmount(value),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
-            ),
-            Gap.h16,
-            if (state.type != TransactionType.transfer) ...[
+              if (state.type == TransactionType.transfer) ...[
+                CommonTextfield(
+                  label: 'Dompet tujuan'.hardcoded,
+                  controller: _destWalletTextController,
+                  suffixIcon: const Icon(Icons.arrow_drop_down),
+                  onTap: () {
+                    showModalBottomSheet<WalletEntity?>(
+                      context: context,
+                      builder: (BuildContext context) => WalletPicker(
+                        selectedWallets: selectedWallets,
+                        options: walletOptions,
+                        onSelected: (wallet) {
+                          ref
+                              .read(addTransactionControllerProvider.notifier)
+                              .setDestWallet(wallet);
+                        },
+                      ),
+                    );
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
+                ),
+                Gap.h16,
+              ],
               CommonTextfield(
-                label: 'Judul'.hardcoded,
-                onChanged: (value) => _controller.setName(value),
+                label: 'Jumlah'.hardcoded,
+                inputType: TextInputType.number,
+                inputFormatters: [AppConstants.idrCurrencyFormatter],
+                focusNode: _amountFocusNode,
+                onChanged: (value) => _controller.setAmount(value),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter some text';
@@ -240,52 +306,78 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                 },
               ),
               Gap.h16,
-              SearchAnchor(
-                searchController: _searchController,
-                viewOnSubmitted: (value) {
-                  _controller.setCategory(CategoryEntity(label: value));
-                  _searchController.closeView(value);
-                  _categoryTextController.text = value;
-                },
-                builder: (context, controller) {
-                  return CommonTextfield(
-                    controller: _categoryTextController,
-                    label: 'Category'.hardcoded,
-                    suffixIcon: const Icon(Icons.search),
-                    onTap: () => controller.openView(),
-                  );
-                },
-                suggestionsBuilder: (context, controller) {
-                  final keyword = controller.text.toLowerCase();
-                  return categories
-                      .where((category) =>
-                          category.label.toLowerCase().contains(keyword),)
-                      .map(
-                        (category) => ListTile(
-                          title: Text(category.label),
-                          onTap: () {
-                            _categoryTextController.text = category.label;
-                            _controller.setCategory(category);
-                            controller.closeView(category.label);
-                          },
-                        ),
-                      );
-                },
-              ),
-              Gap.h16,
-              CommonTextfield(
-                label: 'Keterangan',
-                onChanged: (value) => _controller.setDescription(value),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter some text';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
+              if (state.type != TransactionType.transfer) ...[
+                CommonTextfield(
+                  focusNode: _nameFocusNode,
+                  label: 'Judul'.hardcoded,
+                  controller: _nameTextController,
+                  onChanged: (value) {
+                    _controller.setName(value);
+
+                    if (value.length >= 3) {
+                      _controller
+                        ..searchName(value)
+                        ..suggestCategory(value);
+                    } else {
+                      _controller.clearNameSuggestion();
+                    }
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
+                ),
+                NameSuggestion(
+                  suggestedNames,
+                  onPressed: (name) {
+                    _controller
+                      ..setName(name)
+                      ..clearNameSuggestion();
+
+                    if (suggestedCategoryOptions != null &&
+                        suggestedCategoryOptions.isNotEmpty) {
+                      _controller.setCategory(suggestedCategoryOptions.first);
+                    }
+                  },
+                ),
+                Gap.h16,
+                CommonTextfield(
+                  focusNode: _categoryFocusNode,
+                  label: 'Category'.hardcoded,
+                  controller: _categoryTextController,
+                  onChanged: (value) {
+                    if (value.length >= 3) {
+                      _controller.searchCategory(value);
+                    }
+                  },
+                  onTap: () => _controller
+                    ..clearNameSuggestion()
+                    ..clearCategorySuggestion(),
+                ),
+                CategorySuggestion(
+                  suggestedCategoryOptions,
+                  onPressed: (category) {
+                    _controller.setCategory(category);
+                  },
+                ),
+                Gap.h16,
+                CommonTextfield(
+                  focusNode: _descriptionFocusNode,
+                  label: 'Keterangan',
+                  onChanged: (value) => _controller.setDescription(value),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );

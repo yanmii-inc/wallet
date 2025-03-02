@@ -1,12 +1,10 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:intl/intl.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/transaction_entity.dart';
 import 'package:yanmii_wallet/src/features/report/presentation/transaction_history_controller.dart';
-import 'package:yanmii_wallet/src/features/transactions/presentation/list/transactions_list_section.dart';
+import 'package:yanmii_wallet/src/features/transactions/presentation/list/transaction_item_tile.dart';
 import 'package:yanmii_wallet/src/utils/extensions/string_extension.dart';
 
 enum TransactionHistoryType {
@@ -83,7 +81,7 @@ class _TransactionHistoryScreenState
               color: Theme.of(context).colorScheme.surface,
             ),
             itemBuilder: (context, transaction) =>
-                TransactionItemTile(item: transaction),
+                TransactionItemTile(transactionId: transaction.id!),
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),

@@ -19,9 +19,13 @@ class EditTransactionState with _$EditTransactionState {
     @Default(null) WalletEntity? wallet,
     @Default(null) WalletEntity? destWallet,
     @Default('') String name,
+    @Default(AsyncLoading<List<String>>())
+    AsyncValue<List<String>> suggestedNames,
     @Default(0) int amount,
     @Default(AsyncLoading<List<CategoryEntity>>())
     AsyncValue<List<CategoryEntity>> categoryOptions,
+    @Default(AsyncLoading<List<CategoryEntity>>())
+    AsyncValue<List<CategoryEntity>> suggestedCategoryOptions,
     @Default(null) CategoryEntity? category,
     @Default('') String description,
     @Default(TransactionType.expense) TransactionType type,

@@ -11,16 +11,18 @@ import 'package:yanmii_wallet/src/common/domain/entities/category_entity.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/transaction_entity.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/wallet_entity.dart';
 
-class TransactionsService {
-  TransactionsService(this.ref);
-  final Ref ref;
+class TransactionsService extends Notifier<List<TransactionEntity>> {
+  TransactionsService() : super();
 
   TransactionRepository get _transactionRepository =>
       ref.watch(transactionRepositoryProvider);
   CategoryRepository get _categoryRepository =>
       ref.watch(categoryRepositoryProvider);
 
-  List<TransactionEntity> transactions = [];
+  @override
+  List<TransactionEntity> build() {
+    return [];
+  }
 
   Future<void> createTransaction({
     required String title,
@@ -32,18 +34,15 @@ class TransactionsService {
     required CategoryEntity? category,
     WalletEntity? destWallet,
   }) async {
-    int? categoryId;
-
     if (category != null) {
       if (category.id == null) {
         final result = await _categoryRepository
             .createCategory(Category(label: category.label));
-        result.when(
-          success: (data) => categoryId = data,
-          failure: (error, stackTrace) {},
-        );
-      } else {
-        categoryId = category.id;
+        category = category.copyWith(
+            id: result.when(
+          success: (id) => id,
+          failure: (error, stackTrace) => null,
+        ));
       }
     }
 
@@ -52,10 +51,10 @@ class TransactionsService {
         amount: int.parse(amount),
         date: date.toIso8601String(),
         description: description,
-        walletId: wallet.id,
-        categoryId: categoryId,
+        wallet: wallet,
+        category: category,
         type: type.name,
-        destWalletId: destWallet?.id,
+        destWallet: destWallet,
         title: title,
       );
     } catch (e, st) {
@@ -70,9 +69,8 @@ class TransactionsService {
 
     result.when(
       success: (data) {
-        transactions =
-            data.map(mapper.mapTransactionToTransactionEntity).toList();
-        log('transactions $transactions');
+        state = data.map(mapper.mapTransactionToTransactionEntity).toList();
+        // log('transactions $state');
       },
       failure: (error, stackTrace) {
         log(
@@ -89,18 +87,26 @@ class TransactionsService {
     required int amount,
     required String date,
     required String description,
-    required int? walletId,
+    required WalletEntity wallet,
     required String type,
-    required int? categoryId,
-    int? destWalletId,
+    required CategoryEntity? category,
+    WalletEntity? destWallet,
   }) async {
+    final mapper = ref.read(transactionMapperProvider);
     final transaction = Transaction(
       amount: amount,
       date: date,
       description: description,
-      walletId: walletId,
-      destWalletId: destWalletId,
-      categoryId: categoryId,
+      walletId: wallet.id,
+      wallet: mapper.mapWalletEntityToWallet(wallet),
+      destWalletId: destWallet?.id,
+      destWallet: destWallet != null
+          ? mapper.mapWalletEntityToWallet(destWallet)
+          : null,
+      categoryId: category?.id,
+      category: category != null
+          ? mapper.mapCategoryEntityToCategory(category)
+          : null,
       type: type,
       title: title,
     );
@@ -113,7 +119,7 @@ class TransactionsService {
         final transactionEntity = mapper.mapTransactionToTransactionEntity(
           transaction.copyWith(id: data),
         );
-        transactions = [...transactions, transactionEntity];
+        state = [...state, transactionEntity];
       },
       failure: (_, stackTrace) {},
     );
@@ -144,20 +150,19 @@ class TransactionsService {
     CategoryEntity? category,
     WalletEntity? destWallet,
   }) async {
-    int? categoryId;
-
     if (category != null) {
       if (category.id == null) {
         final result = await _categoryRepository
             .createCategory(Category(label: category.label));
-        result.when(
-          success: (data) => categoryId = data,
-          failure: (error, stackTrace) {},
-        );
-      } else {
-        categoryId = category.id;
+        category = category.copyWith(
+            id: result.when(
+          success: (id) => id,
+          failure: (error, stackTrace) => null,
+        ));
       }
     }
+
+    final mapper = ref.read(transactionMapperProvider);
 
     final value = Transaction(
       id: id,
@@ -166,8 +171,15 @@ class TransactionsService {
       date: date.toIso8601String(),
       description: description,
       walletId: wallet.id,
+      wallet: mapper.mapWalletEntityToWallet(wallet),
       destWalletId: destWallet?.id,
-      categoryId: categoryId,
+      destWallet: destWallet != null
+          ? mapper.mapWalletEntityToWallet(destWallet)
+          : null,
+      categoryId: category?.id,
+      category: category != null
+          ? mapper.mapCategoryEntityToCategory(category)
+          : null,
       type: type.name,
     );
 
@@ -175,12 +187,10 @@ class TransactionsService {
 
     result.when(
       success: (data) {
-        final mapper = ref.read(transactionMapperProvider);
-
         final transactionEntity =
             mapper.mapTransactionToTransactionEntity(value);
-        transactions = [
-          ...transactions.map((transaction) {
+        state = [
+          ...state.map((transaction) {
             if (transaction.id == transactionEntity.id) {
               return transactionEntity;
             } else {
@@ -188,6 +198,8 @@ class TransactionsService {
             }
           }),
         ];
+
+        log('transactions $state');
       },
       failure: (_, stackTrace) {},
     );
@@ -198,7 +210,7 @@ class TransactionsService {
 
     result.when(
       success: (_) {
-        transactions.removeWhere((element) => element.id == transaction.id);
+        state.removeWhere((element) => element.id == transaction.id);
       },
       failure: (_, stackTrace) {
         log('Error removing transaction', stackTrace: stackTrace);
@@ -216,8 +228,17 @@ class TransactionsService {
       rethrow;
     }
   }
+
+  Future<List<String>> searchName(String keyword) async {
+    final result = await _transactionRepository.searchName(keyword);
+    return result.when(
+      success: (data) => data,
+      failure: (_, stackTrace) => [],
+    );
+  }
 }
 
-final transactionsServiceProvider = Provider<TransactionsService>(
+final transactionsServiceProvider =
+    NotifierProvider<TransactionsService, List<TransactionEntity>>(
   TransactionsService.new,
 );

@@ -20,7 +20,7 @@ class EditTransactionController extends StateNotifier<EditTransactionState> {
   final int transactionId;
 
   TransactionsService get _transactionService =>
-      ref.read(transactionsServiceProvider);
+      ref.read(transactionsServiceProvider.notifier);
 
   void _validate() {
     final isStandardTransaction = state.type != TransactionType.transfer &&
@@ -80,6 +80,36 @@ class EditTransactionController extends StateNotifier<EditTransactionState> {
     state =
         state.copyWith(amount: int.tryParse(value.replaceAll('.', '')) ?? 0);
     _validate();
+  }
+
+  Future<void> suggestCategory(String value) async {
+    final categories = await ref
+        .read(categoryServiceProvider.notifier)
+        .searchSuggestedCategories(value);
+    state = state.copyWith(suggestedCategoryOptions: AsyncData(categories));
+  }
+
+  Future<void> searchCategory(String value) async {
+    log('searchCategory: $value');
+    final categories =
+        await ref.read(categoryServiceProvider.notifier).searchCategory(value);
+    state = state.copyWith(suggestedCategoryOptions: AsyncData(categories));
+  }
+
+  Future<void> searchName(String value) async {
+    final names =
+        await ref.read(transactionsServiceProvider.notifier).searchName(value);
+    state = state.copyWith(
+      suggestedNames: AsyncData(names),
+    );
+  }
+
+  void clearNameSuggestion() {
+    state = state.copyWith(suggestedNames: const AsyncData([]));
+  }
+
+  void clearCategorySuggestion() {
+    state = state.copyWith(suggestedCategoryOptions: const AsyncData([]));
   }
 
   void setCategory(CategoryEntity value) {
@@ -143,8 +173,9 @@ class EditTransactionController extends StateNotifier<EditTransactionState> {
 
   Future<void> getTransactionById(int id) async {
     log('getTransactionById $id');
-    final transaction =
-        await ref.watch(transactionsServiceProvider).getTransactionById(id);
+    final transaction = await ref
+        .watch(transactionsServiceProvider.notifier)
+        .getTransactionById(id);
     state = state.copyWith(
       transaction: transaction,
       wallet: transaction.wallet,

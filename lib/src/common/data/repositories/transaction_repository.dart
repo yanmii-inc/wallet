@@ -81,6 +81,22 @@ class TransactionRepository {
     }
   }
 
+  Future<DbResult<List<String>>> searchName(String keyword) async {
+    final db = await _db;
+    final result = await db.rawQuery(
+      '''
+      SELECT t.title, COUNT(*) as occurrence
+      FROM transactions t
+      WHERE t.title LIKE '%$keyword%'
+      GROUP BY t.title
+      ORDER BY occurrence DESC, t.title;
+      ''',
+      [keyword],
+    );
+
+    return DbResult.success(result.map((e) => e['title']! as String).toList());
+  }
+
   Future<DbResult<int>> delete(int id) async {
     final db = await _db;
 
@@ -116,47 +132,35 @@ class TransactionRepository {
   }) async {
     final db = await _db;
     try {
-      final now = DateTime.now();
-      final currentDay = now.day;
-
-      DateTime startDateTime;
-      if (currentDay < startDate) {
-        startDateTime = DateTime(now.year, now.month - 1, startDate);
-      } else {
-        startDateTime = DateTime(now.year, now.month, startDate);
-      }
-
-      const query = '''
+      // This will shift all dates to align with our custom month start
+      final query = '''
+        WITH adjusted_transactions AS (
+          SELECT 
+            *,
+            DATE(date, '-${startDate - 1} days') as adjusted_date
+          FROM transactions
+        )
         SELECT 
-          CAST(STRFTIME('%Y', t.date) AS INT) AS year,
-          CAST(STRFTIME('%m', t.date) AS INT) AS month, 
-          SUM(CASE WHEN t.type = 'expense' AND t.amount > 0 THEN t.amount ELSE 0 END) AS total_expense,
-          SUM(CASE WHEN t.type = 'income' AND t.amount > 0 THEN t.amount ELSE 0 END) AS total_income,
-          SUM(CASE WHEN t.type = 'income' AND t.amount > 0 THEN t.amount ELSE 0 END) - 
-          SUM(CASE WHEN t.type = 'expense' AND t.amount > 0 THEN t.amount ELSE 0 END) AS monthly_balance,
+          CAST(STRFTIME('%Y', adjusted_date) AS INT) AS year,
+          CAST(STRFTIME('%m', adjusted_date) AS INT) AS month, 
+          SUM(CASE WHEN type = 'expense' AND amount > 0 THEN amount ELSE 0 END) AS total_expense,
+          SUM(CASE WHEN type = 'income' AND amount > 0 THEN amount ELSE 0 END) AS total_income,
+          SUM(CASE WHEN type = 'income' AND amount > 0 THEN amount ELSE 0 END) - 
+          SUM(CASE WHEN type = 'expense' AND amount > 0 THEN amount ELSE 0 END) AS monthly_balance,
           (SELECT SUM(CASE WHEN t2.type = 'income' AND t2.amount > 0 THEN t2.amount ELSE 0 END) - 
                   SUM(CASE WHEN t2.type = 'expense' AND t2.amount > 0 THEN t2.amount ELSE 0 END) 
-          FROM transactions t2 
-          WHERE DATE(t2.date) <= DATE(t.date)) AS running_balance
+           FROM adjusted_transactions t2 
+           WHERE DATE(t2.adjusted_date) <= DATE(t.adjusted_date)) AS running_balance
         FROM 
-          transactions t
-        WHERE DATE(t.date) >= DATE(?)
+          adjusted_transactions t
         GROUP BY 
-          STRFTIME('%Y', t.date), 
-          STRFTIME('%m', t.date)
+          STRFTIME('%Y', adjusted_date), 
+          STRFTIME('%m', adjusted_date)
         ORDER BY 
           year, month;
       ''';
 
-      log('query $query ${startDateTime.toIso8601String()}');
-
-      final result = await db.rawQuery(
-        query,
-        [startDateTime.toIso8601String()],
-      );
-
-      log('result $result');
-
+      final result = await db.rawQuery(query);
       final data = result.map(MonthlyBalance.fromJson).toList();
 
       return DbResult.success(data);
@@ -318,6 +322,7 @@ class TransactionRepository {
         query,
         [title, startDate?.toIso8601String(), endDate.toIso8601String()],
       );
+      log('result $result');
 
       final formattedResult = result.map(_formatTransaction).toList();
 

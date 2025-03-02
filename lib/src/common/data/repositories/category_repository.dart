@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:yanmii_wallet/src/common/data/models/local/category.dart';
@@ -10,10 +12,22 @@ class CategoryRepository {
   final DatabaseHelper _databaseHelper;
   Future<Database> get _db => _databaseHelper.database;
 
-  Future<DbResult<List<Category>>> getCategories() async {
+  Future<DbResult<List<Category>>> getCategories({String? keyword}) async {
     try {
       final db = await _db;
-      final result = await db.query('categories');
+
+      late List<Map<String, dynamic>> result;
+
+      log('getCategories: $keyword');
+
+      if (keyword != null) {
+        result = await db.rawQuery(
+          'SELECT * FROM categories WHERE label LIKE "%$keyword%"',
+        );
+      } else {
+        result = await db.query('categories');
+      }
+
       if (result.isNotEmpty) {
         return DbResult.success(result.map(Category.fromJson).toList());
       } else {
@@ -30,6 +44,35 @@ class CategoryRepository {
       final result = await db.insert('categories', category.toJson());
       return DbResult.success(result);
     } catch (error, stackTrace) {
+      return DbResult.failure(error, stackTrace);
+    }
+  }
+
+  Future<DbResult<List<Category>>> searchSuggestedCategories(
+    String keyword,
+  ) async {
+    log('searchSuggestedCategories: $keyword');
+    try {
+      final db = await _db;
+      final result = await db.rawQuery(
+        '''
+         SELECT DISTINCT c.*, COUNT(t.id) as transaction_count 
+          FROM categories c
+          INNER JOIN transactions t ON t.category_id = c.id
+          WHERE t.title LIKE ?
+          GROUP BY c.id
+          ORDER BY transaction_count DESC
+        ''',
+        ['%$keyword%'],
+      );
+      log('searchSuggestedCategories result: $result');
+      return DbResult.success(result.map(Category.fromJson).toList());
+    } catch (error, stackTrace) {
+      log(
+        'searchSuggestedCategories error',
+        error: error,
+        stackTrace: stackTrace,
+      );
       return DbResult.failure(error, stackTrace);
     }
   }

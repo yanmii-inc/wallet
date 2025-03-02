@@ -22,8 +22,12 @@ mixin _$AddTransactionState {
   WalletEntity? get wallet => throw _privateConstructorUsedError;
   WalletEntity? get destWallet => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
+  AsyncValue<List<String>> get suggestedNames =>
+      throw _privateConstructorUsedError;
   int get amount => throw _privateConstructorUsedError;
   AsyncValue<List<CategoryEntity>> get categoryOptions =>
+      throw _privateConstructorUsedError;
+  AsyncValue<List<CategoryEntity>> get suggestedCategoryOptions =>
       throw _privateConstructorUsedError;
   CategoryEntity? get category => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
@@ -51,8 +55,10 @@ abstract class $AddTransactionStateCopyWith<$Res> {
       WalletEntity? wallet,
       WalletEntity? destWallet,
       String name,
+      AsyncValue<List<String>> suggestedNames,
       int amount,
       AsyncValue<List<CategoryEntity>> categoryOptions,
+      AsyncValue<List<CategoryEntity>> suggestedCategoryOptions,
       CategoryEntity? category,
       String description,
       TransactionType type,
@@ -84,8 +90,10 @@ class _$AddTransactionStateCopyWithImpl<$Res, $Val extends AddTransactionState>
     Object? wallet = freezed,
     Object? destWallet = freezed,
     Object? name = null,
+    Object? suggestedNames = null,
     Object? amount = null,
     Object? categoryOptions = null,
+    Object? suggestedCategoryOptions = null,
     Object? category = freezed,
     Object? description = null,
     Object? type = null,
@@ -113,6 +121,10 @@ class _$AddTransactionStateCopyWithImpl<$Res, $Val extends AddTransactionState>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
+      suggestedNames: null == suggestedNames
+          ? _value.suggestedNames
+          : suggestedNames // ignore: cast_nullable_to_non_nullable
+              as AsyncValue<List<String>>,
       amount: null == amount
           ? _value.amount
           : amount // ignore: cast_nullable_to_non_nullable
@@ -120,6 +132,10 @@ class _$AddTransactionStateCopyWithImpl<$Res, $Val extends AddTransactionState>
       categoryOptions: null == categoryOptions
           ? _value.categoryOptions
           : categoryOptions // ignore: cast_nullable_to_non_nullable
+              as AsyncValue<List<CategoryEntity>>,
+      suggestedCategoryOptions: null == suggestedCategoryOptions
+          ? _value.suggestedCategoryOptions
+          : suggestedCategoryOptions // ignore: cast_nullable_to_non_nullable
               as AsyncValue<List<CategoryEntity>>,
       category: freezed == category
           ? _value.category
@@ -201,8 +217,10 @@ abstract class _$$AddTransactionStateImplCopyWith<$Res>
       WalletEntity? wallet,
       WalletEntity? destWallet,
       String name,
+      AsyncValue<List<String>> suggestedNames,
       int amount,
       AsyncValue<List<CategoryEntity>> categoryOptions,
+      AsyncValue<List<CategoryEntity>> suggestedCategoryOptions,
       CategoryEntity? category,
       String description,
       TransactionType type,
@@ -235,8 +253,10 @@ class __$$AddTransactionStateImplCopyWithImpl<$Res>
     Object? wallet = freezed,
     Object? destWallet = freezed,
     Object? name = null,
+    Object? suggestedNames = null,
     Object? amount = null,
     Object? categoryOptions = null,
+    Object? suggestedCategoryOptions = null,
     Object? category = freezed,
     Object? description = null,
     Object? type = null,
@@ -264,6 +284,10 @@ class __$$AddTransactionStateImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
+      suggestedNames: null == suggestedNames
+          ? _value.suggestedNames
+          : suggestedNames // ignore: cast_nullable_to_non_nullable
+              as AsyncValue<List<String>>,
       amount: null == amount
           ? _value.amount
           : amount // ignore: cast_nullable_to_non_nullable
@@ -271,6 +295,10 @@ class __$$AddTransactionStateImplCopyWithImpl<$Res>
       categoryOptions: null == categoryOptions
           ? _value.categoryOptions
           : categoryOptions // ignore: cast_nullable_to_non_nullable
+              as AsyncValue<List<CategoryEntity>>,
+      suggestedCategoryOptions: null == suggestedCategoryOptions
+          ? _value.suggestedCategoryOptions
+          : suggestedCategoryOptions // ignore: cast_nullable_to_non_nullable
               as AsyncValue<List<CategoryEntity>>,
       category: freezed == category
           ? _value.category
@@ -307,8 +335,11 @@ class _$AddTransactionStateImpl
       this.wallet = null,
       this.destWallet = null,
       this.name = '',
+      this.suggestedNames = const AsyncLoading<List<String>>(),
       this.amount = 0,
       this.categoryOptions = const AsyncLoading<List<CategoryEntity>>(),
+      this.suggestedCategoryOptions =
+          const AsyncLoading<List<CategoryEntity>>(),
       this.category = null,
       this.description = '',
       this.type = TransactionType.expense,
@@ -332,10 +363,16 @@ class _$AddTransactionStateImpl
   final String name;
   @override
   @JsonKey()
+  final AsyncValue<List<String>> suggestedNames;
+  @override
+  @JsonKey()
   final int amount;
   @override
   @JsonKey()
   final AsyncValue<List<CategoryEntity>> categoryOptions;
+  @override
+  @JsonKey()
+  final AsyncValue<List<CategoryEntity>> suggestedCategoryOptions;
   @override
   @JsonKey()
   final CategoryEntity? category;
@@ -354,7 +391,7 @@ class _$AddTransactionStateImpl
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AddTransactionState(date: $date, walletOptions: $walletOptions, wallet: $wallet, destWallet: $destWallet, name: $name, amount: $amount, categoryOptions: $categoryOptions, category: $category, description: $description, type: $type, isFormValid: $isFormValid, submissionStatus: $submissionStatus)';
+    return 'AddTransactionState(date: $date, walletOptions: $walletOptions, wallet: $wallet, destWallet: $destWallet, name: $name, suggestedNames: $suggestedNames, amount: $amount, categoryOptions: $categoryOptions, suggestedCategoryOptions: $suggestedCategoryOptions, category: $category, description: $description, type: $type, isFormValid: $isFormValid, submissionStatus: $submissionStatus)';
   }
 
   @override
@@ -367,8 +404,11 @@ class _$AddTransactionStateImpl
       ..add(DiagnosticsProperty('wallet', wallet))
       ..add(DiagnosticsProperty('destWallet', destWallet))
       ..add(DiagnosticsProperty('name', name))
+      ..add(DiagnosticsProperty('suggestedNames', suggestedNames))
       ..add(DiagnosticsProperty('amount', amount))
       ..add(DiagnosticsProperty('categoryOptions', categoryOptions))
+      ..add(DiagnosticsProperty(
+          'suggestedCategoryOptions', suggestedCategoryOptions))
       ..add(DiagnosticsProperty('category', category))
       ..add(DiagnosticsProperty('description', description))
       ..add(DiagnosticsProperty('type', type))
@@ -388,9 +428,14 @@ class _$AddTransactionStateImpl
             (identical(other.destWallet, destWallet) ||
                 other.destWallet == destWallet) &&
             (identical(other.name, name) || other.name == name) &&
+            (identical(other.suggestedNames, suggestedNames) ||
+                other.suggestedNames == suggestedNames) &&
             (identical(other.amount, amount) || other.amount == amount) &&
             (identical(other.categoryOptions, categoryOptions) ||
                 other.categoryOptions == categoryOptions) &&
+            (identical(
+                    other.suggestedCategoryOptions, suggestedCategoryOptions) ||
+                other.suggestedCategoryOptions == suggestedCategoryOptions) &&
             (identical(other.category, category) ||
                 other.category == category) &&
             (identical(other.description, description) ||
@@ -410,8 +455,10 @@ class _$AddTransactionStateImpl
       wallet,
       destWallet,
       name,
+      suggestedNames,
       amount,
       categoryOptions,
+      suggestedCategoryOptions,
       category,
       description,
       type,
@@ -435,8 +482,10 @@ abstract class _AddTransactionState implements AddTransactionState {
           final WalletEntity? wallet,
           final WalletEntity? destWallet,
           final String name,
+          final AsyncValue<List<String>> suggestedNames,
           final int amount,
           final AsyncValue<List<CategoryEntity>> categoryOptions,
+          final AsyncValue<List<CategoryEntity>> suggestedCategoryOptions,
           final CategoryEntity? category,
           final String description,
           final TransactionType type,
@@ -455,9 +504,13 @@ abstract class _AddTransactionState implements AddTransactionState {
   @override
   String get name;
   @override
+  AsyncValue<List<String>> get suggestedNames;
+  @override
   int get amount;
   @override
   AsyncValue<List<CategoryEntity>> get categoryOptions;
+  @override
+  AsyncValue<List<CategoryEntity>> get suggestedCategoryOptions;
   @override
   CategoryEntity? get category;
   @override

@@ -7,12 +7,14 @@ import 'package:yanmii_wallet/src/features/transactions/presentation/transaction
 
 class TransactionsController extends StateNotifier<TransactionsState> {
   TransactionsController(this.ref)
-      : super(TransactionsState(selectedDate: DateTime.now()));
+      : super(TransactionsState(selectedDate: DateTime.now())) {
+    log('TransactionsController initialized with date: ${state.selectedDate}');
+  }
   final Ref ref;
 
   void forward(DateTime date) {
-    state = state.copyWith(selectedDate: date.add(const Duration(days: 1)));
     log('forward: ${state.selectedDate}');
+    state = state.copyWith(selectedDate: date.add(const Duration(days: 1)));
   }
 
   void backward(DateTime date) {
@@ -23,28 +25,28 @@ class TransactionsController extends StateNotifier<TransactionsState> {
 
   Future<void> getTransactions(DateTime day) async {
     await ref
-        .read(transactionsServiceProvider)
+        .read(transactionsServiceProvider.notifier)
         .getTransactionsByDate(state.selectedDate);
     if (mounted) {
       state = state.copyWith(
-        transactions:
-            AsyncData(ref.watch(transactionsServiceProvider).transactions),
+        transactions: AsyncData(ref.read(transactionsServiceProvider)),
       );
     }
   }
 
   Future<void> delete(TransactionEntity item) async {
-    await ref.read(transactionsServiceProvider).deleteTransaction(item);
+    await ref
+        .read(transactionsServiceProvider.notifier)
+        .deleteTransaction(item);
     if (mounted) {
       state = state.copyWith(
-        transactions:
-            AsyncData(ref.watch(transactionsServiceProvider).transactions),
+        transactions: AsyncData(ref.watch(transactionsServiceProvider)),
       );
     }
   }
 }
 
-final transactionsControllerProvider =
-    StateNotifierProvider<TransactionsController, TransactionsState>(
+final transactionsControllerProvider = StateNotifierProvider.autoDispose<
+    TransactionsController, TransactionsState>(
   TransactionsController.new,
 );
