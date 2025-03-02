@@ -9,5 +9,7 @@ class TransactionHistoryState with _$TransactionHistoryState {
   const factory TransactionHistoryState({
     @Default(AsyncLoading<List<TransactionEntity>>())
     AsyncValue<List<TransactionEntity>> transactions,
+    @Default(AsyncLoading<List<TransactionEntity>>())
+    AsyncValue<List<TransactionEntity>> searchedTransactions,
   }) = _TransactionHistoryState;
 }

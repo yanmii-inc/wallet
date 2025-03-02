@@ -23,16 +23,11 @@ class DetailedViewController extends StateNotifier<DetailedViewState> {
       startDateTime = DateTime(now.year, now.month, startDate);
     }
 
-    await ref
+    final result = await ref
         .read(reportServiceProvider)
         .getCategoryTotals(startDateTime: startDateTime);
 
-    if (mounted) {
-      state = state.copyWith(
-        categories: AsyncValue.data(ref.watch(reportServiceProvider).reports),
-        startDateTime: startDateTime,
-      );
-    }
+    state = state.copyWith(categories: AsyncValue.data(result));
   }
 }
 

@@ -10,15 +10,11 @@ class PerCategoryRecapController extends StateNotifier<PerCategoryRecapState> {
   Future<void> getCategoryTransactions(DateTime month) async {
     state = state.copyWith(categoryReports: const AsyncLoading());
 
-    await ref
+    final result = await ref
         .read(reportServiceProvider)
         .getCategoryTotals(startDateTime: month);
-    if (mounted) {
-      state = state.copyWith(
-        categoryReports:
-            AsyncValue.data(ref.watch(reportServiceProvider).reports),
-      );
-    }
+
+    state = state.copyWith(categoryReports: AsyncValue.data(result));
   }
 }
 

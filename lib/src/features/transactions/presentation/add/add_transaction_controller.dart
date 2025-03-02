@@ -74,9 +74,8 @@ class AddTransactionController extends StateNotifier<AddTransactionState> {
     _validate();
   }
 
-  void setAmount(String value) {
-    state =
-        state.copyWith(amount: int.tryParse(value.replaceAll('.', '')) ?? 0);
+  void setAmount(int value) {
+    state = state.copyWith(amount: value);
     _validate();
   }
 

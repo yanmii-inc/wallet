@@ -18,6 +18,8 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$TransactionHistoryState {
   AsyncValue<List<TransactionEntity>> get transactions =>
       throw _privateConstructorUsedError;
+  AsyncValue<List<TransactionEntity>> get searchedTransactions =>
+      throw _privateConstructorUsedError;
 
   /// Create a copy of TransactionHistoryState
   /// with the given fields replaced by the non-null parameter values.
@@ -32,7 +34,9 @@ abstract class $TransactionHistoryStateCopyWith<$Res> {
           $Res Function(TransactionHistoryState) then) =
       _$TransactionHistoryStateCopyWithImpl<$Res, TransactionHistoryState>;
   @useResult
-  $Res call({AsyncValue<List<TransactionEntity>> transactions});
+  $Res call(
+      {AsyncValue<List<TransactionEntity>> transactions,
+      AsyncValue<List<TransactionEntity>> searchedTransactions});
 }
 
 /// @nodoc
@@ -52,11 +56,16 @@ class _$TransactionHistoryStateCopyWithImpl<$Res,
   @override
   $Res call({
     Object? transactions = null,
+    Object? searchedTransactions = null,
   }) {
     return _then(_value.copyWith(
       transactions: null == transactions
           ? _value.transactions
           : transactions // ignore: cast_nullable_to_non_nullable
+              as AsyncValue<List<TransactionEntity>>,
+      searchedTransactions: null == searchedTransactions
+          ? _value.searchedTransactions
+          : searchedTransactions // ignore: cast_nullable_to_non_nullable
               as AsyncValue<List<TransactionEntity>>,
     ) as $Val);
   }
@@ -71,7 +80,9 @@ abstract class _$$TransactionHistoryStateImplCopyWith<$Res>
       __$$TransactionHistoryStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({AsyncValue<List<TransactionEntity>> transactions});
+  $Res call(
+      {AsyncValue<List<TransactionEntity>> transactions,
+      AsyncValue<List<TransactionEntity>> searchedTransactions});
 }
 
 /// @nodoc
@@ -90,11 +101,16 @@ class __$$TransactionHistoryStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? transactions = null,
+    Object? searchedTransactions = null,
   }) {
     return _then(_$TransactionHistoryStateImpl(
       transactions: null == transactions
           ? _value.transactions
           : transactions // ignore: cast_nullable_to_non_nullable
+              as AsyncValue<List<TransactionEntity>>,
+      searchedTransactions: null == searchedTransactions
+          ? _value.searchedTransactions
+          : searchedTransactions // ignore: cast_nullable_to_non_nullable
               as AsyncValue<List<TransactionEntity>>,
     ));
   }
@@ -104,15 +120,20 @@ class __$$TransactionHistoryStateImplCopyWithImpl<$Res>
 
 class _$TransactionHistoryStateImpl implements _TransactionHistoryState {
   const _$TransactionHistoryStateImpl(
-      {this.transactions = const AsyncLoading<List<TransactionEntity>>()});
+      {this.transactions = const AsyncLoading<List<TransactionEntity>>(),
+      this.searchedTransactions =
+          const AsyncLoading<List<TransactionEntity>>()});
 
   @override
   @JsonKey()
   final AsyncValue<List<TransactionEntity>> transactions;
+  @override
+  @JsonKey()
+  final AsyncValue<List<TransactionEntity>> searchedTransactions;
 
   @override
   String toString() {
-    return 'TransactionHistoryState(transactions: $transactions)';
+    return 'TransactionHistoryState(transactions: $transactions, searchedTransactions: $searchedTransactions)';
   }
 
   @override
@@ -121,11 +142,14 @@ class _$TransactionHistoryStateImpl implements _TransactionHistoryState {
         (other.runtimeType == runtimeType &&
             other is _$TransactionHistoryStateImpl &&
             (identical(other.transactions, transactions) ||
-                other.transactions == transactions));
+                other.transactions == transactions) &&
+            (identical(other.searchedTransactions, searchedTransactions) ||
+                other.searchedTransactions == searchedTransactions));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, transactions);
+  int get hashCode =>
+      Object.hash(runtimeType, transactions, searchedTransactions);
 
   /// Create a copy of TransactionHistoryState
   /// with the given fields replaced by the non-null parameter values.
@@ -139,11 +163,14 @@ class _$TransactionHistoryStateImpl implements _TransactionHistoryState {
 
 abstract class _TransactionHistoryState implements TransactionHistoryState {
   const factory _TransactionHistoryState(
-          {final AsyncValue<List<TransactionEntity>> transactions}) =
+          {final AsyncValue<List<TransactionEntity>> transactions,
+          final AsyncValue<List<TransactionEntity>> searchedTransactions}) =
       _$TransactionHistoryStateImpl;
 
   @override
   AsyncValue<List<TransactionEntity>> get transactions;
+  @override
+  AsyncValue<List<TransactionEntity>> get searchedTransactions;
 
   /// Create a copy of TransactionHistoryState
   /// with the given fields replaced by the non-null parameter values.

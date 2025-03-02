@@ -9,14 +9,9 @@ class ReportController extends StateNotifier<MonthlyViewState> {
   Future<void> getMonthlyRecaps() async {
     state = state.copyWith(months: const AsyncLoading());
 
-    await ref.read(reportServiceProvider).getMonthlyRecaps();
+    final result = await ref.read(reportServiceProvider).getMonthlyRecaps();
 
-    if (mounted) {
-      state = state.copyWith(
-        months:
-            AsyncValue.data(ref.watch(reportServiceProvider).monthlyBalances),
-      );
-    }
+    state = state.copyWith(months: AsyncValue.data(result));
   }
 }
 

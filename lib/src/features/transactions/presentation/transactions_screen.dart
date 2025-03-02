@@ -196,7 +196,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen>
         },
         child: SlideTransition(
           position: _isForward ? _animationForward : _animationBackward,
-          child: TransactionsListSection(),
+          child: const TransactionsListSection(),
         ),
       ),
     );

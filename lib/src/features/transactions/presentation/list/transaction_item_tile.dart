@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:yanmii_wallet/src/app/constants/constants.dart';
 import 'package:yanmii_wallet/src/common/components/avatar.dart';
 import 'package:yanmii_wallet/src/features/transactions/application/transaction_provider.dart';
-import 'package:yanmii_wallet/src/features/transactions/application/transactions_service.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/transactions_controller.dart';
 import 'package:yanmii_wallet/src/routing/routes.dart';
 import 'package:yanmii_wallet/src/utils/extensions/build_context_extension/theme_extension.dart';
@@ -25,8 +23,8 @@ class TransactionItemTile extends ConsumerWidget {
       background: Container(
         color: Colors.red,
         alignment: Alignment.centerRight,
-        padding: EdgeInsets.only(right: 16),
-        child: Icon(Icons.delete, color: Colors.white),
+        padding: const EdgeInsets.only(right: 16),
+        child: const Icon(Icons.delete, color: Colors.white),
       ),
       onDismissed: (direction) =>
           ref.read(transactionsControllerProvider.notifier).delete(transaction),

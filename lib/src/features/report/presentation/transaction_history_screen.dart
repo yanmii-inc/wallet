@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:grouped_list/grouped_list.dart';
@@ -51,41 +53,57 @@ class _TransactionHistoryScreenState
   @override
   Widget build(BuildContext context) {
     final transactions =
-        ref.watch(transactionHistoryControllerProvider).transactions;
+        ref.watch(transactionHistoryControllerProvider).searchedTransactions;
     return Scaffold(
       appBar: AppBar(
         title: Text('Transaction History'.hardcoded),
       ),
-      body: transactions.when(
-        data: (transactions) {
-          if (transactions.isEmpty) {
-            return const Center(child: Text('No transactions found'));
-          }
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: SearchBar(
+              onChanged: (value) {
+                ref
+                    .read(transactionHistoryControllerProvider.notifier)
+                    .searchTransactions(value);
+              },
+            ),
+          ),
+          Expanded(
+            child: transactions.when(
+              data: (transactions) {
+                if (transactions.isEmpty) {
+                  return const Center(child: Text('No transactions found'));
+                }
 
-          return GroupedListView<TransactionEntity, DateTime>(
-            elements: transactions,
-            groupBy: (transaction) =>
-                DateUtils.dateOnly(DateTime.parse(transaction.date)),
-            order: GroupedListOrder.DESC,
-            useStickyGroupSeparators: true,
-            groupSeparatorBuilder: (DateTime date) => Container(
-              padding: const EdgeInsets.all(16),
-              color: Theme.of(context).colorScheme.surface,
-              child: Text(
-                DateFormat('EEEE, MMMM d, y').format(date),
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
+                return GroupedListView<TransactionEntity, DateTime>(
+                  elements: transactions,
+                  groupBy: (transaction) =>
+                      DateUtils.dateOnly(DateTime.parse(transaction.date)),
+                  order: GroupedListOrder.DESC,
+                  useStickyGroupSeparators: true,
+                  groupSeparatorBuilder: (DateTime date) => Container(
+                    padding: const EdgeInsets.all(16),
+                    color: Theme.of(context).colorScheme.surface,
+                    child: Text(
+                      DateFormat('EEEE, MMMM d, y').format(date),
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ),
+                  separator: Divider(
+                    thickness: 4,
+                    color: Theme.of(context).colorScheme.surface,
+                  ),
+                  itemBuilder: (context, transaction) =>
+                      TransactionItemTile(transactionId: transaction.id!),
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, stack) => Center(child: Text(error.toString())),
             ),
-            separator: Divider(
-              thickness: 4,
-              color: Theme.of(context).colorScheme.surface,
-            ),
-            itemBuilder: (context, transaction) =>
-                TransactionItemTile(transactionId: transaction.id!),
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(child: Text(error.toString())),
+          ),
+        ],
       ),
     );
   }

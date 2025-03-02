@@ -1,5 +1,5 @@
-import 'dart:developer';
-
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:formz/formz.dart';
@@ -7,15 +7,13 @@ import 'package:go_router/go_router.dart';
 import 'package:yanmii_wallet/src/app/constants/constants.dart';
 import 'package:yanmii_wallet/src/common/components/textfield.dart';
 import 'package:yanmii_wallet/src/common/data/models/type.dart';
-import 'package:yanmii_wallet/src/common/domain/entities/category_entity.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/wallet_entity.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/add/add_transaction_controller.dart';
+import 'package:yanmii_wallet/src/features/transactions/presentation/add/category_suggestion.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/add/name_suggestion.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/list/wallet_picker.dart';
-import 'package:yanmii_wallet/src/features/transactions/presentation/transactions_controller.dart';
 import 'package:yanmii_wallet/src/utils/extensions/datetime_extension.dart';
 import 'package:yanmii_wallet/src/utils/extensions/string_extension.dart';
-import 'package:yanmii_wallet/src/features/transactions/presentation/add/category_suggestion.dart';
 
 class AddTransactionScreen extends ConsumerStatefulWidget {
   const AddTransactionScreen({
@@ -295,9 +293,25 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
               CommonTextfield(
                 label: 'Jumlah'.hardcoded,
                 inputType: TextInputType.number,
-                inputFormatters: [AppConstants.idrCurrencyFormatter],
+                inputFormatters: [
+                  CurrencyTextInputFormatter.currency(
+                    locale: context.locale.toLanguageTag(),
+                    symbol: '',
+                    decimalDigits: 0,
+                  ),
+                ],
                 focusNode: _amountFocusNode,
-                onChanged: (value) => _controller.setAmount(value),
+                onChanged: (value) {
+                  if (value.isNotEmpty) {
+                    final numberFormat = NumberFormat.decimalPattern(
+                      context.locale.toLanguageTag(),
+                    );
+                    final rawValue = numberFormat.parse(value).round();
+                    _controller.setAmount(rawValue);
+                  } else {
+                    _controller.setAmount(0);
+                  }
+                },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter some text';

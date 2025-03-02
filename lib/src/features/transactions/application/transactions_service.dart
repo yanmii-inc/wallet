@@ -39,10 +39,11 @@ class TransactionsService extends Notifier<List<TransactionEntity>> {
         final result = await _categoryRepository
             .createCategory(Category(label: category.label));
         category = category.copyWith(
-            id: result.when(
-          success: (id) => id,
-          failure: (error, stackTrace) => null,
-        ));
+          id: result.when(
+            success: (id) => id,
+            failure: (error, stackTrace) => null,
+          ),
+        );
       }
     }
 
@@ -155,10 +156,11 @@ class TransactionsService extends Notifier<List<TransactionEntity>> {
         final result = await _categoryRepository
             .createCategory(Category(label: category.label));
         category = category.copyWith(
-            id: result.when(
-          success: (id) => id,
-          failure: (error, stackTrace) => null,
-        ));
+          id: result.when(
+            success: (id) => id,
+            failure: (error, stackTrace) => null,
+          ),
+        );
       }
     }
 
@@ -234,6 +236,72 @@ class TransactionsService extends Notifier<List<TransactionEntity>> {
     return result.when(
       success: (data) => data,
       failure: (_, stackTrace) => [],
+    );
+  }
+
+  Future<List<TransactionEntity>> getTransactionsByTitle(
+    String title, {
+    DateTime? startDate,
+    DateTime? endDate,
+  }) async {
+    final mapper = ref.read(transactionMapperProvider);
+    final result = await _transactionRepository.getTransactionsByTitle(
+      title,
+      startDate: startDate,
+      endDate: endDate,
+    );
+
+    return result.when(
+      success: (data) {
+        final transactions =
+            data.map(mapper.mapTransactionToTransactionEntity).toList();
+        final existingTransactionsMap = {for (final t in state) t.id: t}
+          ..addAll({for (final t in transactions) t.id: t});
+        state = existingTransactionsMap.values.toList();
+        log('transactions $state');
+        return transactions;
+      },
+      failure: (error, stackTrace) {
+        log(
+          'Error mapTransactionToTransactionEntity',
+          error: error,
+          stackTrace: stackTrace,
+        );
+        return [];
+      },
+    );
+  }
+
+  Future<List<TransactionEntity>> getTransactionsByCategory(
+    int categoryId, {
+    DateTime? startDate,
+    DateTime? endDate,
+  }) async {
+    final mapper = ref.read(transactionMapperProvider);
+    final result = await _transactionRepository.getTransactionsByCategory(
+      categoryId,
+      startDate: startDate,
+      endDate: endDate,
+    );
+
+    return result.when(
+      success: (data) {
+        final transactions =
+            data.map(mapper.mapTransactionToTransactionEntity).toList();
+        log('transactions $state');
+        final existingTransactionsMap = {for (final t in state) t.id: t}
+          ..addAll({for (final t in transactions) t.id: t});
+        state = existingTransactionsMap.values.toList();
+        return transactions;
+      },
+      failure: (error, stackTrace) {
+        log(
+          'Error mapTransactionToTransactionEntity',
+          error: error,
+          stackTrace: stackTrace,
+        );
+        return [];
+      },
     );
   }
 }

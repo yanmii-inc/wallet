@@ -1,3 +1,5 @@
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:formz/formz.dart';
@@ -36,7 +38,6 @@ class _AddTransactionScreenState extends ConsumerState<EditTransactionScreen> {
   final _amountTextController = TextEditingController();
   final _descriptionTextController = TextEditingController();
   final _categoryTextController = TextEditingController();
-  final _searchController = SearchController();
 
   EditTransactionController get _controller =>
       ref.read(editTransactionControllerProvider(widget.id).notifier);
@@ -65,7 +66,7 @@ class _AddTransactionScreenState extends ConsumerState<EditTransactionScreen> {
           ..setType(transaction.type)
           ..setCategory(transaction.category!)
           ..setName(transaction.name)
-          ..setAmount(transaction.amount.toString())
+          ..setAmount(transaction.amount)
           ..setType(transaction.type)
           ..setDescription(transaction.description ?? '');
 
@@ -105,8 +106,6 @@ class _AddTransactionScreenState extends ConsumerState<EditTransactionScreen> {
             .walletOptions
             .value ??
         [];
-    final categoryOptions =
-        ref.watch(editTransactionControllerProvider(widget.id)).categoryOptions;
     final wallet =
         ref.watch(editTransactionControllerProvider(widget.id)).wallet;
     final destWallet =
@@ -238,8 +237,24 @@ class _AddTransactionScreenState extends ConsumerState<EditTransactionScreen> {
               label: 'Jumlah'.hardcoded,
               inputType: TextInputType.number,
               controller: _amountTextController,
-              inputFormatters: [AppConstants.idrCurrencyFormatter],
-              onChanged: (value) => _controller.setAmount(value),
+              inputFormatters: [
+                CurrencyTextInputFormatter.currency(
+                  locale: context.locale.toLanguageTag(),
+                  symbol: '',
+                  decimalDigits: 0,
+                ),
+              ],
+              onChanged: (value) {
+                if (value.isNotEmpty) {
+                  final numberFormat = NumberFormat.decimalPattern(
+                    context.locale.toLanguageTag(),
+                  );
+                  final rawValue = numberFormat.parse(value).round();
+                  _controller.setAmount(rawValue);
+                } else {
+                  _controller.setAmount(0);
+                }
+              },
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter some amount';
@@ -271,7 +286,7 @@ class _AddTransactionScreenState extends ConsumerState<EditTransactionScreen> {
                 },
               ),
               NameSuggestion(
-                state.suggestedNames.value ?? [],
+                suggestedNames,
                 onPressed: (name) {
                   _controller
                     ..setName(name)
