@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yanmii_wallet/src/common/data/models/local/category_total.dart';
+import 'package:yanmii_wallet/src/common/data/models/local/custom_balance.dart';
 import 'package:yanmii_wallet/src/common/data/models/local/monthly_balance.dart';
 import 'package:yanmii_wallet/src/common/data/models/local/title_total.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/monthly_balance_entity.dart';
+import 'package:yanmii_wallet/src/features/report/domain/entities/custom_balance_entity.dart';
 import 'package:yanmii_wallet/src/features/report/domain/entities/report_entity.dart';
 import 'package:yanmii_wallet/src/features/report/domain/entities/title_report_entity.dart';
 
@@ -56,6 +58,18 @@ class ReportMapper {
       totalExpense: (balance.totalExpense ?? 0.0).toInt(),
       totalIncome: (balance.totalIncome ?? 0.0).toInt(),
       showRunningBalance: showRunningBalance,
+    );
+  }
+
+  CustomBalanceEntity toCustomBalanceEntity(CustomBalance balance) {
+    return CustomBalanceEntity(
+      id: balance.id,
+      title: balance.title,
+      startDate: balance.startDate,
+      endDate: balance.endDate,
+      balance: balance.balance,
+      totalExpense: balance.totalExpense,
+      totalIncome: balance.totalIncome,
     );
   }
 }

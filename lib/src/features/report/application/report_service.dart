@@ -3,8 +3,10 @@ import 'dart:developer';
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yanmii_wallet/src/app/constants/constants.dart';
+import 'package:yanmii_wallet/src/common/data/models/local/monthly_balance.dart';
 import 'package:yanmii_wallet/src/common/data/repositories/transaction_repository.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/monthly_balance_entity.dart';
+import 'package:yanmii_wallet/src/features/report/domain/entities/custom_balance_entity.dart';
 import 'package:yanmii_wallet/src/features/report/domain/entities/report_entity.dart';
 import 'package:yanmii_wallet/src/features/report/domain/entities/title_report_entity.dart';
 import 'package:yanmii_wallet/src/features/report/domain/mapper/report_mapper.dart';
@@ -80,6 +82,64 @@ class ReportService {
       failure: (e, st) {
         log(e.toString(), error: e, stackTrace: st);
         return [];
+      },
+    );
+  }
+
+  Future<List<CustomBalanceEntity>> getCustomRecaps() async {
+    final result = await transactionRepository.getCustomRecaps();
+
+    return result.when(
+      success: (data) {
+        final mapper = ref.read(reportMapperProvider);
+        return data.map((e) => mapper.toCustomBalanceEntity(e)).toList();
+      },
+      failure: (e, st) {
+        log(e.toString(), error: e, stackTrace: st);
+        return [];
+      },
+    );
+  }
+
+  Future<void> addCustomRecap(
+    String title,
+    DateTime startDate,
+    DateTime endDate,
+  ) async {
+    final result = await transactionRepository.addCustomRecap(
+      title,
+      startDate,
+      endDate,
+    );
+
+    result.when(
+      success: (id) {
+        return id;
+      },
+      failure: (e, st) {
+        log(e.toString(), error: e, stackTrace: st);
+        throw Exception();
+      },
+    );
+  }
+
+  Future<CustomBalanceEntity> getMonthRecaps({
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
+    final result = await transactionRepository.getDetailedRecapByRange(
+      startDate: startDate,
+      endDate: endDate,
+    );
+    return result.when(
+      success: (data) {
+        final mapper = ref.read(reportMapperProvider);
+        log(data.toJson().toString());
+        return mapper.toCustomBalanceEntity(data);
+      },
+      failure: (e, st) {
+        log(e.toString(), error: e, stackTrace: st);
+        throw Exception();
       },
     );
   }

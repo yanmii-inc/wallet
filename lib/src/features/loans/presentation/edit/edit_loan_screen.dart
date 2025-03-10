@@ -7,12 +7,11 @@ import 'package:go_router/go_router.dart';
 import 'package:yanmii_wallet/src/app/constants/constants.dart';
 import 'package:yanmii_wallet/src/common/components/textfield.dart';
 import 'package:yanmii_wallet/src/common/data/models/type.dart';
-import 'package:yanmii_wallet/src/common/domain/entities/category_entity.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/wallet_entity.dart';
-import 'package:yanmii_wallet/src/features/transactions/presentation/add/category_suggestion.dart';
-import 'package:yanmii_wallet/src/features/transactions/presentation/add/name_suggestion.dart';
-import 'package:yanmii_wallet/src/features/transactions/presentation/edit/edit_transaction_controller.dart';
-import 'package:yanmii_wallet/src/features/transactions/presentation/list/wallet_picker.dart';
+import 'package:yanmii_wallet/src/features/loans/presentation/add/category_suggestion.dart';
+import 'package:yanmii_wallet/src/features/loans/presentation/add/name_suggestion.dart';
+import 'package:yanmii_wallet/src/features/loans/presentation/edit/edit_loan_controller.dart';
+import 'package:yanmii_wallet/src/features/loans/presentation/list/wallet_picker.dart';
 import 'package:yanmii_wallet/src/utils/extensions/build_context_extension/text_styles.dart';
 import 'package:yanmii_wallet/src/utils/extensions/datetime_extension.dart';
 import 'package:yanmii_wallet/src/utils/extensions/num_extension.dart';
@@ -61,6 +60,15 @@ class _AddTransactionScreenState extends ConsumerState<EditTransactionScreen> {
       if (next.transaction != null && previous?.transaction == null) {
         final transaction = next.transaction!;
         final dateTime = transaction.date.toDateTime ?? DateTime.now();
+        _controller
+          ..setDate(dateTime)
+          ..setTime(TimeOfDay.fromDateTime(dateTime))
+          ..setType(transaction.type)
+          ..setCategory(transaction.category!)
+          ..setName(transaction.name)
+          ..setAmount(transaction.amount)
+          ..setType(transaction.type)
+          ..setDescription(transaction.description ?? '');
 
         _dateTextController.text = dateTime.toDayDdMmYyyy;
         _timeTextController.text = dateTime.toHhMm;
@@ -262,9 +270,7 @@ class _AddTransactionScreenState extends ConsumerState<EditTransactionScreen> {
                   _controller.setName(value);
 
                   if (value.length >= 3) {
-                    _controller
-                      ..searchName(value)
-                      ..suggestCategory(value);
+                    _controller.searchName(value);
                   } else {
                     _controller.clearNameSuggestion();
                   }
@@ -286,8 +292,7 @@ class _AddTransactionScreenState extends ConsumerState<EditTransactionScreen> {
 
                   if (suggestedCategoryOptions != null &&
                       suggestedCategoryOptions.isNotEmpty) {
-                    _controller
-                        .setCategory(suggestedCategoryOptions.first.label);
+                    _controller.setCategory(suggestedCategoryOptions.first);
                   }
                 },
               ),
@@ -296,22 +301,12 @@ class _AddTransactionScreenState extends ConsumerState<EditTransactionScreen> {
                 controller: _categoryTextController,
                 label: 'Category'.hardcoded,
                 suffixIcon: const Icon(Icons.search),
-                onChanged: (value) {
-                  _controller.setCategory(value);
-                  if (value.length >= 2) {
-                    _controller.searchCategory(value);
-                  } else {
-                    _controller.clearCategorySuggestion();
-                  }
-                },
-                onTap: () {
-                  _controller.suggestCategory(_categoryTextController.text);
-                },
+                onTap: () {},
               ),
               CategorySuggestion(
                 state.suggestedCategoryOptions.value ?? [],
                 onPressed: (category) {
-                  _controller.setCategory(category.label);
+                  _controller.setCategory(category);
                 },
               ),
               Gap.h16,

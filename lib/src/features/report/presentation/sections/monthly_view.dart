@@ -56,7 +56,13 @@ class _MonthItem extends ConsumerWidget {
         '${monthlyBalance.monthlyBalance.toIdr}';
     return ListTile(
       onTap: () {
-        context.pushNamed(Routes.detailedReport.name, extra: monthlyBalance);
+        context.pushNamed(
+          Routes.detailedReport.name,
+          extra: {
+            'start_date': monthlyBalance.startDate,
+            'end_date': monthlyBalance.endDate,
+          },
+        );
       },
       title: Column(
         children: [

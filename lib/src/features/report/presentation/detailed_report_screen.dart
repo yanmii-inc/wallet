@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:yanmii_wallet/src/common/domain/entities/monthly_balance_entity.dart';
 import 'package:yanmii_wallet/src/features/report/presentation/sections/detailed_view.dart';
 import 'package:yanmii_wallet/src/features/report/presentation/sections/per_category_recap/per_category_recap_view.dart';
 import 'package:yanmii_wallet/src/features/report/presentation/sections/per_title_recap/per_title_recap_view.dart';
 import 'package:yanmii_wallet/src/features/report/presentation/sections/summary_view.dart';
+import 'package:yanmii_wallet/src/features/report/presentation/sections/summary_view_controller.dart';
 import 'package:yanmii_wallet/src/utils/extensions/string_extension.dart';
 
 class DetailedReportScreen extends ConsumerStatefulWidget {
   const DetailedReportScreen({
-    required this.monthlyBalance,
+    required this.startDate,
+    required this.endDate,
     super.key,
   });
 
-  final MonthlyBalanceEntity monthlyBalance;
+  final DateTime startDate;
+  final DateTime endDate;
 
   @override
   ConsumerState<DetailedReportScreen> createState() =>
@@ -28,6 +30,12 @@ class _DetailedReportScreenState extends ConsumerState<DetailedReportScreen>
   void initState() {
     super.initState();
     _controller = TabController(length: 3, vsync: this);
+    Future.delayed(Duration.zero, () {
+      ref.read(summaryViewControllerProvider.notifier).getSummary(
+            startDate: widget.startDate,
+            endDate: widget.endDate,
+          );
+    });
   }
 
   @override
@@ -42,7 +50,10 @@ class _DetailedReportScreenState extends ConsumerState<DetailedReportScreen>
               floating: true,
             ),
             SliverToBoxAdapter(
-              child: SummaryView(monthlyBalance: widget.monthlyBalance),
+              child: SummaryView(
+                startDate: widget.startDate,
+                endDate: widget.endDate,
+              ),
             ),
             SliverPersistentHeader(
               delegate: _SliverAppBarDelegate(
@@ -62,9 +73,9 @@ class _DetailedReportScreenState extends ConsumerState<DetailedReportScreen>
         body: TabBarView(
           controller: _controller,
           children: [
-            DetailedView(widget.monthlyBalance.startDate),
-            PerTitleRecapView(monthlyBalance: widget.monthlyBalance),
-            PerCategoryRecapView(monthlyBalance: widget.monthlyBalance),
+            DetailedView(widget.startDate),
+            PerTitleRecapView(startDate: widget.startDate),
+            PerCategoryRecapView(startDate: widget.startDate),
           ],
         ),
       ),

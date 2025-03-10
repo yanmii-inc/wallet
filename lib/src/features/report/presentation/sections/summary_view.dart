@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yanmii_wallet/src/app/constants/constants.dart';
-import 'package:yanmii_wallet/src/common/domain/entities/monthly_balance_entity.dart';
+import 'package:yanmii_wallet/src/features/report/presentation/sections/summary_view_controller.dart';
 import 'package:yanmii_wallet/src/utils/extensions/build_context_extension/theme_extension.dart';
 import 'package:yanmii_wallet/src/utils/extensions/datetime_extension.dart';
 import 'package:yanmii_wallet/src/utils/extensions/num_extension.dart';
@@ -9,24 +9,31 @@ import 'package:yanmii_wallet/src/utils/extensions/string_extension.dart';
 
 class SummaryView extends ConsumerWidget {
   const SummaryView({
-    required this.monthlyBalance,
+    required this.startDate,
+    required this.endDate,
     super.key,
   });
 
-  final MonthlyBalanceEntity monthlyBalance;
+  final DateTime startDate;
+  final DateTime endDate;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final balance = '${monthlyBalance.monthlyBalance >= 0 ? '+' : ''}'
-        '${monthlyBalance.monthlyBalance.toIdr}';
+    final monthlyBalance =
+        ref.watch(summaryViewControllerProvider).monthlyBalance;
+    final totalExpense = ref.watch(summaryViewControllerProvider).totalExpense;
+    final totalIncome = ref.watch(summaryViewControllerProvider).totalIncome;
+
+    final balance = '${(monthlyBalance.value ?? 0) >= 0 ? '+' : ''}'
+        '${monthlyBalance.value?.toIdr}';
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
           Gap.h16,
           Text(
-            '${monthlyBalance.startDate.toDdMmYyyy} - '
-            '${monthlyBalance.endDate.toDdMmYyyy}',
+            '${startDate.toDdMmYyyy} - '
+            '${endDate.toDdMmYyyy}',
             style: context.textTheme.titleSmall
                 ?.copyWith(fontWeight: FontWeight.bold),
           ),
@@ -38,7 +45,7 @@ class SummaryView extends ConsumerWidget {
             children: [
               Text('Expense '.hardcoded),
               Text(
-                monthlyBalance.totalExpense.toIdr,
+                totalExpense.value?.toIdr ?? '0',
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ],
@@ -48,7 +55,7 @@ class SummaryView extends ConsumerWidget {
             children: [
               Text('Income'.hardcoded),
               Text(
-                monthlyBalance.totalIncome.toIdr,
+                totalIncome.value?.toIdr ?? '0',
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ],
@@ -61,27 +68,13 @@ class SummaryView extends ConsumerWidget {
                 balance,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: monthlyBalance.monthlyBalance >= 0
+                  color: (monthlyBalance.value ?? 0) >= 0
                       ? Colors.green
                       : Colors.red,
                 ),
               ),
             ],
           ),
-          if (monthlyBalance.showRunningBalance)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Running Balance:'.hardcoded),
-                Text(
-                  monthlyBalance.runningBalance.toIdr,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green,
-                  ),
-                ),
-              ],
-            ),
           Gap.h16,
         ],
       ),

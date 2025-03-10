@@ -1,7 +1,5 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:yanmii_wallet/src/common/domain/entities/monthly_balance_entity.dart';
 import 'package:yanmii_wallet/src/features/report/presentation/sections/per_title_recap/per_title_recap_controller.dart';
 import 'package:yanmii_wallet/src/routing/routes.dart';
 import 'package:yanmii_wallet/src/utils/extensions/build_context_extension/theme_extension.dart';
@@ -10,10 +8,10 @@ import 'package:yanmii_wallet/src/utils/extensions/widget_extension.dart';
 
 class PerTitleRecapView extends ConsumerStatefulWidget {
   const PerTitleRecapView({
-    required this.monthlyBalance,
+    required this.startDate,
     super.key,
   });
-  final MonthlyBalanceEntity monthlyBalance;
+  final DateTime startDate;
 
   @override
   ConsumerState<PerTitleRecapView> createState() => _DailyBreakdownViewState();
@@ -25,7 +23,7 @@ class _DailyBreakdownViewState extends ConsumerState<PerTitleRecapView> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       ref
           .read(perTitleRecapControllerProvider.notifier)
-          .getTitleTransactions(widget.monthlyBalance.startDate);
+          .getTitleTransactions(widget.startDate);
     });
     super.initState();
   }
@@ -54,7 +52,7 @@ class _DailyBreakdownViewState extends ConsumerState<PerTitleRecapView> {
                     '${Routes.transactionHistory.name}byTitle',
                     pathParameters: {
                       'title': e.name,
-                      'date': widget.monthlyBalance.startDate.toIso8601String(),
+                      'date': widget.startDate.toIso8601String(),
                     },
                   );
                 },

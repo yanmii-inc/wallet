@@ -32,11 +32,21 @@ final Provider<ShellRoute> _mainRouteProvider = Provider<ShellRoute>((ref) {
             path: Routes.detailedReport.subPath,
             name: Routes.detailedReport.name,
             pageBuilder: (context, state) {
-              final monthlyBalance =
-                  (state.extra ?? DateTime.now()) as MonthlyBalanceEntity;
+              if (state.extra == null) {
+                return const NoTransitionPage(
+                  child: ContentScreen(
+                    title: 'No Data',
+                    content: const Text('No data'),
+                  ),
+                );
+              }
+              final extras = state.extra! as Map<String, dynamic>;
+              final startDate = extras['start_date'] as DateTime;
+              final endDate = startDate.add(const Duration(days: 30));
               return NoTransitionPage(
                 child: DetailedReportScreen(
-                  monthlyBalance: monthlyBalance,
+                  startDate: startDate,
+                  endDate: endDate,
                 ),
               );
             },

@@ -7,12 +7,11 @@ import 'package:go_router/go_router.dart';
 import 'package:yanmii_wallet/src/app/constants/constants.dart';
 import 'package:yanmii_wallet/src/common/components/textfield.dart';
 import 'package:yanmii_wallet/src/common/data/models/type.dart';
-import 'package:yanmii_wallet/src/common/domain/entities/category_entity.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/wallet_entity.dart';
-import 'package:yanmii_wallet/src/features/transactions/presentation/add/add_transaction_controller.dart';
-import 'package:yanmii_wallet/src/features/transactions/presentation/add/category_suggestion.dart';
-import 'package:yanmii_wallet/src/features/transactions/presentation/add/name_suggestion.dart';
-import 'package:yanmii_wallet/src/features/transactions/presentation/list/wallet_picker.dart';
+import 'package:yanmii_wallet/src/features/loans/presentation/add/add_loan_controller.dart';
+import 'package:yanmii_wallet/src/features/loans/presentation/add/category_suggestion.dart';
+import 'package:yanmii_wallet/src/features/loans/presentation/add/name_suggestion.dart';
+import 'package:yanmii_wallet/src/features/loans/presentation/list/wallet_picker.dart';
 import 'package:yanmii_wallet/src/utils/extensions/datetime_extension.dart';
 import 'package:yanmii_wallet/src/utils/extensions/string_extension.dart';
 
@@ -330,9 +329,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                     _controller.setName(value);
 
                     if (value.length >= 3) {
-                      _controller
-                        ..searchName(value)
-                        ..suggestCategory(value);
+                      _controller.searchName(value);
                     } else {
                       _controller.clearNameSuggestion();
                     }
@@ -353,8 +350,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
 
                     if (suggestedCategoryOptions != null &&
                         suggestedCategoryOptions.isNotEmpty) {
-                      _controller
-                          .setCategory(suggestedCategoryOptions.first.label);
+                      _controller.setCategory(suggestedCategoryOptions.first);
                     }
                   },
                 ),
@@ -364,12 +360,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                   label: 'Category'.hardcoded,
                   controller: _categoryTextController,
                   onChanged: (value) {
-                    _controller.setCategory(value);
-                    if (value.length >= 2) {
-                      _controller.searchCategory(value);
-                    } else {
-                      _controller.clearCategorySuggestion();
-                    }
+                    if (value.length >= 3) {}
                   },
                   onTap: () => _controller
                     ..clearNameSuggestion()
@@ -378,7 +369,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                 CategorySuggestion(
                   suggestedCategoryOptions,
                   onPressed: (category) {
-                    _controller.setCategory(category.label);
+                    _controller.setCategory(category);
                   },
                 ),
                 Gap.h16,

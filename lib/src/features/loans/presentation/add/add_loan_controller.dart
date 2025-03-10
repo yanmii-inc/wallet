@@ -1,15 +1,13 @@
 import 'dart:developer';
 
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:formz/formz.dart';
 import 'package:yanmii_wallet/src/common/data/models/type.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/category_entity.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/wallet_entity.dart';
-import 'package:yanmii_wallet/src/features/transactions/application/category_service.dart';
-import 'package:yanmii_wallet/src/features/transactions/application/transactions_service.dart';
-import 'package:yanmii_wallet/src/features/transactions/presentation/add/add_transaction_state.dart';
+import 'package:yanmii_wallet/src/features/loans/application/loans_service.dart';
+import 'package:yanmii_wallet/src/features/loans/presentation/add/add_loan_state.dart';
 import 'package:yanmii_wallet/src/features/wallet/application/wallet_service.dart';
 
 class AddTransactionController extends StateNotifier<AddTransactionState> {
@@ -17,7 +15,7 @@ class AddTransactionController extends StateNotifier<AddTransactionState> {
 
   final Ref ref;
 
-  TransactionsService get _transactionService =>
+  LoansService get _transactionService =>
       ref.read(transactionsServiceProvider.notifier);
 
   void _validate() {
@@ -80,10 +78,8 @@ class AddTransactionController extends StateNotifier<AddTransactionState> {
     _validate();
   }
 
-  void setCategory(String value) {
-    final category = state.suggestedCategoryOptions.value
-        ?.firstWhereOrNull((element) => element.label == value);
-    state = state.copyWith(category: category ?? CategoryEntity(label: value));
+  void setCategory(CategoryEntity value) {
+    state = state.copyWith(category: value);
     _validate();
   }
 
@@ -123,14 +119,11 @@ class AddTransactionController extends StateNotifier<AddTransactionState> {
 
   Future<void> init() async {
     await ref.read(walletServiceProvider.notifier).getWallets();
-    await ref.read(categoryServiceProvider.notifier).getCategoryList();
 
     final walletOptions = ref.watch(walletServiceProvider);
-    final categoryOptions = ref.watch(categoryServiceProvider);
     state = state.copyWith(
       walletOptions: walletOptions,
       wallet: walletOptions.value?.first,
-      categoryOptions: categoryOptions,
     );
   }
 
@@ -140,20 +133,6 @@ class AddTransactionController extends StateNotifier<AddTransactionState> {
           'Transfer from ${state.wallet!.name} to ${state.destWallet!.name}';
       state = state.copyWith(name: transactionName);
     }
-  }
-
-  Future<void> suggestCategory(String value) async {
-    final categories = await ref
-        .read(categoryServiceProvider.notifier)
-        .searchSuggestedCategories(value);
-    state = state.copyWith(suggestedCategoryOptions: AsyncData(categories));
-  }
-
-  Future<void> searchCategory(String value) async {
-    final categories =
-        await ref.read(categoryServiceProvider.notifier).searchCategory(value);
-
-    state = state.copyWith(suggestedCategoryOptions: AsyncData(categories));
   }
 
   Future<void> searchName(String value) async {

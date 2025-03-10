@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:yanmii_wallet/src/features/transactions/application/transactions_service.dart';
-import 'package:yanmii_wallet/src/features/transactions/presentation/list/transaction_item_tile.dart';
-import 'package:yanmii_wallet/src/features/transactions/presentation/transactions_controller.dart';
+import 'package:yanmii_wallet/src/features/loans/application/loans_service.dart';
+import 'package:yanmii_wallet/src/features/loans/presentation/list/loan_item_tile.dart';
+import 'package:yanmii_wallet/src/features/loans/presentation/loans_controller.dart';
 
-class TransactionsListSection extends ConsumerStatefulWidget {
-  const TransactionsListSection({super.key});
+class LoansListSection extends ConsumerStatefulWidget {
+  const LoansListSection({super.key});
 
   @override
-  ConsumerState<TransactionsListSection> createState() =>
+  ConsumerState<LoansListSection> createState() =>
       _TransactionsListSectionState();
 }
 
-class _TransactionsListSectionState
-    extends ConsumerState<TransactionsListSection> {
+class _TransactionsListSectionState extends ConsumerState<LoansListSection> {
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -21,7 +20,7 @@ class _TransactionsListSectionState
     final transactions = ref.watch(transactionsControllerProvider).transactions;
     ref.listen(transactionsServiceProvider, (previous, next) {
       if (next.length != previous?.length) {
-        ref.read(transactionsControllerProvider.notifier).getTransactions(
+        ref.read(transactionsControllerProvider.notifier).getLoans(
               ref.watch(transactionsControllerProvider).selectedDate,
             );
         _scrollToBottom();
@@ -40,7 +39,7 @@ class _TransactionsListSectionState
           itemCount: data.length,
           itemBuilder: (context, index) {
             final transactionId = data[index].id!;
-            return TransactionItemTile(transactionId: transactionId);
+            return LoanItemTile(transactionId: transactionId);
           },
         );
       },

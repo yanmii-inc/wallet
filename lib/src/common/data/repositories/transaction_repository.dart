@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:yanmii_wallet/src/common/data/models/local/category_total.dart';
+import 'package:yanmii_wallet/src/common/data/models/local/custom_balance.dart';
 import 'package:yanmii_wallet/src/common/data/models/local/monthly_balance.dart';
 import 'package:yanmii_wallet/src/common/data/models/local/title_total.dart';
 import 'package:yanmii_wallet/src/common/data/models/local/transaction.dart'
@@ -169,8 +171,102 @@ class TransactionRepository {
     }
   }
 
-  Future<DbResult<MonthlyBalance>> getDetailedRecapByMonth({
+  Future<DbResult<List<CustomBalance>>> getCustomRecaps() async {
+    log('getCustomRecaps');
+    final db = await _db;
+    try {
+      final list = <CustomBalance>[];
+      final result = await db.rawQuery('''
+        SELECT 
+          * 
+        FROM custom_recaps
+        ORDER BY start_date;
+      ''');
+
+      for (final element in result) {
+        const query = '''
+          SELECT 
+            *,
+            SUM(CASE WHEN t.type = 'expense' AND t.amount > 0 THEN t.amount ELSE 0 END) AS total_expense,
+            SUM(CASE WHEN t.type = 'income' AND t.amount > 0 THEN t.amount ELSE 0 END) AS total_income,
+            SUM(CASE WHEN t.type = 'income' AND t.amount > 0 THEN t.amount ELSE 0 END) - 
+            SUM(CASE WHEN t.type = 'expense' AND t.amount > 0 THEN t.amount ELSE 0 END) AS balance
+          FROM transactions t
+          WHERE t.date >= ? AND t.date <= ?
+        ''';
+
+        final result = (await db.rawQuery(query, [
+          element['start_date'],
+          element['end_date'],
+        ]))
+            .toList();
+
+        final map = {
+          'id': element['id']!,
+          'start_date': element['start_date']!,
+          'end_date': element['end_date']!,
+          'title': element['title']!,
+          'total_expense': result.first['total_expense']!,
+          'total_income': result.first['total_income']!,
+          'balance': result.first['balance']!,
+        };
+
+        log('result ${jsonEncode(map)}');
+
+        final data = CustomBalance.fromJson(map);
+        list.add(data);
+      }
+
+      return DbResult.success(list);
+    } catch (e, st) {
+      return DbResult.failure(e, st);
+    }
+  }
+
+  Future<DbResult<int>> addCustomRecap(
+    String title,
+    DateTime startDate,
+    DateTime endDate,
+  ) async {
+    final db = await _db;
+
+    try {
+      final result = await db.insert('custom_recaps', {
+        'title': title,
+        'start_date': startDate.toIso8601String(),
+        'end_date': endDate.toIso8601String(),
+      });
+
+      return DbResult.success(result);
+    } catch (e, st) {
+      return DbResult.failure(e, st);
+    }
+  }
+
+  Future<DbResult<CustomBalance>> getCustomRecapByRange({
     required DateTime startDate,
+    required DateTime endDate,
+  }) async {
+    final db = await _db;
+    try {
+      final result = await db.rawQuery(
+        '''
+        SELECT * FROM custom_recaps WHERE start_date = ? AND end_date = ?
+        ''',
+        [startDate.toIso8601String(), endDate.toIso8601String()],
+      );
+
+      final data = CustomBalance.fromJson(result.first);
+
+      return DbResult.success(data);
+    } catch (e, st) {
+      return DbResult.failure(e, st);
+    }
+  }
+
+  Future<DbResult<CustomBalance>> getDetailedRecapByRange({
+    required DateTime startDate,
+    required DateTime endDate,
   }) async {
     final db = await _db;
     try {
@@ -182,28 +278,30 @@ class TransactionRepository {
           SUM(CASE WHEN t.type = 'expense' AND t.amount > 0 THEN t.amount ELSE 0 END) AS total_expense,
           SUM(CASE WHEN t.type = 'income' AND t.amount > 0 THEN t.amount ELSE 0 END) AS total_income,
           SUM(CASE WHEN t.type = 'income' AND t.amount > 0 THEN t.amount ELSE 0 END) - 
-          SUM(CASE WHEN t.type = 'expense' AND t.amount > 0 THEN t.amount ELSE 0 END) AS monthly_balance,
+          SUM(CASE WHEN t.type = 'expense' AND t.amount > 0 THEN t.amount ELSE 0 END) AS balance,
           (SELECT SUM(CASE WHEN t2.type = 'income' AND t2.amount > 0 THEN t2.amount ELSE 0 END) - 
                   SUM(CASE WHEN t2.type = 'expense' AND t2.amount > 0 THEN t2.amount ELSE 0 END) 
           FROM transactions t2 
           WHERE STRFTIME('%Y', t2.date) <= STRFTIME('%Y', t.date) AND 
-                STRFTIME('%m', t2.date) <= STRFTIME('%m', t.date)) AS running_balance
+                STRFTIME('%m', t2.date) <= STRFTIME('%m', t.date)) AS running_balance,
+          cr.*
         FROM 
           transactions t
-        WHERE STRFTIME('%Y', t.date) >= ? AND
-              STRFTIME('%m', t.date) >= ?
+        INNER JOIN custom_recaps cr
+          ON t.date >= cr.start_date 
+          AND t.date <= cr.end_date
+        WHERE 
+          t.date >= ? AND t.date <= ?
         GROUP BY 
           STRFTIME('%Y', t.date), 
           STRFTIME('%m', t.date)
         ORDER BY 
           year, month;
       ''',
-        [startDate, startDate],
+        [startDate.toIso8601String(), endDate.toIso8601String()],
       );
 
-      log('result $result');
-
-      final data = MonthlyBalance.fromJson(result.first);
+      final data = CustomBalance.fromJson(result.first);
 
       return DbResult.success(data);
     } catch (e, st) {

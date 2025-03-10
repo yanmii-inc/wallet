@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yanmii_wallet/src/common/data/models/type.dart';
-import 'package:yanmii_wallet/src/common/domain/entities/monthly_balance_entity.dart';
 import 'package:yanmii_wallet/src/common/domain/enums/auth_status.dart';
 import 'package:yanmii_wallet/src/common/services/app_service.dart';
 import 'package:yanmii_wallet/src/common/services/auth_service.dart';

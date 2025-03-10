@@ -7,7 +7,7 @@ import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
   static const _databaseName = 'pocketlog.db';
-  static const _databaseVersion = 7;
+  static const _databaseVersion = 8;
 
   static Database? _database;
 
@@ -67,6 +67,17 @@ class DatabaseHelper {
           await db.execute('''
             ALTER TABLE transactions
             ADD COLUMN dest_wallet_id INTEGER
+          ''');
+        }
+
+        if (oldVersion < 8) {
+          await db.execute('''
+            CREATE TABLE custom_recaps (
+              id INTEGER PRIMARY KEY,
+              title TEXT NOT NULL,
+              start_date TEXT NOT NULL,
+              end_date TEXT NOT NULL 
+            )
           ''');
         }
       },

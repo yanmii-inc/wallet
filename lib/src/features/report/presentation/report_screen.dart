@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yanmii_wallet/src/app/constants/constants.dart';
 import 'package:yanmii_wallet/src/features/report/presentation/realtime_view.dart';
+import 'package:yanmii_wallet/src/features/report/presentation/sections/custom/custom_view.dart';
 import 'package:yanmii_wallet/src/features/report/presentation/sections/monthly_setting_controller.dart';
 import 'package:yanmii_wallet/src/features/report/presentation/sections/monthly_view.dart';
 import 'package:yanmii_wallet/src/features/report/presentation/sections/monthly_view_controller.dart';
@@ -77,14 +78,5 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
         ],
       ),
     );
-  }
-}
-
-class CustomView extends StatelessWidget {
-  const CustomView({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text('Custom View'));
   }
 }

@@ -11,10 +11,10 @@ import 'package:yanmii_wallet/src/utils/extensions/widget_extension.dart';
 
 class PerCategoryRecapView extends ConsumerStatefulWidget {
   const PerCategoryRecapView({
-    required this.monthlyBalance,
+    required this.startDate,
     super.key,
   });
-  final MonthlyBalanceEntity monthlyBalance;
+  final DateTime startDate;
 
   @override
   ConsumerState<PerCategoryRecapView> createState() => _PerCategoryViewState();
@@ -26,7 +26,7 @@ class _PerCategoryViewState extends ConsumerState<PerCategoryRecapView> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       ref
           .read(perCategoryRecapControllerProvider.notifier)
-          .getCategoryTransactions(widget.monthlyBalance.startDate);
+          .getCategoryTransactions(widget.startDate);
     });
     super.initState();
   }
@@ -51,12 +51,12 @@ class _PerCategoryViewState extends ConsumerState<PerCategoryRecapView> {
               final e = transactions[index];
               return InkWell(
                 onTap: () {
-                  log('onTap ${e.name} ${widget.monthlyBalance.startDate}');
+                  log('onTap ${e.name} ${widget.startDate}');
                   context.pushNamed(
                     '${Routes.transactionHistory.name}byCategory',
                     pathParameters: {
                       'category_id': e.id.toString(),
-                      'date': widget.monthlyBalance.startDate.toIso8601String(),
+                      'date': widget.startDate.toIso8601String(),
                     },
                   );
                 },

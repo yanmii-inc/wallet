@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:formz/formz.dart';
@@ -89,9 +90,9 @@ class EditTransactionController extends StateNotifier<EditTransactionState> {
   }
 
   Future<void> searchCategory(String value) async {
-    log('searchCategory: $value');
     final categories =
         await ref.read(categoryServiceProvider.notifier).searchCategory(value);
+
     state = state.copyWith(suggestedCategoryOptions: AsyncData(categories));
   }
 
@@ -111,8 +112,10 @@ class EditTransactionController extends StateNotifier<EditTransactionState> {
     state = state.copyWith(suggestedCategoryOptions: const AsyncData([]));
   }
 
-  void setCategory(CategoryEntity value) {
-    state = state.copyWith(category: value);
+  void setCategory(String value) {
+    final category = state.suggestedCategoryOptions.value
+        ?.firstWhereOrNull((element) => element.label == value);
+    state = state.copyWith(category: category ?? CategoryEntity(label: value));
     _validate();
   }
 
@@ -127,6 +130,8 @@ class EditTransactionController extends StateNotifier<EditTransactionState> {
     if (state.wallet == null) {
       throw Exception('Wallet not selected');
     }
+
+    log('category : ${state.category}');
 
     try {
       await _transactionService.updateTransaction(
