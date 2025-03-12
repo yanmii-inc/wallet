@@ -7,7 +7,6 @@ import 'package:go_router/go_router.dart';
 import 'package:yanmii_wallet/src/app/constants/constants.dart';
 import 'package:yanmii_wallet/src/common/components/textfield.dart';
 import 'package:yanmii_wallet/src/common/data/models/type.dart';
-import 'package:yanmii_wallet/src/common/domain/entities/category_entity.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/wallet_entity.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/add/add_transaction_controller.dart';
 import 'package:yanmii_wallet/src/features/transactions/presentation/add/category_suggestion.dart';

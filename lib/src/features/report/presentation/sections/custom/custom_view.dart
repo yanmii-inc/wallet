@@ -158,7 +158,7 @@ class _MonthItem extends ConsumerWidget {
         context.pushNamed(Routes.detailedReport.name, extra: {
           'start_date': customBalance.startDate,
           'end_date': customBalance.endDate,
-        });
+        },);
       },
       title: Column(
         children: [

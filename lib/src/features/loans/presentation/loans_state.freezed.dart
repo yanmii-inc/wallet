@@ -16,8 +16,7 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$TransactionsState {
-  DateTime get selectedDate => throw _privateConstructorUsedError;
-  AsyncValue<List<TransactionEntity>> get transactions =>
+  AsyncValue<List<LoanEntity>> get transactions =>
       throw _privateConstructorUsedError;
 
   /// Create a copy of TransactionsState
@@ -33,9 +32,7 @@ abstract class $TransactionsStateCopyWith<$Res> {
           TransactionsState value, $Res Function(TransactionsState) then) =
       _$TransactionsStateCopyWithImpl<$Res, TransactionsState>;
   @useResult
-  $Res call(
-      {DateTime selectedDate,
-      AsyncValue<List<TransactionEntity>> transactions});
+  $Res call({AsyncValue<List<LoanEntity>> transactions});
 }
 
 /// @nodoc
@@ -53,18 +50,13 @@ class _$TransactionsStateCopyWithImpl<$Res, $Val extends TransactionsState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? selectedDate = null,
     Object? transactions = null,
   }) {
     return _then(_value.copyWith(
-      selectedDate: null == selectedDate
-          ? _value.selectedDate
-          : selectedDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
       transactions: null == transactions
           ? _value.transactions
           : transactions // ignore: cast_nullable_to_non_nullable
-              as AsyncValue<List<TransactionEntity>>,
+              as AsyncValue<List<LoanEntity>>,
     ) as $Val);
   }
 }
@@ -77,9 +69,7 @@ abstract class _$$TransactionsStateImplCopyWith<$Res>
       __$$TransactionsStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {DateTime selectedDate,
-      AsyncValue<List<TransactionEntity>> transactions});
+  $Res call({AsyncValue<List<LoanEntity>> transactions});
 }
 
 /// @nodoc
@@ -95,18 +85,13 @@ class __$$TransactionsStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? selectedDate = null,
     Object? transactions = null,
   }) {
     return _then(_$TransactionsStateImpl(
-      selectedDate: null == selectedDate
-          ? _value.selectedDate
-          : selectedDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
       transactions: null == transactions
           ? _value.transactions
           : transactions // ignore: cast_nullable_to_non_nullable
-              as AsyncValue<List<TransactionEntity>>,
+              as AsyncValue<List<LoanEntity>>,
     ));
   }
 }
@@ -115,18 +100,15 @@ class __$$TransactionsStateImplCopyWithImpl<$Res>
 
 class _$TransactionsStateImpl implements _TransactionsState {
   const _$TransactionsStateImpl(
-      {required this.selectedDate,
-      this.transactions = const AsyncLoading<List<TransactionEntity>>()});
+      {this.transactions = const AsyncLoading<List<LoanEntity>>()});
 
   @override
-  final DateTime selectedDate;
-  @override
   @JsonKey()
-  final AsyncValue<List<TransactionEntity>> transactions;
+  final AsyncValue<List<LoanEntity>> transactions;
 
   @override
   String toString() {
-    return 'TransactionsState(selectedDate: $selectedDate, transactions: $transactions)';
+    return 'TransactionsState(transactions: $transactions)';
   }
 
   @override
@@ -134,14 +116,12 @@ class _$TransactionsStateImpl implements _TransactionsState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$TransactionsStateImpl &&
-            (identical(other.selectedDate, selectedDate) ||
-                other.selectedDate == selectedDate) &&
             (identical(other.transactions, transactions) ||
                 other.transactions == transactions));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, selectedDate, transactions);
+  int get hashCode => Object.hash(runtimeType, transactions);
 
   /// Create a copy of TransactionsState
   /// with the given fields replaced by the non-null parameter values.
@@ -155,14 +135,11 @@ class _$TransactionsStateImpl implements _TransactionsState {
 
 abstract class _TransactionsState implements TransactionsState {
   const factory _TransactionsState(
-          {required final DateTime selectedDate,
-          final AsyncValue<List<TransactionEntity>> transactions}) =
+          {final AsyncValue<List<LoanEntity>> transactions}) =
       _$TransactionsStateImpl;
 
   @override
-  DateTime get selectedDate;
-  @override
-  AsyncValue<List<TransactionEntity>> get transactions;
+  AsyncValue<List<LoanEntity>> get transactions;
 
   /// Create a copy of TransactionsState
   /// with the given fields replaced by the non-null parameter values.

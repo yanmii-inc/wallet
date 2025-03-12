@@ -36,7 +36,7 @@ final Provider<ShellRoute> _mainRouteProvider = Provider<ShellRoute>((ref) {
                 return const NoTransitionPage(
                   child: ContentScreen(
                     title: 'No Data',
-                    content: const Text('No data'),
+                    content: Text('No data'),
                   ),
                 );
               }
@@ -57,9 +57,7 @@ final Provider<ShellRoute> _mainRouteProvider = Provider<ShellRoute>((ref) {
         path: MainTabRoute.loans.path,
         parentNavigatorKey: _mainTabNavigatorKey,
         pageBuilder: (BuildContext context, GoRouterState state) =>
-            NoTransitionPage(
-          child: ContentScreen(title: MainTabRoute.loans.label),
-        ),
+            const NoTransitionPage(child: LoansScreen()),
       ),
       GoRoute(
         path: MainTabRoute.settings.path,

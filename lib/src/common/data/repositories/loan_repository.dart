@@ -1,8 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:yanmii_wallet/src/common/data/models/local/loan.dart';
 import 'package:yanmii_wallet/src/common/data/sources/sources.dart';
 import 'package:yanmii_wallet/src/utils/helpers/database_helper.dart';
-import 'package:yanmii_wallet/src/common/data/models/local/loan.dart';
 
 class LoanRepository {
   LoanRepository(this._databaseHelper);
@@ -11,6 +13,7 @@ class LoanRepository {
   Future<Database> get _db async => _databaseHelper.database;
 
   Future<DbResult<List<Loan>>> getLoans() async {
+    log('getLoans');
     final db = await _db;
     try {
       final result = await db.query('loans');
@@ -20,22 +23,57 @@ class LoanRepository {
     }
   }
 
-  Future<int> add(Loan loan) async {
+  Future<DbResult<Loan>> getLoanById(int id) async {
     final db = await _db;
-    return db.insert('loans', loan.toJson());
+    try {
+      final result = await db.query(
+        'loans',
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+      return DbResult.success(Loan.fromJson(result.first));
+    } catch (e, st) {
+      return DbResult.failure(e, st);
+    }
   }
 
-  Future<int> update(Loan loan) async {
+  Future<DbResult<int>> add(Loan loan) async {
     final db = await _db;
-    return db
-        .update('loans', loan.toJson(), where: 'id = ?', whereArgs: [loan.id]);
+    try {
+      final result = await db.insert('loans', loan.toJson());
+      return DbResult.success(result);
+    } catch (e, st) {
+      return DbResult.failure(e, st);
+    }
   }
 
-  Future<int> delete(int id) async {
+  Future<DbResult<int>> update(Loan loan) async {
     final db = await _db;
-    return db.delete('loans', where: 'id = ?', whereArgs: [id]);
+    try {
+      return DbResult.success(
+        await db.update(
+          'loans',
+          loan.toJson(),
+          where: 'id = ?',
+          whereArgs: [loan.id],
+        ),
+      );
+    } catch (e, st) {
+      return DbResult.failure(e, st);
+    }
+  }
+
+  Future<DbResult<int>> delete(int id) async {
+    final db = await _db;
+    try {
+      final result = await db.delete('loans', where: 'id = ?', whereArgs: [id]);
+      return DbResult.success(result);
+    } catch (e, st) {
+      return DbResult.failure(e, st);
+    }
   }
 }
 
 final loanRepositoryProvider = Provider<LoanRepository>(
-    (ref) => LoanRepository(ref.watch(databaseHelperProvider)));
+  (ref) => LoanRepository(ref.watch(databaseHelperProvider)),
+);

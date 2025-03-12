@@ -8,21 +8,18 @@ class LoansListSection extends ConsumerStatefulWidget {
   const LoansListSection({super.key});
 
   @override
-  ConsumerState<LoansListSection> createState() =>
-      _TransactionsListSectionState();
+  ConsumerState<LoansListSection> createState() => _LoansListSectionState();
 }
 
-class _TransactionsListSectionState extends ConsumerState<LoansListSection> {
+class _LoansListSectionState extends ConsumerState<LoansListSection> {
   final ScrollController _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
-    final transactions = ref.watch(transactionsControllerProvider).transactions;
-    ref.listen(transactionsServiceProvider, (previous, next) {
+    final transactions = ref.watch(loansControllerProvider).transactions;
+    ref.listen(loansServiceProvider, (previous, next) {
       if (next.length != previous?.length) {
-        ref.read(transactionsControllerProvider.notifier).getLoans(
-              ref.watch(transactionsControllerProvider).selectedDate,
-            );
+        ref.read(loansControllerProvider.notifier).getLoans();
         _scrollToBottom();
       }
     });
@@ -34,11 +31,11 @@ class _TransactionsListSectionState extends ConsumerState<LoansListSection> {
         }
 
         return ListView.builder(
-          key: const PageStorageKey('transactions_list'),
+          key: const PageStorageKey('loans_list'),
           controller: _scrollController,
           itemCount: data.length,
           itemBuilder: (context, index) {
-            final transactionId = data[index].id!;
+            final transactionId = data[index].id;
             return LoanItemTile(transactionId: transactionId);
           },
         );

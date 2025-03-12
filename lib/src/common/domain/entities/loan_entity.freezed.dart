@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'loan.dart';
+part of 'loan_entity.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -14,76 +14,72 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-Loan _$LoanFromJson(Map<String, dynamic> json) {
-  return _Loan.fromJson(json);
-}
-
 /// @nodoc
-mixin _$Loan {
+mixin _$LoanEntity {
+  int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   int get amount => throw _privateConstructorUsedError;
-  String get date => throw _privateConstructorUsedError;
-  String get type => throw _privateConstructorUsedError;
-  int? get id => throw _privateConstructorUsedError;
-  @JsonKey(includeToJson: false, includeIfNull: false, name: 'wallet')
-  Wallet? get wallet => throw _privateConstructorUsedError;
-  @JsonKey(name: 'wallet_id')
+  LoanType get type => throw _privateConstructorUsedError;
+  DateTime get date => throw _privateConstructorUsedError;
+  WalletEntity? get wallet => throw _privateConstructorUsedError;
   int? get walletId => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
 
-  /// Serializes this Loan to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of Loan
+  /// Create a copy of LoanEntity
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $LoanCopyWith<Loan> get copyWith => throw _privateConstructorUsedError;
+  $LoanEntityCopyWith<LoanEntity> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $LoanCopyWith<$Res> {
-  factory $LoanCopyWith(Loan value, $Res Function(Loan) then) =
-      _$LoanCopyWithImpl<$Res, Loan>;
+abstract class $LoanEntityCopyWith<$Res> {
+  factory $LoanEntityCopyWith(
+          LoanEntity value, $Res Function(LoanEntity) then) =
+      _$LoanEntityCopyWithImpl<$Res, LoanEntity>;
   @useResult
   $Res call(
-      {String name,
+      {int id,
+      String name,
       int amount,
-      String date,
-      String type,
-      int? id,
-      @JsonKey(includeToJson: false, includeIfNull: false, name: 'wallet')
-      Wallet? wallet,
-      @JsonKey(name: 'wallet_id') int? walletId,
+      LoanType type,
+      DateTime date,
+      WalletEntity? wallet,
+      int? walletId,
       String? description});
 
-  $WalletCopyWith<$Res>? get wallet;
+  $WalletEntityCopyWith<$Res>? get wallet;
 }
 
 /// @nodoc
-class _$LoanCopyWithImpl<$Res, $Val extends Loan>
-    implements $LoanCopyWith<$Res> {
-  _$LoanCopyWithImpl(this._value, this._then);
+class _$LoanEntityCopyWithImpl<$Res, $Val extends LoanEntity>
+    implements $LoanEntityCopyWith<$Res> {
+  _$LoanEntityCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of Loan
+  /// Create a copy of LoanEntity
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? name = null,
     Object? amount = null,
-    Object? date = null,
     Object? type = null,
-    Object? id = freezed,
+    Object? date = null,
     Object? wallet = freezed,
     Object? walletId = freezed,
     Object? description = freezed,
   }) {
     return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -92,22 +88,18 @@ class _$LoanCopyWithImpl<$Res, $Val extends Loan>
           ? _value.amount
           : amount // ignore: cast_nullable_to_non_nullable
               as int,
-      date: null == date
-          ? _value.date
-          : date // ignore: cast_nullable_to_non_nullable
-              as String,
       type: null == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
-              as String,
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as LoanType,
+      date: null == date
+          ? _value.date
+          : date // ignore: cast_nullable_to_non_nullable
+              as DateTime,
       wallet: freezed == wallet
           ? _value.wallet
           : wallet // ignore: cast_nullable_to_non_nullable
-              as Wallet?,
+              as WalletEntity?,
       walletId: freezed == walletId
           ? _value.walletId
           : walletId // ignore: cast_nullable_to_non_nullable
@@ -119,65 +111,70 @@ class _$LoanCopyWithImpl<$Res, $Val extends Loan>
     ) as $Val);
   }
 
-  /// Create a copy of Loan
+  /// Create a copy of LoanEntity
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $WalletCopyWith<$Res>? get wallet {
+  $WalletEntityCopyWith<$Res>? get wallet {
     if (_value.wallet == null) {
       return null;
     }
 
-    return $WalletCopyWith<$Res>(_value.wallet!, (value) {
+    return $WalletEntityCopyWith<$Res>(_value.wallet!, (value) {
       return _then(_value.copyWith(wallet: value) as $Val);
     });
   }
 }
 
 /// @nodoc
-abstract class _$$LoanImplCopyWith<$Res> implements $LoanCopyWith<$Res> {
-  factory _$$LoanImplCopyWith(
-          _$LoanImpl value, $Res Function(_$LoanImpl) then) =
-      __$$LoanImplCopyWithImpl<$Res>;
+abstract class _$$LoanEntityImplCopyWith<$Res>
+    implements $LoanEntityCopyWith<$Res> {
+  factory _$$LoanEntityImplCopyWith(
+          _$LoanEntityImpl value, $Res Function(_$LoanEntityImpl) then) =
+      __$$LoanEntityImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
-      {String name,
+      {int id,
+      String name,
       int amount,
-      String date,
-      String type,
-      int? id,
-      @JsonKey(includeToJson: false, includeIfNull: false, name: 'wallet')
-      Wallet? wallet,
-      @JsonKey(name: 'wallet_id') int? walletId,
+      LoanType type,
+      DateTime date,
+      WalletEntity? wallet,
+      int? walletId,
       String? description});
 
   @override
-  $WalletCopyWith<$Res>? get wallet;
+  $WalletEntityCopyWith<$Res>? get wallet;
 }
 
 /// @nodoc
-class __$$LoanImplCopyWithImpl<$Res>
-    extends _$LoanCopyWithImpl<$Res, _$LoanImpl>
-    implements _$$LoanImplCopyWith<$Res> {
-  __$$LoanImplCopyWithImpl(_$LoanImpl _value, $Res Function(_$LoanImpl) _then)
+class __$$LoanEntityImplCopyWithImpl<$Res>
+    extends _$LoanEntityCopyWithImpl<$Res, _$LoanEntityImpl>
+    implements _$$LoanEntityImplCopyWith<$Res> {
+  __$$LoanEntityImplCopyWithImpl(
+      _$LoanEntityImpl _value, $Res Function(_$LoanEntityImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of Loan
+  /// Create a copy of LoanEntity
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? name = null,
     Object? amount = null,
-    Object? date = null,
     Object? type = null,
-    Object? id = freezed,
+    Object? date = null,
     Object? wallet = freezed,
     Object? walletId = freezed,
     Object? description = freezed,
   }) {
-    return _then(_$LoanImpl(
+    return _then(_$LoanEntityImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -186,22 +183,18 @@ class __$$LoanImplCopyWithImpl<$Res>
           ? _value.amount
           : amount // ignore: cast_nullable_to_non_nullable
               as int,
-      date: null == date
-          ? _value.date
-          : date // ignore: cast_nullable_to_non_nullable
-              as String,
       type: null == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
-              as String,
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as LoanType,
+      date: null == date
+          ? _value.date
+          : date // ignore: cast_nullable_to_non_nullable
+              as DateTime,
       wallet: freezed == wallet
           ? _value.wallet
           : wallet // ignore: cast_nullable_to_non_nullable
-              as Wallet?,
+              as WalletEntity?,
       walletId: freezed == walletId
           ? _value.walletId
           : walletId // ignore: cast_nullable_to_non_nullable
@@ -215,38 +208,33 @@ class __$$LoanImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-@JsonSerializable()
-class _$LoanImpl implements _Loan {
-  const _$LoanImpl(
-      {required this.name,
+
+class _$LoanEntityImpl implements _LoanEntity {
+  const _$LoanEntityImpl(
+      {required this.id,
+      required this.name,
       required this.amount,
-      required this.date,
       required this.type,
-      this.id = null,
-      @JsonKey(includeToJson: false, includeIfNull: false, name: 'wallet')
+      required this.date,
       this.wallet = null,
-      @JsonKey(name: 'wallet_id') this.walletId = null,
+      this.walletId = null,
       this.description = null});
 
-  factory _$LoanImpl.fromJson(Map<String, dynamic> json) =>
-      _$$LoanImplFromJson(json);
-
+  @override
+  final int id;
   @override
   final String name;
   @override
   final int amount;
   @override
-  final String date;
+  final LoanType type;
   @override
-  final String type;
+  final DateTime date;
   @override
   @JsonKey()
-  final int? id;
+  final WalletEntity? wallet;
   @override
-  @JsonKey(includeToJson: false, includeIfNull: false, name: 'wallet')
-  final Wallet? wallet;
-  @override
-  @JsonKey(name: 'wallet_id')
+  @JsonKey()
   final int? walletId;
   @override
   @JsonKey()
@@ -254,19 +242,19 @@ class _$LoanImpl implements _Loan {
 
   @override
   String toString() {
-    return 'Loan(name: $name, amount: $amount, date: $date, type: $type, id: $id, wallet: $wallet, walletId: $walletId, description: $description)';
+    return 'LoanEntity(id: $id, name: $name, amount: $amount, type: $type, date: $date, wallet: $wallet, walletId: $walletId, description: $description)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$LoanImpl &&
+            other is _$LoanEntityImpl &&
+            (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.amount, amount) || other.amount == amount) &&
-            (identical(other.date, date) || other.date == date) &&
             (identical(other.type, type) || other.type == type) &&
-            (identical(other.id, id) || other.id == id) &&
+            (identical(other.date, date) || other.date == date) &&
             (identical(other.wallet, wallet) || other.wallet == wallet) &&
             (identical(other.walletId, walletId) ||
                 other.walletId == walletId) &&
@@ -274,64 +262,51 @@ class _$LoanImpl implements _Loan {
                 other.description == description));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType, name, amount, date, type, id, wallet, walletId, description);
+      runtimeType, id, name, amount, type, date, wallet, walletId, description);
 
-  /// Create a copy of Loan
+  /// Create a copy of LoanEntity
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$LoanImplCopyWith<_$LoanImpl> get copyWith =>
-      __$$LoanImplCopyWithImpl<_$LoanImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$LoanImplToJson(
-      this,
-    );
-  }
+  _$$LoanEntityImplCopyWith<_$LoanEntityImpl> get copyWith =>
+      __$$LoanEntityImplCopyWithImpl<_$LoanEntityImpl>(this, _$identity);
 }
 
-abstract class _Loan implements Loan {
-  const factory _Loan(
-      {required final String name,
+abstract class _LoanEntity implements LoanEntity {
+  const factory _LoanEntity(
+      {required final int id,
+      required final String name,
       required final int amount,
-      required final String date,
-      required final String type,
-      final int? id,
-      @JsonKey(includeToJson: false, includeIfNull: false, name: 'wallet')
-      final Wallet? wallet,
-      @JsonKey(name: 'wallet_id') final int? walletId,
-      final String? description}) = _$LoanImpl;
+      required final LoanType type,
+      required final DateTime date,
+      final WalletEntity? wallet,
+      final int? walletId,
+      final String? description}) = _$LoanEntityImpl;
 
-  factory _Loan.fromJson(Map<String, dynamic> json) = _$LoanImpl.fromJson;
-
+  @override
+  int get id;
   @override
   String get name;
   @override
   int get amount;
   @override
-  String get date;
+  LoanType get type;
   @override
-  String get type;
+  DateTime get date;
   @override
-  int? get id;
+  WalletEntity? get wallet;
   @override
-  @JsonKey(includeToJson: false, includeIfNull: false, name: 'wallet')
-  Wallet? get wallet;
-  @override
-  @JsonKey(name: 'wallet_id')
   int? get walletId;
   @override
   String? get description;
 
-  /// Create a copy of Loan
+  /// Create a copy of LoanEntity
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$LoanImplCopyWith<_$LoanImpl> get copyWith =>
+  _$$LoanEntityImplCopyWith<_$LoanEntityImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -1,9 +1,9 @@
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:yanmii_wallet/src/common/domain/entities/transaction_entity.dart';
+import 'package:yanmii_wallet/src/common/domain/entities/loan_entity.dart';
 import 'package:yanmii_wallet/src/features/loans/application/loans_service.dart';
 
-final transactionProvider = Provider.family<TransactionEntity?, int>((ref, id) {
-  final transactions = ref.watch(transactionsServiceProvider);
-  return transactions.firstWhereOrNull((t) => t.id == id);
+final loansProvider = Provider.family<LoanEntity?, int>((ref, id) {
+  final loans = ref.watch(loansServiceProvider);
+  return loans.firstWhereOrNull((t) => t.id == id);
 });

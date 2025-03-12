@@ -7,23 +7,25 @@ part of 'loan.dart';
 // **************************************************************************
 
 _$LoanImpl _$$LoanImplFromJson(Map<String, dynamic> json) => _$LoanImpl(
-      id: json['id'] as String,
       name: json['name'] as String,
-      amount: (json['amount'] as num).toDouble(),
-      date: DateTime.parse(json['date'] as String),
+      amount: (json['amount'] as num).toInt(),
+      date: json['date'] as String,
+      type: json['type'] as String,
+      id: (json['id'] as num?)?.toInt() ?? null,
       wallet: json['wallet'] == null
           ? null
           : Wallet.fromJson(json['wallet'] as Map<String, dynamic>),
-      walletId: (json['walletId'] as num?)?.toInt() ?? null,
+      walletId: (json['wallet_id'] as num?)?.toInt() ?? null,
       description: json['description'] as String? ?? null,
     );
 
 Map<String, dynamic> _$$LoanImplToJson(_$LoanImpl instance) =>
     <String, dynamic>{
-      'id': instance.id,
       'name': instance.name,
       'amount': instance.amount,
-      'date': instance.date.toIso8601String(),
-      'walletId': instance.walletId,
+      'date': instance.date,
+      'type': instance.type,
+      'id': instance.id,
+      'wallet_id': instance.walletId,
       'description': instance.description,
     };

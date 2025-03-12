@@ -7,14 +7,15 @@ part 'loan.g.dart';
 @freezed
 class Loan with _$Loan {
   const factory Loan({
-    required String id,
     required String name,
-    required double amount,
-    required DateTime date,
-    @JsonKey(includeToJson: false, includeIfNull: false)
+    required int amount,
+    required String date,
+    required String type,
+    @Default(null) int? id,
+    @JsonKey(includeToJson: false, includeIfNull: false, name: 'wallet')
     @Default(null)
     Wallet? wallet,
-    @Default(null) int? walletId,
+    @Default(null) @JsonKey(name: 'wallet_id') int? walletId,
     @Default(null) String? description,
   }) = _Loan;
 

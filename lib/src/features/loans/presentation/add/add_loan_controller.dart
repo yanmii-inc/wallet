@@ -1,40 +1,30 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:formz/formz.dart';
-import 'package:yanmii_wallet/src/common/data/models/type.dart';
-import 'package:yanmii_wallet/src/common/domain/entities/category_entity.dart';
+import 'package:yanmii_wallet/src/common/domain/entities/loan_entity.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/wallet_entity.dart';
 import 'package:yanmii_wallet/src/features/loans/application/loans_service.dart';
 import 'package:yanmii_wallet/src/features/loans/presentation/add/add_loan_state.dart';
 import 'package:yanmii_wallet/src/features/wallet/application/wallet_service.dart';
 
-class AddTransactionController extends StateNotifier<AddTransactionState> {
-  AddTransactionController(this.ref) : super(const AddTransactionState());
+class AddLoanController extends StateNotifier<AddLoanState> {
+  AddLoanController(this.ref) : super(const AddLoanState());
 
   final Ref ref;
 
   LoansService get _transactionService =>
-      ref.read(transactionsServiceProvider.notifier);
+      ref.read(loansServiceProvider.notifier);
 
   void _validate() {
-    final isStandardTransaction = state.type != TransactionType.transfer &&
-        state.date != null &&
-        state.wallet != null &&
-        state.name.isNotEmpty &&
-        state.amount > 0;
+    final isValid =
+        state.type != null && state.name.isNotEmpty && state.amount > 0;
 
-    final isTransferTransaction = state.type == TransactionType.transfer &&
-        state.date != null &&
-        state.wallet != null &&
-        state.destWallet != null &&
-        state.wallet?.id != state.destWallet?.id &&
-        state.amount > 0;
+    state = state.copyWith(isFormValid: isValid);
+  }
 
-    state = state.copyWith(
-      isFormValid: isStandardTransaction || isTransferTransaction,
-    );
+  void setType(LoanType value) {
+    state = state.copyWith(type: value);
+    _validate();
   }
 
   void setDate(DateTime value) {
@@ -57,14 +47,6 @@ class AddTransactionController extends StateNotifier<AddTransactionState> {
 
   void setWallet(WalletEntity value) {
     state = state.copyWith(wallet: value);
-    _setTransactionName();
-    _validate();
-  }
-
-  void setDestWallet(WalletEntity value) {
-    state = state.copyWith(destWallet: value);
-
-    _setTransactionName();
     _validate();
   }
 
@@ -78,11 +60,6 @@ class AddTransactionController extends StateNotifier<AddTransactionState> {
     _validate();
   }
 
-  void setCategory(CategoryEntity value) {
-    state = state.copyWith(category: value);
-    _validate();
-  }
-
   void setDescription(String value) {
     state = state.copyWith(description: value);
     _validate();
@@ -91,8 +68,8 @@ class AddTransactionController extends StateNotifier<AddTransactionState> {
   Future<void> save() async {
     state = state.copyWith(submissionStatus: FormzSubmissionStatus.inProgress);
 
-    if (state.wallet == null) {
-      throw Exception('Wallet not selected');
+    if (state.type == null) {
+      throw Exception('Type not selected');
     }
 
     try {
@@ -101,10 +78,8 @@ class AddTransactionController extends StateNotifier<AddTransactionState> {
         title: state.name,
         date: state.date ?? DateTime.now(),
         description: state.description,
-        wallet: state.wallet!,
-        destWallet: state.destWallet,
-        category: state.category,
-        type: state.type,
+        type: state.type!,
+        wallet: state.wallet,
       );
       state = state.copyWith(submissionStatus: FormzSubmissionStatus.success);
     } catch (e) {
@@ -112,47 +87,15 @@ class AddTransactionController extends StateNotifier<AddTransactionState> {
     }
   }
 
-  void setType(TransactionType type) {
-    state = state.copyWith(type: type);
-    _validate();
-  }
-
   Future<void> init() async {
     await ref.read(walletServiceProvider.notifier).getWallets();
 
     final walletOptions = ref.watch(walletServiceProvider);
-    state = state.copyWith(
-      walletOptions: walletOptions,
-      wallet: walletOptions.value?.first,
-    );
-  }
-
-  void _setTransactionName() {
-    if (state.wallet != null && state.destWallet != null) {
-      final transactionName =
-          'Transfer from ${state.wallet!.name} to ${state.destWallet!.name}';
-      state = state.copyWith(name: transactionName);
-    }
-  }
-
-  Future<void> searchName(String value) async {
-    final names =
-        await ref.read(transactionsServiceProvider.notifier).searchName(value);
-    state = state.copyWith(
-      suggestedNames: AsyncData(names),
-    );
-  }
-
-  void clearNameSuggestion() {
-    state = state.copyWith(suggestedNames: const AsyncData([]));
-  }
-
-  void clearCategorySuggestion() {
-    state = state.copyWith(suggestedCategoryOptions: const AsyncData([]));
+    state = state.copyWith(walletOptions: walletOptions);
   }
 }
 
-final addTransactionControllerProvider = StateNotifierProvider.autoDispose<
-    AddTransactionController, AddTransactionState>(
-  (ref) => AddTransactionController(ref)..init(),
+final addTransactionControllerProvider =
+    StateNotifierProvider.autoDispose<AddLoanController, AddLoanState>(
+  (ref) => AddLoanController(ref)..init(),
 );

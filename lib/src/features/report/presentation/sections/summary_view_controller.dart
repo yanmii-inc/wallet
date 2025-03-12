@@ -32,4 +32,4 @@ class SummaryViewController extends Notifier<SummaryViewState> {
 
 final summaryViewControllerProvider =
     NotifierProvider<SummaryViewController, SummaryViewState>(
-        SummaryViewController.new);
+        SummaryViewController.new,);

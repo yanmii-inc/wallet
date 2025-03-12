@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yanmii_wallet/src/common/data/models/type.dart';
+import 'package:yanmii_wallet/src/common/domain/entities/loan_entity.dart';
 import 'package:yanmii_wallet/src/common/domain/enums/auth_status.dart';
 import 'package:yanmii_wallet/src/common/services/app_service.dart';
 import 'package:yanmii_wallet/src/common/services/auth_service.dart';
 import 'package:yanmii_wallet/src/features/auth/login/login_screen.dart';
 import 'package:yanmii_wallet/src/features/auth/logout/logout_button.dart';
 import 'package:yanmii_wallet/src/features/auth/register/register_screen.dart';
+import 'package:yanmii_wallet/src/features/loans/presentation/add/add_loan_screen.dart';
+import 'package:yanmii_wallet/src/features/loans/presentation/edit/edit_loan_screen.dart';
+import 'package:yanmii_wallet/src/features/loans/presentation/loans_screen.dart';
 import 'package:yanmii_wallet/src/features/main/main_screen.dart';
 import 'package:yanmii_wallet/src/features/onboarding/onboarding_screen.dart';
 import 'package:yanmii_wallet/src/features/report/presentation/detailed_report_screen.dart';
@@ -86,11 +90,33 @@ final Provider<GoRouter> goRouterProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(
+        path: '${MainTabRoute.loans.path}/add/:type',
+        name: Routes.loanAdd.name,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          final typeArg = state.pathParameters['type']!;
+          final type = LoanType.values.firstWhere(
+            (element) => element.name == typeArg,
+            orElse: () => LoanType.debt,
+          );
+          return MaterialPage(
+            child: AddLoanScreen(type: type),
+          );
+        },
+      ),
+      GoRoute(
         path: '${MainTabRoute.transactions.path}/edit/:id',
         name: Routes.transactionsEdit.name,
         pageBuilder: (BuildContext context, GoRouterState state) {
           final id = state.pathParameters['id']!;
           return MaterialPage(child: EditTransactionScreen(id: int.parse(id)));
+        },
+      ),
+      GoRoute(
+        path: '${MainTabRoute.loans.path}/edit/:id',
+        name: Routes.loanEdit.name,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          final id = state.pathParameters['id']!;
+          return MaterialPage(child: EditLoanScreen(id: int.parse(id)));
         },
       ),
       ref.watch(_mainRouteProvider),
