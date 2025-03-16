@@ -11,6 +11,9 @@ import 'package:yanmii_wallet/src/features/auth/logout/logout_button.dart';
 import 'package:yanmii_wallet/src/features/auth/register/register_screen.dart';
 import 'package:yanmii_wallet/src/features/loans/presentation/add/add_loan_screen.dart';
 import 'package:yanmii_wallet/src/features/loans/presentation/edit/edit_loan_screen.dart';
+import 'package:yanmii_wallet/src/features/loans/presentation/list/add/add_payment_screen.dart';
+import 'package:yanmii_wallet/src/features/loans/presentation/list/edit/edit_payment_screen.dart';
+import 'package:yanmii_wallet/src/features/loans/presentation/list/loan_payments_screen.dart';
 import 'package:yanmii_wallet/src/features/loans/presentation/loans_screen.dart';
 import 'package:yanmii_wallet/src/features/main/main_screen.dart';
 import 'package:yanmii_wallet/src/features/onboarding/onboarding_screen.dart';
@@ -117,6 +120,38 @@ final Provider<GoRouter> goRouterProvider = Provider<GoRouter>((ref) {
         pageBuilder: (BuildContext context, GoRouterState state) {
           final id = state.pathParameters['id']!;
           return MaterialPage(child: EditLoanScreen(id: int.parse(id)));
+        },
+      ),
+      GoRoute(
+        path: '${Routes.loanPayments.path}/:loan_id',
+        name: Routes.loanPayments.name,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          final id = state.pathParameters['loan_id']!;
+          return MaterialPage(
+            child: LoanPaymentsSection(loanId: int.parse(id)),
+          );
+        },
+        routes: [
+          GoRoute(
+            path: 'add',
+            name: Routes.loanPaymentAdd.name,
+            pageBuilder: (BuildContext context, GoRouterState state) {
+              final id = state.pathParameters['loan_id']!;
+              return MaterialPage(
+                child: AddPaymebtScreen(loanId: int.parse(id)),
+              );
+            },
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '${Routes.loanPayments.path}/:id/edit',
+        name: Routes.loanPaymentEdit.name,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          final id = state.pathParameters['id']!;
+          return MaterialPage(
+            child: EditPaymentScreen(id: int.parse(id)),
+          );
         },
       ),
       ref.watch(_mainRouteProvider),

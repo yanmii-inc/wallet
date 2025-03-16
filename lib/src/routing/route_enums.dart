@@ -12,7 +12,10 @@ enum Routes {
   transactionHistory,
   loanAdd,
   loanEdit,
-  loanHistory;
+  loanPayments,
+  loanPaymentAdd,
+  loanPaymentEdit,
+  ;
 
   String get path => '/${name.toKebabCase}';
 

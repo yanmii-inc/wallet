@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/loan_entity.dart';
 import 'package:yanmii_wallet/src/features/loans/application/loans_service.dart';
 import 'package:yanmii_wallet/src/features/loans/presentation/list/loan_item_tile.dart';
@@ -94,7 +93,7 @@ class _LoansScreenState extends ConsumerState<LoansScreen> {
             itemCount: data.length,
             itemBuilder: (context, index) {
               final transactionId = data[index].id;
-              return LoanItemTile(transactionId: transactionId);
+              return LoanItemTile(loanId: transactionId);
             },
           );
         },

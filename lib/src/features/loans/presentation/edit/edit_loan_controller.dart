@@ -94,7 +94,7 @@ class EditLoanController extends StateNotifier<EditLoanState> {
     state = state.copyWith(walletOptions: walletOptions);
   }
 
-  Future<void> getTransactionById(int id) async {
+  Future<void> getLoanById(int id) async {
     final loan =
         await ref.watch(loansServiceProvider.notifier).getTransactionById(id);
     state = state.copyWith(

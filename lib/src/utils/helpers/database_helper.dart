@@ -7,7 +7,7 @@ import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
   static const _databaseName = 'pocketlog.db';
-  static const _databaseVersion = 10;
+  static const _databaseVersion = 11;
 
   static Database? _database;
 
@@ -100,6 +100,22 @@ class DatabaseHelper {
           await db.execute('''
             ALTER TABLE loans
             ADD COLUMN type TEXT NOT NULL
+          ''');
+        }
+
+        if (oldVersion < 11) {
+          await db.execute('''
+             CREATE TABLE loan_payments (
+              id INTEGER PRIMARY KEY,
+              date TEXT,
+              wallet_id INTEGER,
+              loan_id INTEGER,
+              amount REAL NOT NULL,
+              note TEXT,
+              created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+              FOREIGN KEY(wallet_id) REFERENCES wallets(id),
+              FOREIGN KEY(loan_id) REFERENCES loans(id)
+            )
           ''');
         }
       },

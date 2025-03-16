@@ -1,7 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yanmii_wallet/src/common/data/mappers/transaction_mapper.dart';
 import 'package:yanmii_wallet/src/common/data/models/local/loan.dart';
+import 'package:yanmii_wallet/src/common/data/models/local/loan_payment.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/loan_entity.dart';
+import 'package:yanmii_wallet/src/common/domain/entities/loan_payment_entity.dart';
 
 class LoanMapper {
   LoanMapper(this.ref);
@@ -20,6 +22,16 @@ class LoanMapper {
           ? mapper.mapWalletToWalletEntity(load.wallet!)
           : null,
       walletId: load.walletId,
+    );
+  }
+
+  LoanPaymentEntity mapLoanPaymentToLoanPaymentEntity(LoanPayment load) {
+    return LoanPaymentEntity(
+      id: load.id,
+      amount: load.amount,
+      date: load.date,
+      walletId: load.walletId,
+      loanId: load.loanId,
     );
   }
 }

@@ -41,7 +41,7 @@ class _AddTransactionScreenState extends ConsumerState<EditLoanScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       ref
           .read(editTransactionControllerProvider(widget.id).notifier)
-          .getTransactionById(widget.id);
+          .getLoanById(widget.id);
     });
   }
 
