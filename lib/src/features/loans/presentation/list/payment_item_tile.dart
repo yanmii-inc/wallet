@@ -7,6 +7,7 @@ import 'package:yanmii_wallet/src/routing/routes.dart';
 import 'package:yanmii_wallet/src/utils/extensions/build_context_extension/theme_extension.dart';
 import 'package:yanmii_wallet/src/utils/extensions/datetime_extension.dart';
 import 'package:yanmii_wallet/src/utils/extensions/num_extension.dart';
+import 'package:yanmii_wallet/src/utils/extensions/string_extension.dart';
 
 class PaymentItemTile extends ConsumerWidget {
   const PaymentItemTile({required this.loanId, super.key});
@@ -58,7 +59,7 @@ class PaymentItemTile extends ConsumerWidget {
           style: context.textTheme.titleSmall!
               .copyWith(fontWeight: FontWeight.bold),
         ),
-        subtitle: Text(payment.note ?? ''),
+        subtitle: Text(payment.note ?? 'No note'.hardcoded),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

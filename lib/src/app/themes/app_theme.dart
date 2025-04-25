@@ -13,7 +13,6 @@ class AppTheme {
   static final ThemeData defaultTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
-    scaffoldBackgroundColor: LightColors.neutralColor[1],
     inputDecorationTheme: const InputDecorationTheme(
       contentPadding: EdgeInsets.symmetric(
         vertical: 16,
@@ -28,21 +27,8 @@ class AppTheme {
     textTheme: lightTypography.toTextTheme(),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
-        backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
-          if (states.contains(WidgetState.disabled)) {
-            return LightColors.neutralColor;
-          }
-          if (states.contains(WidgetState.hovered)) {
-            return LightColors.primaryColor.shade400;
-          } else if (states.contains(WidgetState.focused)) {
-            return LightColors.primaryColor.shade400;
-          }
-          return LightColors.primaryColor;
-        }),
         shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       ),
     ),

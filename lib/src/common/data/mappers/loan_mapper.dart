@@ -32,6 +32,7 @@ class LoanMapper {
       date: load.date,
       walletId: load.walletId,
       loanId: load.loanId,
+      note: load.note,
     );
   }
 }

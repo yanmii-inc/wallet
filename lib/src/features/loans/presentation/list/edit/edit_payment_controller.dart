@@ -60,6 +60,7 @@ class EditPaymentController extends StateNotifier<EditPaymentState> {
 
   void setDescription(String note) {
     state = state.copyWith(note: note);
+    log('note ${state.note}');
     _validate();
   }
 

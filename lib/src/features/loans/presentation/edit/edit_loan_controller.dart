@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:formz/formz.dart';
@@ -19,6 +21,7 @@ class EditLoanController extends StateNotifier<EditLoanState> {
   void _validate() {
     final isValid =
         state.type != null && state.name.isNotEmpty && state.amount > 0;
+    log('validate ${state.type}');
     state = state.copyWith(isFormValid: isValid);
   }
 
@@ -63,10 +66,6 @@ class EditLoanController extends StateNotifier<EditLoanState> {
   Future<void> save() async {
     state = state.copyWith(submissionStatus: FormzSubmissionStatus.inProgress);
 
-    if (state.wallet == null) {
-      throw Exception('Wallet not selected');
-    }
-
     if (state.type == null) {
       throw Exception('Type not selected');
     }
@@ -103,6 +102,7 @@ class EditLoanController extends StateNotifier<EditLoanState> {
       date: loan.date,
       amount: loan.amount,
       name: loan.name,
+      type: loan.type,
       description: loan.description ?? '',
     );
   }

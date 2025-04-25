@@ -108,6 +108,7 @@ class LoansService extends Notifier<List<LoanEntity>> {
     final transactionMapper = ref.read(transactionMapperProvider);
 
     final value = Loan(
+      id: id,
       name: title,
       amount: int.parse(amount),
       date: date.toIso8601String(),

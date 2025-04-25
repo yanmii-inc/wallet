@@ -51,6 +51,7 @@ class LoanRepository {
   Future<DbResult<int>> update(Loan loan) async {
     final db = await _db;
     try {
+      log('update ${loan.toJson()}');
       return DbResult.success(
         await db.update(
           'loans',
@@ -86,6 +87,7 @@ class LoanRepository {
 
   Future<DbResult<int>> updatePayment(LoanPayment payment) async {
     final db = await _db;
+    log('updatePayment ${payment.toJson()}');
     try {
       final result = await db.update(
         'loan_payments',

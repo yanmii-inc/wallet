@@ -49,12 +49,14 @@ class LoanPaymentsService extends Notifier<List<LoanPaymentEntity>> {
     int? walletId,
     String? note,
   }) async {
+    log('note $note');
     final payment = LoanPayment(
       date: date.toIso8601String(),
       walletId: walletId,
       amount: amount,
       id: paymentId,
       loanId: loanId,
+      note: note,
     );
     final result = await _loanRepository.updatePayment(payment);
     return result.when(

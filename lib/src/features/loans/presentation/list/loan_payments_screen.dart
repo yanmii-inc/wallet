@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:yanmii_wallet/src/common/components/button.dart';
 import 'package:yanmii_wallet/src/features/loans/application/loans_service.dart';
 import 'package:yanmii_wallet/src/features/loans/presentation/list/loan_payments_controller.dart';
 import 'package:yanmii_wallet/src/features/loans/presentation/list/payment_item_tile.dart';
 import 'package:yanmii_wallet/src/routing/routes.dart';
+import 'package:yanmii_wallet/src/utils/extensions/string_extension.dart';
 
 class LoanPaymentsSection extends ConsumerStatefulWidget {
   const LoanPaymentsSection({required this.loanId, super.key});
@@ -42,7 +44,24 @@ class _LoansListSectionState extends ConsumerState<LoanPaymentsSection> {
     });
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Loan Payments')),
+      appBar: AppBar(
+        title: const Text('Loan Payments'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              context.pushNamed(
+                Routes.loanEdit.name,
+                pathParameters: {'id': widget.loanId.toString()},
+              );
+            },
+            icon: const Icon(Icons.edit),
+          ),
+          IconButton(
+            onPressed: () => _showDeleteConfirmationDialog(context),
+            icon: const Icon(Icons.delete),
+          )
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () => context.pushNamed(
@@ -85,5 +104,37 @@ class _LoansListSectionState extends ConsumerState<LoanPaymentsSection> {
         );
       });
     }
+  }
+
+  Future<bool?> _showDeleteConfirmationDialog(BuildContext context) async {
+    return showModalBottomSheet<bool>(
+      context: context,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Delete this loan?'.hardcoded),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  TextButton(
+                    onPressed: () => context.pop(false),
+                    child: Text('Cancel'.hardcoded),
+                  ),
+                  CommonButton(
+                    'Delete'.hardcoded,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                    onPressed: () => context.pop(true),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

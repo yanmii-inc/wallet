@@ -10,6 +10,8 @@ class CommonButton extends StatelessWidget {
     double? height,
     bool? isLoading,
     double? fontSize,
+    Color? backgroundColor,
+    Color? textColor,
     bool? isDisabled,
   }) =>
       CommonButton._(
@@ -20,6 +22,8 @@ class CommonButton extends StatelessWidget {
         isDisabled: isDisabled ?? false,
         isLoading: isLoading ?? false,
         fontSize: fontSize,
+        backgroundColor: backgroundColor,
+        textColor: textColor,
       );
 
   const CommonButton._(
