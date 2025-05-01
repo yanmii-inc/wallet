@@ -7,7 +7,7 @@ import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
   static const _databaseName = 'pocketlog.db';
-  static const _databaseVersion = 11;
+  static const _databaseVersion = 12;
 
   static Database? _database;
 
@@ -16,6 +16,19 @@ class DatabaseHelper {
 
     _database = await _initDatabase();
     return _database!;
+  }
+
+  // Use this method to force recreate the database if needed
+  Future<void> resetDatabase() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final path = join(directory.path, _databaseName);
+
+    log('Deleting database at: $path');
+    await deleteDatabase(path);
+    _database = null;
+
+    // Reinitialize the database
+    _database = await _initDatabase();
   }
 
   Future<Database> _initDatabase() async {
@@ -60,6 +73,44 @@ class DatabaseHelper {
             label TEXT NOT NULL
           )
         ''');
+
+        await db.execute('''
+          CREATE TABLE custom_recaps (
+            id INTEGER PRIMARY KEY,
+            title TEXT NOT NULL,
+            start_date TEXT NOT NULL,
+            end_date TEXT NOT NULL 
+          )
+        ''');
+
+        await db.execute('''
+          CREATE TABLE loans (
+            id INTEGER PRIMARY KEY,
+            date TEXT,
+            wallet_id INTEGER,
+            amount REAL NOT NULL,
+            name REAL NOT NULL,
+            description TEXT,
+            type TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(wallet_id) REFERENCES wallets(id)
+          )
+        ''');
+
+        await db.execute('''
+          CREATE TABLE loan_payments (
+            id INTEGER PRIMARY KEY,
+            date TEXT,
+            wallet_id INTEGER,
+            loan_id INTEGER,
+            amount REAL NOT NULL,
+            note TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(wallet_id) REFERENCES wallets(id),
+            FOREIGN KEY(loan_id) REFERENCES loans(id)
+          )
+        ''');
+
         await _seedDatabase(db);
       },
       onUpgrade: (db, oldVersion, newVersion) async {
@@ -117,6 +168,24 @@ class DatabaseHelper {
               FOREIGN KEY(loan_id) REFERENCES loans(id)
             )
           ''');
+        }
+
+        if (oldVersion < 12) {
+          // Check if custom_recaps table exists
+          final tables = await db.rawQuery(
+              "SELECT name FROM sqlite_master WHERE type='table' AND name='custom_recaps';");
+
+          if (tables.isEmpty) {
+            // Create custom_recaps table if it doesn't exist
+            await db.execute('''
+              CREATE TABLE IF NOT EXISTS custom_recaps (
+                id INTEGER PRIMARY KEY,
+                title TEXT NOT NULL,
+                start_date TEXT NOT NULL,
+                end_date TEXT NOT NULL 
+              )
+            ''');
+          }
         }
       },
     );

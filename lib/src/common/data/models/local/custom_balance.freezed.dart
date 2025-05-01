@@ -21,9 +21,9 @@ CustomBalance _$CustomBalanceFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$CustomBalance {
   @JsonKey(name: 'id')
-  int get id => throw _privateConstructorUsedError;
+  int? get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'title')
-  String get title => throw _privateConstructorUsedError;
+  String? get title => throw _privateConstructorUsedError;
   @JsonKey(name: 'start_date')
   DateTime get startDate => throw _privateConstructorUsedError;
   @JsonKey(name: 'end_date')
@@ -52,8 +52,8 @@ abstract class $CustomBalanceCopyWith<$Res> {
       _$CustomBalanceCopyWithImpl<$Res, CustomBalance>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'id') int id,
-      @JsonKey(name: 'title') String title,
+      {@JsonKey(name: 'id') int? id,
+      @JsonKey(name: 'title') String? title,
       @JsonKey(name: 'start_date') DateTime startDate,
       @JsonKey(name: 'end_date') DateTime endDate,
       @JsonKey(name: 'total_expense') int totalExpense,
@@ -76,8 +76,8 @@ class _$CustomBalanceCopyWithImpl<$Res, $Val extends CustomBalance>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? title = null,
+    Object? id = freezed,
+    Object? title = freezed,
     Object? startDate = null,
     Object? endDate = null,
     Object? totalExpense = null,
@@ -85,14 +85,14 @@ class _$CustomBalanceCopyWithImpl<$Res, $Val extends CustomBalance>
     Object? balance = null,
   }) {
     return _then(_value.copyWith(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int,
-      title: null == title
+              as int?,
+      title: freezed == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       startDate: null == startDate
           ? _value.startDate
           : startDate // ignore: cast_nullable_to_non_nullable
@@ -126,8 +126,8 @@ abstract class _$$CustomBalanceImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'id') int id,
-      @JsonKey(name: 'title') String title,
+      {@JsonKey(name: 'id') int? id,
+      @JsonKey(name: 'title') String? title,
       @JsonKey(name: 'start_date') DateTime startDate,
       @JsonKey(name: 'end_date') DateTime endDate,
       @JsonKey(name: 'total_expense') int totalExpense,
@@ -148,8 +148,8 @@ class __$$CustomBalanceImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? title = null,
+    Object? id = freezed,
+    Object? title = freezed,
     Object? startDate = null,
     Object? endDate = null,
     Object? totalExpense = null,
@@ -157,14 +157,14 @@ class __$$CustomBalanceImplCopyWithImpl<$Res>
     Object? balance = null,
   }) {
     return _then(_$CustomBalanceImpl(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int,
-      title: null == title
+              as int?,
+      title: freezed == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       startDate: null == startDate
           ? _value.startDate
           : startDate // ignore: cast_nullable_to_non_nullable
@@ -193,8 +193,8 @@ class __$$CustomBalanceImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$CustomBalanceImpl implements _CustomBalance {
   const _$CustomBalanceImpl(
-      {@JsonKey(name: 'id') required this.id,
-      @JsonKey(name: 'title') required this.title,
+      {@JsonKey(name: 'id') this.id = null,
+      @JsonKey(name: 'title') this.title = null,
       @JsonKey(name: 'start_date') required this.startDate,
       @JsonKey(name: 'end_date') required this.endDate,
       @JsonKey(name: 'total_expense') required this.totalExpense,
@@ -206,10 +206,10 @@ class _$CustomBalanceImpl implements _CustomBalance {
 
   @override
   @JsonKey(name: 'id')
-  final int id;
+  final int? id;
   @override
   @JsonKey(name: 'title')
-  final String title;
+  final String? title;
   @override
   @JsonKey(name: 'start_date')
   final DateTime startDate;
@@ -271,8 +271,8 @@ class _$CustomBalanceImpl implements _CustomBalance {
 
 abstract class _CustomBalance implements CustomBalance {
   const factory _CustomBalance(
-          {@JsonKey(name: 'id') required final int id,
-          @JsonKey(name: 'title') required final String title,
+          {@JsonKey(name: 'id') final int? id,
+          @JsonKey(name: 'title') final String? title,
           @JsonKey(name: 'start_date') required final DateTime startDate,
           @JsonKey(name: 'end_date') required final DateTime endDate,
           @JsonKey(name: 'total_expense') required final int totalExpense,
@@ -285,10 +285,10 @@ abstract class _CustomBalance implements CustomBalance {
 
   @override
   @JsonKey(name: 'id')
-  int get id;
+  int? get id;
   @override
   @JsonKey(name: 'title')
-  String get title;
+  String? get title;
   @override
   @JsonKey(name: 'start_date')
   DateTime get startDate;

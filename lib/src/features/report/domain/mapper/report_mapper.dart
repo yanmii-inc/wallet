@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yanmii_wallet/src/common/data/models/local/category_total.dart';
 import 'package:yanmii_wallet/src/common/data/models/local/custom_balance.dart';
@@ -39,10 +41,11 @@ class ReportMapper {
     final currentDay = now.day;
 
     DateTime startDateTime;
+    final month = balance.month ?? now.month;
     if (currentDay < startDate) {
-      startDateTime = DateTime(now.year, now.month - 1, startDate);
+      startDateTime = DateTime(now.year, month - 1, startDate);
     } else {
-      startDateTime = DateTime(now.year, now.month, startDate);
+      startDateTime = DateTime(now.year, month, startDate);
     }
 
     final endDate = DateTime(
@@ -50,6 +53,9 @@ class ReportMapper {
       startDateTime.month + 1,
       startDate,
     ).subtract(const Duration(days: 1));
+
+    log('endDate $endDate');
+    log('startDateTime $startDate');
     return MonthlyBalanceEntity(
       endDate: endDate,
       startDate: startDateTime,
@@ -63,8 +69,8 @@ class ReportMapper {
 
   CustomBalanceEntity toCustomBalanceEntity(CustomBalance balance) {
     return CustomBalanceEntity(
-      id: balance.id,
-      title: balance.title,
+      id: balance.id ?? 0,
+      title: balance.title ?? '',
       startDate: balance.startDate,
       endDate: balance.endDate,
       balance: balance.balance,

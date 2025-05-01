@@ -134,35 +134,61 @@ class TransactionRepository {
   }) async {
     final db = await _db;
     try {
-      // This will shift all dates to align with our custom month start
+      // Calculate custom month periods based on startDate
       final query = '''
-        WITH adjusted_transactions AS (
+        WITH date_info AS (
           SELECT 
-            *,
-            DATE(date, '-${startDate - 1} days') as adjusted_date
+            date,
+            type,
+            amount,
+            -- Extract the day from the date
+            CAST(STRFTIME('%d', date) AS INT) AS day,
+            -- Extract year and month
+            CAST(STRFTIME('%Y', date) AS INT) AS year,
+            CAST(STRFTIME('%m', date) AS INT) AS month,
+            -- Calculate the custom month period
+            CASE 
+              -- If the day is less than startDate, it belongs to the previous month period
+              WHEN CAST(STRFTIME('%d', date) AS INT) < $startDate THEN 
+                -- Use the current month as the period
+                CAST(STRFTIME('%Y', date) AS INT) * 100 + CAST(STRFTIME('%m', date) AS INT)
+              -- If the day is >= startDate, it belongs to the current month period
+              ELSE 
+                -- Calculate next month (handling December to January transition)
+                CASE 
+                  WHEN CAST(STRFTIME('%m', date) AS INT) = 12 THEN 
+                    (CAST(STRFTIME('%Y', date) AS INT) + 1) * 100 + 1
+                  ELSE 
+                    CAST(STRFTIME('%Y', date) AS INT) * 100 + (CAST(STRFTIME('%m', date) AS INT) + 1)
+                END
+            END AS custom_period
           FROM transactions
         )
         SELECT 
-          CAST(STRFTIME('%Y', adjusted_date) AS INT) AS year,
-          CAST(STRFTIME('%m', adjusted_date) AS INT) AS month, 
+          custom_period / 100 AS year,
+          custom_period % 100 AS month,
           SUM(CASE WHEN type = 'expense' AND amount > 0 THEN amount ELSE 0 END) AS total_expense,
           SUM(CASE WHEN type = 'income' AND amount > 0 THEN amount ELSE 0 END) AS total_income,
           SUM(CASE WHEN type = 'income' AND amount > 0 THEN amount ELSE 0 END) - 
           SUM(CASE WHEN type = 'expense' AND amount > 0 THEN amount ELSE 0 END) AS monthly_balance,
-          (SELECT SUM(CASE WHEN t2.type = 'income' AND t2.amount > 0 THEN t2.amount ELSE 0 END) - 
-                  SUM(CASE WHEN t2.type = 'expense' AND t2.amount > 0 THEN t2.amount ELSE 0 END) 
-           FROM adjusted_transactions t2 
-           WHERE DATE(t2.adjusted_date) <= DATE(t.adjusted_date)) AS running_balance
+          -- For running balance, we need to calculate across all periods up to the current one
+          (SELECT 
+            SUM(CASE WHEN di2.type = 'income' AND di2.amount > 0 THEN di2.amount ELSE 0 END) - 
+            SUM(CASE WHEN di2.type = 'expense' AND di2.amount > 0 THEN di2.amount ELSE 0 END)
+           FROM date_info di2 
+           WHERE di2.custom_period <= di.custom_period
+          ) AS running_balance
         FROM 
-          adjusted_transactions t
+          date_info di
         GROUP BY 
-          STRFTIME('%Y', adjusted_date), 
-          STRFTIME('%m', adjusted_date)
+          custom_period
         ORDER BY 
-          year, month;
+          custom_period;
       ''';
 
       final result = await db.rawQuery(query);
+
+      log('result $result');
       final data = result.map(MonthlyBalance.fromJson).toList();
 
       return DbResult.success(data);
@@ -269,9 +295,7 @@ class TransactionRepository {
     required DateTime endDate,
   }) async {
     final db = await _db;
-    try {
-      final result = await db.rawQuery(
-        '''
+    final query = '''
         SELECT 
           CAST(STRFTIME('%Y', t.date) AS INT) AS year,
           CAST(STRFTIME('%m', t.date) AS INT) AS month, 
@@ -280,16 +304,15 @@ class TransactionRepository {
           SUM(CASE WHEN t.type = 'income' AND t.amount > 0 THEN t.amount ELSE 0 END) - 
           SUM(CASE WHEN t.type = 'expense' AND t.amount > 0 THEN t.amount ELSE 0 END) AS balance,
           (SELECT SUM(CASE WHEN t2.type = 'income' AND t2.amount > 0 THEN t2.amount ELSE 0 END) - 
-                  SUM(CASE WHEN t2.type = 'expense' AND t2.amount > 0 THEN t2.amount ELSE 0 END) 
+                  SUM(CASE WHEN t2.type = 'expense' AND t2.amount > 0 THEN t2.amount ELSE 0 END)
           FROM transactions t2 
           WHERE STRFTIME('%Y', t2.date) <= STRFTIME('%Y', t.date) AND 
                 STRFTIME('%m', t2.date) <= STRFTIME('%m', t.date)) AS running_balance,
-          cr.*
+                
+          '$startDate' AS start_date,
+          '$endDate' AS end_date
         FROM 
           transactions t
-        INNER JOIN custom_recaps cr
-          ON t.date >= cr.start_date 
-          AND t.date <= cr.end_date
         WHERE 
           t.date >= ? AND t.date <= ?
         GROUP BY 
@@ -297,9 +320,15 @@ class TransactionRepository {
           STRFTIME('%m', t.date)
         ORDER BY 
           year, month;
-      ''',
+      ''';
+    log('query $query \n ${startDate.toIso8601String()} ${endDate.toIso8601String()}');
+    try {
+      final result = await db.rawQuery(
+        query,
         [startDate.toIso8601String(), endDate.toIso8601String()],
       );
+
+      log('result.first ${result.first}');
 
       final data = CustomBalance.fromJson(result.first);
 

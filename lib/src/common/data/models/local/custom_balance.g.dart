@@ -8,8 +8,8 @@ part of 'custom_balance.dart';
 
 _$CustomBalanceImpl _$$CustomBalanceImplFromJson(Map<String, dynamic> json) =>
     _$CustomBalanceImpl(
-      id: (json['id'] as num).toInt(),
-      title: json['title'] as String,
+      id: (json['id'] as num?)?.toInt() ?? null,
+      title: json['title'] as String? ?? null,
       startDate: DateTime.parse(json['start_date'] as String),
       endDate: DateTime.parse(json['end_date'] as String),
       totalExpense: (json['total_expense'] as num).toInt(),
