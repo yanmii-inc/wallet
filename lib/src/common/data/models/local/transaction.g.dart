@@ -17,6 +17,10 @@ _$TransactionImpl _$$TransactionImplFromJson(Map<String, dynamic> json) =>
       walletId: (json['wallet_id'] as num?)?.toInt() ?? null,
       destWalletId: (json['dest_wallet_id'] as num?)?.toInt() ?? null,
       categoryId: (json['category_id'] as num?)?.toInt() ?? null,
+      cloudId: json['cloud_id'] as String? ?? null,
+      updatedAt: json['updated_at'] == null
+          ? null
+          : DateTime.parse(json['updated_at'] as String),
       wallet: json['wallet'] == null
           ? null
           : Wallet.fromJson(json['wallet'] as Map<String, dynamic>),
@@ -39,4 +43,5 @@ Map<String, dynamic> _$$TransactionImplToJson(_$TransactionImpl instance) =>
       'wallet_id': instance.walletId,
       'dest_wallet_id': instance.destWalletId,
       'category_id': instance.categoryId,
+      'updated_at': instance.updatedAt?.toIso8601String(),
     };

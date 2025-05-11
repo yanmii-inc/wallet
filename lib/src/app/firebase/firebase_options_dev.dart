@@ -50,19 +50,19 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDNVnL6aWQIYiy9kLtO3S0gpb6wruLIKn0',
-    appId: '1:513134167003:android:faee314efd98d57fb59dfe',
-    messagingSenderId: '513134167003',
-    projectId: 'kesanapp-dev',
-    storageBucket: 'kesanapp-dev.appspot.com',
+    apiKey: 'AIzaSyCRg2O8TggRfGNpQaUcRKdnSzGW2_RNJqc',
+    appId: '1:1031166473986:android:64be659c5709e78e25f41b',
+    messagingSenderId: '1031166473986',
+    projectId: 'yanmii-wallet-dev',
+    storageBucket: 'yanmii-wallet-dev.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBU9nKfepaak_MBF2OGwL8RmGXJrfKpkyk',
-    appId: '1:513134167003:ios:3295206b06684355b59dfe',
-    messagingSenderId: '513134167003',
-    projectId: 'kesanapp-dev',
-    storageBucket: 'kesanapp-dev.appspot.com',
-    iosBundleId: 'com.kesan.ios.dev',
+    apiKey: 'AIzaSyDECEF72Y-1L5KGLgapa02glLVScxvxHcU',
+    appId: '1:1031166473986:ios:b2fae6204f3fc33c25f41b',
+    messagingSenderId: '1031166473986',
+    projectId: 'yanmii-wallet-dev',
+    storageBucket: 'yanmii-wallet-dev.firebasestorage.app',
+    iosBundleId: 'com.yanmii.wallet.dev',
   );
 }

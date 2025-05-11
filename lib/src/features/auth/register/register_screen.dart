@@ -43,7 +43,7 @@ class RegisterHeaderSection extends StatelessWidget {
     return Align(
       alignment: Alignment.centerRight,
       child: InkWell(
-        onTap: () => context.goNamed(Routes.login.name),
+        onTap: () => context.goNamed(Routes.signIn.name),
         child: const Text('Login'),
       ),
     );
@@ -67,16 +67,29 @@ class _RegisterInputSectionState extends ConsumerState<RegisterInputSection> {
       TextEditingController();
   final TextEditingController _password2EditingController =
       TextEditingController();
+  final TextEditingController _fullNameEditingController =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     final emailForm = ref.watch(registerControllerProvider).email;
     final passwordForm = ref.watch(registerControllerProvider).password;
     final password2Form = ref.watch(registerControllerProvider).password2;
+    final fullNameForm = ref.watch(registerControllerProvider).fullName;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        CommonTextfield(
+          controller: _fullNameEditingController,
+          hintText: 'Full Name',
+          label: 'Full Name',
+          onChanged: (value) => ref
+              .read(registerControllerProvider.notifier)
+              .updateFullName(value),
+          validator: (value) => fullNameForm.error?.message,
+        ),
+        Gap.h4,
         CommonTextfield(
           controller: _emailEditingController,
           hintText: tr(LocaleKeys.email),
@@ -119,13 +132,10 @@ class _RegisterInputSectionState extends ConsumerState<RegisterInputSection> {
         Gap.h24,
         CommonButton(
           'Register',
-          isDisabled: ref.watch(registerControllerProvider).isValid,
+          isDisabled: !ref.watch(registerControllerProvider).isValid,
           isLoading: ref.watch(registerControllerProvider).value.isLoading,
-          onPressed: () => ref.read(registerControllerProvider.notifier).submit(
-                emailForm.value,
-                passwordForm.value,
-                password2Form.value,
-              ),
+          onPressed: () =>
+              ref.read(registerControllerProvider.notifier).submit(),
         ),
       ],
     );

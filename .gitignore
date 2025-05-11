@@ -135,3 +135,4 @@ app.*.symbols
 
 .fvm/*
 !.fvm/fvm_config.json
+config.json

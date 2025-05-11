@@ -15,7 +15,7 @@ class CategoryService extends StateNotifier<AsyncValue<List<CategoryEntity>>> {
     required String name,
   }) async {
     final category = Category(label: name);
-    final result = await _categoryRepository.createCategory(category);
+    final result = await _categoryRepository.insert(category);
 
     result.when(
       success: (data) {

@@ -4,14 +4,17 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:yanmii_wallet/src/app/constants/constants.dart';
 import 'package:yanmii_wallet/src/app/constants/keys/storage_key.dart';
+import 'package:yanmii_wallet/src/common/data/models/local/transaction.dart';
+import 'package:yanmii_wallet/src/common/data/models/local/transaction_adapter.dart';
 import 'package:yanmii_wallet/src/common/domain/entities/user.dart';
 
 class HiveDB {
   static Future<void> init() async {
     await Hive.initFlutter();
 
-    Hive.registerAdapter(UserAdapter());
-    // TODO: register more entity Adapters here
+    Hive
+      ..registerAdapter(UserAdapter())
+      ..registerAdapter(TransactionAdapter());
 
     await Hive.openBox<User>(HiveKey.userBox);
     await Hive.openBox<String?>(HiveKey.userTokenBox);
@@ -19,6 +22,7 @@ class HiveDB {
     await Hive.openBox<bool>(HiveKey.isOnboardedBox);
     await Hive.openBox<bool>(HiveKey.isInitializedBox);
     await Hive.openBox<String>(HiveKey.themeBox);
+    await Hive.openBox<Transaction>(HiveKey.transactionBox);
 
     const storage = FlutterSecureStorage();
     final containsEncryptionKey = await storage.read(key: StorageKey.secureKey);

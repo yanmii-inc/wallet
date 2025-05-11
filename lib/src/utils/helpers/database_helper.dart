@@ -7,7 +7,7 @@ import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
   static const _databaseName = 'pocketlog.db';
-  static const _databaseVersion = 12;
+  static const _databaseVersion = 3;
 
   static Database? _database;
 
@@ -18,17 +18,77 @@ class DatabaseHelper {
     return _database!;
   }
 
-  // Use this method to force recreate the database if needed
-  Future<void> resetDatabase() async {
-    final directory = await getApplicationDocumentsDirectory();
-    final path = join(directory.path, _databaseName);
+  Future<void> _createTables(Database db) async {
+    await db.execute('''
+      CREATE TABLE transactions (
+        id INTEGER PRIMARY KEY,
+        date TEXT,
+        wallet_id INTEGER,
+        dest_wallet_id INTEGER,
+        amount REAL NOT NULL,
+        title TEXT NOT NULL,
+        category_id INTEGER,
+        description TEXT,
+        type TEXT,
+        cloud_id TEXT,
+        updated_at TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(wallet_id) REFERENCES wallets(id),
+        FOREIGN KEY(category_id) REFERENCES categories(id)
+      );
+    ''');
 
-    log('Deleting database at: $path');
-    await deleteDatabase(path);
-    _database = null;
+    await db.execute('''
+      CREATE TABLE wallets (
+        id INTEGER PRIMARY KEY,
+        name TEXT NOT NULL,
+        logo TEXT
+      );
+    ''');
 
-    // Reinitialize the database
-    _database = await _initDatabase();
+    await db.execute('''
+      CREATE TABLE categories (
+        id INTEGER PRIMARY KEY,
+        label TEXT NOT NULL
+      );
+    ''');
+
+    await db.execute('''
+      CREATE TABLE custom_recaps (
+        id INTEGER PRIMARY KEY,
+        title TEXT NOT NULL,
+        start_date TEXT NOT NULL,
+        end_date TEXT NOT NULL 
+      );
+    ''');
+
+    await db.execute('''
+      CREATE TABLE loans (
+        id INTEGER PRIMARY KEY,
+        date TEXT,
+        wallet_id INTEGER,
+        amount REAL NOT NULL,
+        name TEXT NOT NULL,
+        description TEXT,
+        type TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(wallet_id) REFERENCES wallets(id)
+      );
+    ''');
+
+    await db.execute('''
+      CREATE TABLE loan_payments (
+        id INTEGER PRIMARY KEY,
+        date TEXT,
+        wallet_id INTEGER,
+        loan_id INTEGER,
+        amount REAL NOT NULL,
+        note TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(wallet_id) REFERENCES wallets(id),
+        FOREIGN KEY(loan_id) REFERENCES loans(id)
+      );
+    ''');
   }
 
   Future<Database> _initDatabase() async {
@@ -41,151 +101,19 @@ class DatabaseHelper {
       path,
       version: _databaseVersion,
       onCreate: (db, version) async {
-        await db.execute('''
-          CREATE TABLE transactions (
-            id INTEGER PRIMARY KEY,
-            date TEXT,
-            wallet_id INTEGER,
-            dest_wallet_id INTEGER,
-            amount REAL NOT NULL,
-            title REAL NOT NULL,
-            category_id INTEGER,
-            description TEXT,
-            type TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY(wallet_id) REFERENCES wallets(id),
-            FOREIGN KEY(category_id) REFERENCES categories(id)
-          );
-
-        ''');
-
-        await db.execute('''
-          CREATE TABLE wallets (
-            id INTEGER PRIMARY KEY,
-            name TEXT NOT NULL,
-            logo TEXT
-          );
-        ''');
-
-        await db.execute('''
-          CREATE TABLE categories (
-            id INTEGER PRIMARY KEY,
-            label TEXT NOT NULL
-          )
-        ''');
-
-        await db.execute('''
-          CREATE TABLE custom_recaps (
-            id INTEGER PRIMARY KEY,
-            title TEXT NOT NULL,
-            start_date TEXT NOT NULL,
-            end_date TEXT NOT NULL 
-          )
-        ''');
-
-        await db.execute('''
-          CREATE TABLE loans (
-            id INTEGER PRIMARY KEY,
-            date TEXT,
-            wallet_id INTEGER,
-            amount REAL NOT NULL,
-            name REAL NOT NULL,
-            description TEXT,
-            type TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY(wallet_id) REFERENCES wallets(id)
-          )
-        ''');
-
-        await db.execute('''
-          CREATE TABLE loan_payments (
-            id INTEGER PRIMARY KEY,
-            date TEXT,
-            wallet_id INTEGER,
-            loan_id INTEGER,
-            amount REAL NOT NULL,
-            note TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY(wallet_id) REFERENCES wallets(id),
-            FOREIGN KEY(loan_id) REFERENCES loans(id)
-          )
-        ''');
-
+        await _createTables(db);
         await _seedDatabase(db);
       },
       onUpgrade: (db, oldVersion, newVersion) async {
-        if (oldVersion < 7) {
-          await db.execute('''
-            ALTER TABLE transactions
-            ADD COLUMN dest_wallet_id INTEGER
-          ''');
+        if (oldVersion < 2) {
+          await db
+              .execute('ALTER TABLE transactions ADD COLUMN cloud_id TEXT;');
         }
 
-        if (oldVersion < 8) {
-          await db.execute('''
-            CREATE TABLE custom_recaps (
-              id INTEGER PRIMARY KEY,
-              title TEXT NOT NULL,
-              start_date TEXT NOT NULL,
-              end_date TEXT NOT NULL 
-            )
-          ''');
-        }
-
-        if (oldVersion < 9) {
-          await db.execute('''
-            CREATE TABLE loans (
-              id INTEGER PRIMARY KEY,
-              date TEXT,
-              wallet_id INTEGER,
-              amount REAL NOT NULL,
-              name REAL NOT NULL,
-              description TEXT,
-              created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-              FOREIGN KEY(wallet_id) REFERENCES wallets(id)
-            )
-          ''');
-        }
-
-        if (oldVersion < 10) {
-          await db.execute('''
-            ALTER TABLE loans
-            ADD COLUMN type TEXT NOT NULL
-          ''');
-        }
-
-        if (oldVersion < 11) {
-          await db.execute('''
-             CREATE TABLE loan_payments (
-              id INTEGER PRIMARY KEY,
-              date TEXT,
-              wallet_id INTEGER,
-              loan_id INTEGER,
-              amount REAL NOT NULL,
-              note TEXT,
-              created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-              FOREIGN KEY(wallet_id) REFERENCES wallets(id),
-              FOREIGN KEY(loan_id) REFERENCES loans(id)
-            )
-          ''');
-        }
-
-        if (oldVersion < 12) {
-          // Check if custom_recaps table exists
-          final tables = await db.rawQuery(
-              "SELECT name FROM sqlite_master WHERE type='table' AND name='custom_recaps';");
-
-          if (tables.isEmpty) {
-            // Create custom_recaps table if it doesn't exist
-            await db.execute('''
-              CREATE TABLE IF NOT EXISTS custom_recaps (
-                id INTEGER PRIMARY KEY,
-                title TEXT NOT NULL,
-                start_date TEXT NOT NULL,
-                end_date TEXT NOT NULL 
-              )
-            ''');
-          }
+        if (oldVersion < 3) {
+          await db.execute(
+            'ALTER TABLE transactions ADD COLUMN updated_at TIMESTAMP;',
+          );
         }
       },
     );

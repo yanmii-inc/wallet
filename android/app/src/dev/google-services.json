@@ -1,0 +1,105 @@
+{
+  "project_info": {
+    "project_number": "1031166473986",
+    "project_id": "yanmii-wallet-dev",
+    "storage_bucket": "yanmii-wallet-dev.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1031166473986:android:09e56b7ae8dd8fc925f41b",
+        "android_client_info": {
+          "package_name": "com.yanmi.wallet.stg"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRg2O8TggRfGNpQaUcRKdnSzGW2_RNJqc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1031166473986:android:6fa0548f57f81b3225f41b",
+        "android_client_info": {
+          "package_name": "com.yanmii.wallet.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRg2O8TggRfGNpQaUcRKdnSzGW2_RNJqc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1031166473986:android:64be659c5709e78e25f41b",
+        "android_client_info": {
+          "package_name": "com.yanmii_wallet.mobile.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRg2O8TggRfGNpQaUcRKdnSzGW2_RNJqc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1031166473986:android:758239d2251a060725f41b",
+        "android_client_info": {
+          "package_name": "com.zot_starter.mobile.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRg2O8TggRfGNpQaUcRKdnSzGW2_RNJqc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1031166473986:android:8edd03d6dbf0f07c25f41b",
+        "android_client_info": {
+          "package_name": "com.zot_starter.mobile.stg"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRg2O8TggRfGNpQaUcRKdnSzGW2_RNJqc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

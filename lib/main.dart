@@ -14,6 +14,7 @@ import 'package:yanmii_wallet/src/common/data/sources/local/hive_db.dart';
 import 'package:yanmii_wallet/src/common/data/sources/remote/config/http_overrides.dart';
 import 'package:yanmii_wallet/src/localization/codegen_loader.g.dart';
 import 'package:yanmii_wallet/src/logging/analytics.dart';
+import 'package:yanmii_wallet/src/utils/helpers/supabase_helper.dart';
 
 void main() {
   const env = String.fromEnvironment(
@@ -32,6 +33,7 @@ void main() {
       );
       await HiveDB.init();
       await AnalyticsService.init();
+      await SupabaseHelper.initialize();
 
       // to skip the problem of SSL certification
       // and solve the Image.network(url) issue

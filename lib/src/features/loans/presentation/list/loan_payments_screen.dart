@@ -59,7 +59,7 @@ class _LoansListSectionState extends ConsumerState<LoanPaymentsSection> {
           IconButton(
             onPressed: () => _showDeleteConfirmationDialog(context),
             icon: const Icon(Icons.delete),
-          )
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(

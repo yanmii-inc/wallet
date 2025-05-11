@@ -12,6 +12,7 @@ class RegisterState with _$RegisterState {
     @Default(EmailFormz.pure()) EmailFormz email,
     @Default(PasswordFormz.pure()) PasswordFormz password,
     @Default(ConfirmPasswordFormz.pure()) ConfirmPasswordFormz password2,
+    @Default(TextFormz.pure()) TextFormz fullName,
     @Default(false) bool isValid,
     @Default(FormzSubmissionStatus.initial)
     FormzSubmissionStatus submissionStatus,

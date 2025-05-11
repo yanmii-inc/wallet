@@ -1,0 +1,1 @@
+/Users/mrkahvi/android-projects/kahfi-wallet/yanmii_wallet/build/app/intermediates/cxx/RelWithDebInfo/2ql4d384/obj/arm64-v8a

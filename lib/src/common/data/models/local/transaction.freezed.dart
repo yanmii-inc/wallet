@@ -32,6 +32,10 @@ mixin _$Transaction {
   int? get destWalletId => throw _privateConstructorUsedError;
   @JsonKey(name: 'category_id')
   int? get categoryId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'cloud_id', includeToJson: false)
+  String? get cloudId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'updated_at')
+  DateTime? get updatedAt => throw _privateConstructorUsedError;
   @JsonKey(includeToJson: false, includeIfNull: false)
   Wallet? get wallet => throw _privateConstructorUsedError;
   @JsonKey(includeToJson: false, includeIfNull: false)
@@ -65,6 +69,8 @@ abstract class $TransactionCopyWith<$Res> {
       @JsonKey(name: 'wallet_id') int? walletId,
       @JsonKey(name: 'dest_wallet_id') int? destWalletId,
       @JsonKey(name: 'category_id') int? categoryId,
+      @JsonKey(name: 'cloud_id', includeToJson: false) String? cloudId,
+      @JsonKey(name: 'updated_at') DateTime? updatedAt,
       @JsonKey(includeToJson: false, includeIfNull: false) Wallet? wallet,
       @JsonKey(includeToJson: false, includeIfNull: false) Wallet? destWallet,
       @JsonKey(includeToJson: false, includeIfNull: false) Category? category});
@@ -98,6 +104,8 @@ class _$TransactionCopyWithImpl<$Res, $Val extends Transaction>
     Object? walletId = freezed,
     Object? destWalletId = freezed,
     Object? categoryId = freezed,
+    Object? cloudId = freezed,
+    Object? updatedAt = freezed,
     Object? wallet = freezed,
     Object? destWallet = freezed,
     Object? category = freezed,
@@ -139,6 +147,14 @@ class _$TransactionCopyWithImpl<$Res, $Val extends Transaction>
           ? _value.categoryId
           : categoryId // ignore: cast_nullable_to_non_nullable
               as int?,
+      cloudId: freezed == cloudId
+          ? _value.cloudId
+          : cloudId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       wallet: freezed == wallet
           ? _value.wallet
           : wallet // ignore: cast_nullable_to_non_nullable
@@ -215,6 +231,8 @@ abstract class _$$TransactionImplCopyWith<$Res>
       @JsonKey(name: 'wallet_id') int? walletId,
       @JsonKey(name: 'dest_wallet_id') int? destWalletId,
       @JsonKey(name: 'category_id') int? categoryId,
+      @JsonKey(name: 'cloud_id', includeToJson: false) String? cloudId,
+      @JsonKey(name: 'updated_at') DateTime? updatedAt,
       @JsonKey(includeToJson: false, includeIfNull: false) Wallet? wallet,
       @JsonKey(includeToJson: false, includeIfNull: false) Wallet? destWallet,
       @JsonKey(includeToJson: false, includeIfNull: false) Category? category});
@@ -249,6 +267,8 @@ class __$$TransactionImplCopyWithImpl<$Res>
     Object? walletId = freezed,
     Object? destWalletId = freezed,
     Object? categoryId = freezed,
+    Object? cloudId = freezed,
+    Object? updatedAt = freezed,
     Object? wallet = freezed,
     Object? destWallet = freezed,
     Object? category = freezed,
@@ -290,6 +310,14 @@ class __$$TransactionImplCopyWithImpl<$Res>
           ? _value.categoryId
           : categoryId // ignore: cast_nullable_to_non_nullable
               as int?,
+      cloudId: freezed == cloudId
+          ? _value.cloudId
+          : cloudId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       wallet: freezed == wallet
           ? _value.wallet
           : wallet // ignore: cast_nullable_to_non_nullable
@@ -319,6 +347,8 @@ class _$TransactionImpl implements _Transaction {
       @JsonKey(name: 'wallet_id') this.walletId = null,
       @JsonKey(name: 'dest_wallet_id') this.destWalletId = null,
       @JsonKey(name: 'category_id') this.categoryId = null,
+      @JsonKey(name: 'cloud_id', includeToJson: false) this.cloudId = null,
+      @JsonKey(name: 'updated_at') this.updatedAt = null,
       @JsonKey(includeToJson: false, includeIfNull: false) this.wallet = null,
       @JsonKey(includeToJson: false, includeIfNull: false)
       this.destWallet = null,
@@ -353,6 +383,12 @@ class _$TransactionImpl implements _Transaction {
   @JsonKey(name: 'category_id')
   final int? categoryId;
   @override
+  @JsonKey(name: 'cloud_id', includeToJson: false)
+  final String? cloudId;
+  @override
+  @JsonKey(name: 'updated_at')
+  final DateTime? updatedAt;
+  @override
   @JsonKey(includeToJson: false, includeIfNull: false)
   final Wallet? wallet;
   @override
@@ -364,7 +400,7 @@ class _$TransactionImpl implements _Transaction {
 
   @override
   String toString() {
-    return 'Transaction(date: $date, amount: $amount, title: $title, type: $type, id: $id, description: $description, walletId: $walletId, destWalletId: $destWalletId, categoryId: $categoryId, wallet: $wallet, destWallet: $destWallet, category: $category)';
+    return 'Transaction(date: $date, amount: $amount, title: $title, type: $type, id: $id, description: $description, walletId: $walletId, destWalletId: $destWalletId, categoryId: $categoryId, cloudId: $cloudId, updatedAt: $updatedAt, wallet: $wallet, destWallet: $destWallet, category: $category)';
   }
 
   @override
@@ -385,6 +421,9 @@ class _$TransactionImpl implements _Transaction {
                 other.destWalletId == destWalletId) &&
             (identical(other.categoryId, categoryId) ||
                 other.categoryId == categoryId) &&
+            (identical(other.cloudId, cloudId) || other.cloudId == cloudId) &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt) &&
             (identical(other.wallet, wallet) || other.wallet == wallet) &&
             (identical(other.destWallet, destWallet) ||
                 other.destWallet == destWallet) &&
@@ -405,6 +444,8 @@ class _$TransactionImpl implements _Transaction {
       walletId,
       destWalletId,
       categoryId,
+      cloudId,
+      updatedAt,
       wallet,
       destWallet,
       category);
@@ -436,6 +477,8 @@ abstract class _Transaction implements Transaction {
       @JsonKey(name: 'wallet_id') final int? walletId,
       @JsonKey(name: 'dest_wallet_id') final int? destWalletId,
       @JsonKey(name: 'category_id') final int? categoryId,
+      @JsonKey(name: 'cloud_id', includeToJson: false) final String? cloudId,
+      @JsonKey(name: 'updated_at') final DateTime? updatedAt,
       @JsonKey(includeToJson: false, includeIfNull: false) final Wallet? wallet,
       @JsonKey(includeToJson: false, includeIfNull: false)
       final Wallet? destWallet,
@@ -466,6 +509,12 @@ abstract class _Transaction implements Transaction {
   @override
   @JsonKey(name: 'category_id')
   int? get categoryId;
+  @override
+  @JsonKey(name: 'cloud_id', includeToJson: false)
+  String? get cloudId;
+  @override
+  @JsonKey(name: 'updated_at')
+  DateTime? get updatedAt;
   @override
   @JsonKey(includeToJson: false, includeIfNull: false)
   Wallet? get wallet;

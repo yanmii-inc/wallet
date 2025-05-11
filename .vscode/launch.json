@@ -7,9 +7,23 @@
             "request": "launch",
             "program": "lib/main.dart",
             "args": [
-                "--dart-define=API_URL=http://0.0.0.0:8080/", // Change to your server IP address
+                "--dart-define=API_URL=http://0.0.0.0:8080/",
                 "--dart-define=ENV=DEV",
-                "--flavor=dev"
+                "--flavor=dev",
+                "--dart-define-from-file=config.json"
+            ]
+        }, 
+        {
+            "name": "Dev Release",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "release",
+            "args": [
+                "--dart-define=API_URL=http://0.0.0.0:8080/",
+                "--dart-define=ENV=DEV",
+                "--flavor=dev",
+                "--dart-define-from-file=config.json"
             ]
         }, 
         {
@@ -20,7 +34,8 @@
             "args": [
                 "--dart-define=API_URL=http://0.0.0.0:8080/",
                 "--dart-define=ENV=STG",
-                "--flavor=stg"
+                "--flavor=stg",
+                "--dart-define-from-file=config.json"
             ]
         },
         {

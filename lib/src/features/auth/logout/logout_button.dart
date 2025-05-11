@@ -13,7 +13,7 @@ class LogoutButton extends ConsumerWidget {
       final loggedOut = logout.isSuccessful.value ?? false;
 
       if (loggedOut) {
-        context.goNamed(Routes.login.name);
+        context.goNamed(Routes.signIn.name);
       }
     });
     return CommonButton(

@@ -1,0 +1,2 @@
+/Users/mrkahvi/android-projects/kahfi-wallet/yanmii_wallet/android/app/.cxx/RelWithDebInfo/2ql4d384/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/mrkahvi/android-projects/kahfi-wallet/yanmii_wallet/android/app/.cxx/RelWithDebInfo/2ql4d384/armeabi-v7a/CMakeFiles/rebuild_cache.dir

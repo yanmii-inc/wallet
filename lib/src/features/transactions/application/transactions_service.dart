@@ -37,7 +37,7 @@ class TransactionsService extends Notifier<List<TransactionEntity>> {
     if (category != null) {
       if (category.id == null) {
         final result = await _categoryRepository
-            .createCategory(Category(label: category.label));
+            .insert(Category(label: category.label));
         category = category.copyWith(
           id: result.when(
             success: (id) => id,
@@ -154,7 +154,7 @@ class TransactionsService extends Notifier<List<TransactionEntity>> {
     if (category != null) {
       if (category.id == null) {
         final result = await _categoryRepository
-            .createCategory(Category(label: category.label));
+            .insert(Category(label: category.label));
         category = category.copyWith(
           id: result.when(
             success: (id) => id,

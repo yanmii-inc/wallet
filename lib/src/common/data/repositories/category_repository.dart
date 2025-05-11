@@ -38,13 +38,34 @@ class CategoryRepository {
     }
   }
 
-  Future<DbResult<int>> createCategory(Category category) async {
+  Future<DbResult<int>> insert(Category category) async {
     try {
       final db = await _db;
       final result = await db.insert('categories', category.toJson());
       return DbResult.success(result);
     } catch (error, stackTrace) {
       return DbResult.failure(error, stackTrace);
+    }
+  }
+
+  Future<DbResult<void>> insertAll(List<Category> categories) async {
+    try {
+      final db = await _db;
+      final batch = db.batch();
+      
+      for (final category in categories) {
+        batch.insert('categories', {
+          'label': category.label,
+          'cloud_id': category.cloudId,
+          'user_id': category.userId,
+          'updated_at': category.updatedAt?.toIso8601String(),
+        });
+      }
+      
+      await batch.commit(noResult: true);
+      return const DbResult.success(null);
+    } catch (e, st) {
+      return DbResult.failure(e, st);
     }
   }
 

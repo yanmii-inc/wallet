@@ -32,21 +32,17 @@ class LoginController extends StateNotifier<LoginState> {
   Future<void> submit(String email, String password) async {
     state = state.copyWith(value: const AsyncValue.loading());
 
-    final response = await ref.read(authServiceProvider).login(email, password);
-
-    response.when(
-      success: (data) {
-        state = state.copyWith(
-          value: AsyncValue.data(data),
-          submissionStatus: FormzSubmissionStatus.success,
-        );
-      },
-      failure: (error, stackTrace) {
-        state = state.copyWith(
-          submissionStatus: FormzSubmissionStatus.failure,
-        );
-      },
-    );
+    try {
+      final user = await ref.read(authServiceProvider).signIn(email, password);
+      state = state.copyWith(
+        value: AsyncValue.data(user),
+        submissionStatus: FormzSubmissionStatus.success,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        submissionStatus: FormzSubmissionStatus.failure,
+      );
+    }
   }
 }
 

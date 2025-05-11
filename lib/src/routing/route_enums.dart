@@ -3,8 +3,8 @@ part of 'routes.dart';
 enum Routes {
   onboarding,
   splash,
-  login,
-  register,
+  signIn,
+  signUp,
   transactionsAdd,
   transactionsEdit,
   walletsAdd,

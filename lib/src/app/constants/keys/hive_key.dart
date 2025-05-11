@@ -18,4 +18,7 @@ class HiveKey {
 
   static const String themeBox = 'themeBox';
   static const String theme = 'theme';
+
+  static const String transactionBox = 'transactionBox';
+  static const String transaction = 'transaction';
 }

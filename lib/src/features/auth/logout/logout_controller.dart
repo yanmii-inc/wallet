@@ -9,7 +9,7 @@ class LogoutController extends StateNotifier<LogoutState> {
 
   Future<void> logout() async {
     state = state.copyWith(isSuccessful: const AsyncValue.loading());
-    await ref.read(authServiceProvider).logout();
+    await ref.read(authServiceProvider).signOut();
     state = state.copyWith(isSuccessful: const AsyncValue.data(true));
   }
 }

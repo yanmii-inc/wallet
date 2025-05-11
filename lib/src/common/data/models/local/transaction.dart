@@ -18,6 +18,10 @@ class Transaction with _$Transaction {
     @Default(null) @JsonKey(name: 'wallet_id') int? walletId,
     @Default(null) @JsonKey(name: 'dest_wallet_id') int? destWalletId,
     @Default(null) @JsonKey(name: 'category_id') int? categoryId,
+    @Default(null)
+    @JsonKey(name: 'cloud_id', includeToJson: false)
+    String? cloudId,
+    @Default(null) @JsonKey(name: 'updated_at') DateTime? updatedAt,
     @JsonKey(includeToJson: false, includeIfNull: false)
     @Default(null)
     Wallet? wallet,
@@ -31,4 +35,11 @@ class Transaction with _$Transaction {
 
   factory Transaction.fromJson(Map<String, dynamic> json) =>
       _$TransactionFromJson(json);
+}
+
+extension TransactionExtension on Transaction {
+  Map<String, dynamic> toSupabaseJson() {
+    final json = toJson()..remove('id');
+    return json;
+  }
 }

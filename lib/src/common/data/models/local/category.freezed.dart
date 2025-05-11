@@ -21,7 +21,14 @@ Category _$CategoryFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$Category {
   String get label => throw _privateConstructorUsedError;
+  @JsonKey(includeToJson: false)
   int? get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'cloud_id')
+  String? get cloudId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'user_id')
+  String? get userId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'updated_at')
+  DateTime? get updatedAt => throw _privateConstructorUsedError;
 
   /// Serializes this Category to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -38,7 +45,12 @@ abstract class $CategoryCopyWith<$Res> {
   factory $CategoryCopyWith(Category value, $Res Function(Category) then) =
       _$CategoryCopyWithImpl<$Res, Category>;
   @useResult
-  $Res call({String label, int? id});
+  $Res call(
+      {String label,
+      @JsonKey(includeToJson: false) int? id,
+      @JsonKey(name: 'cloud_id') String? cloudId,
+      @JsonKey(name: 'user_id') String? userId,
+      @JsonKey(name: 'updated_at') DateTime? updatedAt});
 }
 
 /// @nodoc
@@ -58,6 +70,9 @@ class _$CategoryCopyWithImpl<$Res, $Val extends Category>
   $Res call({
     Object? label = null,
     Object? id = freezed,
+    Object? cloudId = freezed,
+    Object? userId = freezed,
+    Object? updatedAt = freezed,
   }) {
     return _then(_value.copyWith(
       label: null == label
@@ -68,6 +83,18 @@ class _$CategoryCopyWithImpl<$Res, $Val extends Category>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
+      cloudId: freezed == cloudId
+          ? _value.cloudId
+          : cloudId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      userId: freezed == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ) as $Val);
   }
 }
@@ -80,7 +107,12 @@ abstract class _$$CategoryImplCopyWith<$Res>
       __$$CategoryImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String label, int? id});
+  $Res call(
+      {String label,
+      @JsonKey(includeToJson: false) int? id,
+      @JsonKey(name: 'cloud_id') String? cloudId,
+      @JsonKey(name: 'user_id') String? userId,
+      @JsonKey(name: 'updated_at') DateTime? updatedAt});
 }
 
 /// @nodoc
@@ -98,6 +130,9 @@ class __$$CategoryImplCopyWithImpl<$Res>
   $Res call({
     Object? label = null,
     Object? id = freezed,
+    Object? cloudId = freezed,
+    Object? userId = freezed,
+    Object? updatedAt = freezed,
   }) {
     return _then(_$CategoryImpl(
       label: null == label
@@ -108,6 +143,18 @@ class __$$CategoryImplCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
+      cloudId: freezed == cloudId
+          ? _value.cloudId
+          : cloudId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      userId: freezed == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ));
   }
 }
@@ -115,7 +162,12 @@ class __$$CategoryImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$CategoryImpl implements _Category {
-  const _$CategoryImpl({required this.label, this.id = null});
+  const _$CategoryImpl(
+      {required this.label,
+      @JsonKey(includeToJson: false) this.id = null,
+      @JsonKey(name: 'cloud_id') this.cloudId = null,
+      @JsonKey(name: 'user_id') this.userId = null,
+      @JsonKey(name: 'updated_at') this.updatedAt = null});
 
   factory _$CategoryImpl.fromJson(Map<String, dynamic> json) =>
       _$$CategoryImplFromJson(json);
@@ -123,12 +175,21 @@ class _$CategoryImpl implements _Category {
   @override
   final String label;
   @override
-  @JsonKey()
+  @JsonKey(includeToJson: false)
   final int? id;
+  @override
+  @JsonKey(name: 'cloud_id')
+  final String? cloudId;
+  @override
+  @JsonKey(name: 'user_id')
+  final String? userId;
+  @override
+  @JsonKey(name: 'updated_at')
+  final DateTime? updatedAt;
 
   @override
   String toString() {
-    return 'Category(label: $label, id: $id)';
+    return 'Category(label: $label, id: $id, cloudId: $cloudId, userId: $userId, updatedAt: $updatedAt)';
   }
 
   @override
@@ -137,12 +198,17 @@ class _$CategoryImpl implements _Category {
         (other.runtimeType == runtimeType &&
             other is _$CategoryImpl &&
             (identical(other.label, label) || other.label == label) &&
-            (identical(other.id, id) || other.id == id));
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.cloudId, cloudId) || other.cloudId == cloudId) &&
+            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, label, id);
+  int get hashCode =>
+      Object.hash(runtimeType, label, id, cloudId, userId, updatedAt);
 
   /// Create a copy of Category
   /// with the given fields replaced by the non-null parameter values.
@@ -161,8 +227,12 @@ class _$CategoryImpl implements _Category {
 }
 
 abstract class _Category implements Category {
-  const factory _Category({required final String label, final int? id}) =
-      _$CategoryImpl;
+  const factory _Category(
+      {required final String label,
+      @JsonKey(includeToJson: false) final int? id,
+      @JsonKey(name: 'cloud_id') final String? cloudId,
+      @JsonKey(name: 'user_id') final String? userId,
+      @JsonKey(name: 'updated_at') final DateTime? updatedAt}) = _$CategoryImpl;
 
   factory _Category.fromJson(Map<String, dynamic> json) =
       _$CategoryImpl.fromJson;
@@ -170,7 +240,17 @@ abstract class _Category implements Category {
   @override
   String get label;
   @override
+  @JsonKey(includeToJson: false)
   int? get id;
+  @override
+  @JsonKey(name: 'cloud_id')
+  String? get cloudId;
+  @override
+  @JsonKey(name: 'user_id')
+  String? get userId;
+  @override
+  @JsonKey(name: 'updated_at')
+  DateTime? get updatedAt;
 
   /// Create a copy of Category
   /// with the given fields replaced by the non-null parameter values.

@@ -51,7 +51,7 @@ class LoginHeaderSection extends StatelessWidget {
     return Align(
       alignment: Alignment.centerRight,
       child: InkWell(
-        onTap: () => context.pushNamed(Routes.register.name),
+        onTap: () => context.pushNamed(Routes.signUp.name),
         child: const Text('Register'),
       ),
     );

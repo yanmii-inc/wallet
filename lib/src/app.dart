@@ -1,8 +1,13 @@
+import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yanmii_wallet/src/app/config/config.dart';
 import 'package:yanmii_wallet/src/app/constants/constants.dart';
+import 'package:yanmii_wallet/src/common/data/repositories/transaction_repository.dart';
+import 'package:yanmii_wallet/src/common/services/auth_service.dart';
+import 'package:yanmii_wallet/src/common/services/sync_provider.dart';
 import 'package:yanmii_wallet/src/features/main/main_controller.dart';
 import 'package:yanmii_wallet/src/routing/routes.dart';
 
@@ -12,6 +17,24 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final routers = ref.watch(goRouterProvider);
+    // Initialize sync providers
+    // Initialize sync providers
+    ref
+      ..watch(syncProvider)
+      ..watch(transactionSyncProvider)
+
+      // Listen for auth status changes
+      ..listen(
+        authStateProvider,
+        (previous, next) {
+          log('User authenticated, triggering sync');
+          // Use a callback to avoid calling read inside a selector
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            ref.read(syncProvider.notifier).sync();
+          });
+        },
+      );
+
     final themeMode = ref.watch(appControllerProvider).currentTheme;
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,

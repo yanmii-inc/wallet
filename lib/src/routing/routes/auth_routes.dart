@@ -6,15 +6,15 @@ final _authRoutesProvider = Provider(
     builder: (context, state, child) => child,
     routes: [
       GoRoute(
-        path: Routes.login.path,
-        name: Routes.login.name,
-        builder: (context, state) => const LoginScreen(),
+        path: Routes.signIn.path,
+        name: Routes.signIn.name,
+        builder: (context, state) => const SignInScreen(),
       ),
       GoRoute(
-        path: Routes.register.path,
-        name: Routes.register.name,
+        path: Routes.signUp.path,
+        name: Routes.signUp.name,
         builder: (BuildContext context, GoRouterState state) =>
-            const RegisterScreen(),
+            const SignUpScreen(),
       ),
     ],
   ),

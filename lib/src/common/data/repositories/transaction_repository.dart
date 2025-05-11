@@ -11,6 +11,7 @@ import 'package:yanmii_wallet/src/common/data/models/local/title_total.dart';
 import 'package:yanmii_wallet/src/common/data/models/local/transaction.dart'
     as model;
 import 'package:yanmii_wallet/src/common/data/sources/sources.dart';
+import 'package:yanmii_wallet/src/common/services/sync_provider.dart';
 import 'package:yanmii_wallet/src/utils/helpers/database_helper.dart';
 
 class TransactionRepository {
@@ -22,12 +23,15 @@ class TransactionRepository {
   Future<DbResult<int>> createTransaction(model.Transaction value) async {
     try {
       final db = await _db;
-      log('value.toJson() ${value.toJson()}');
+      final now = DateTime.now().toUtc();
+      final transaction = value.copyWith(updatedAt: now);
+      log('transaction.toJson() ${transaction.toJson()}');
 
-      final id = await db.insert('transactions', value.toJson());
+      final id = await db.insert('transactions', transaction.toJson());
 
       return DbResult.success(id);
     } catch (e, st) {
+      log('createTransaction error: $e', error: e, stackTrace: st);
       return DbResult.failure(e, st);
     }
   }
@@ -114,12 +118,14 @@ class TransactionRepository {
   Future<DbResult<int>> updateTransaction(model.Transaction value) async {
     try {
       final db = await _db;
+      final now = DateTime.now().toUtc();
+      final transaction = value.copyWith(updatedAt: now);
 
       final id = await db.update(
         'transactions',
-        value.toJson(),
+        transaction.toJson(),
         where: 'id = ?',
-        whereArgs: [value.id],
+        whereArgs: [transaction.id],
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
 
@@ -321,7 +327,7 @@ class TransactionRepository {
         ORDER BY 
           year, month;
       ''';
-    log('query $query \n ${startDate.toIso8601String()} ${endDate.toIso8601String()}');
+    log('''query $query \n ${startDate.toIso8601String()} ${endDate.toIso8601String()}''');
     try {
       final result = await db.rawQuery(
         query,
@@ -554,7 +560,43 @@ class TransactionRepository {
         },
     };
   }
+
+  Future<DbResult<List<model.Transaction>>> getAllTransactions() async {
+    try {
+      final db = await _db;
+
+      const query = '''
+      SELECT 
+          t.id AS id, t.amount, t.type, t.date, t.title, t.description, t.category_id,
+          t.cloud_id, t.updated_at,
+          w.id AS wallet_id, w.name AS wallet_name, w.logo AS wallet_logo,
+          dw.id AS dest_wallet_id, dw.name AS dest_wallet_name, dw.logo AS dest_wallet_logo,
+          c.id AS category_id, c.label AS category_label
+          FROM transactions t
+          LEFT JOIN wallets w ON t.wallet_id = w.id
+          LEFT JOIN wallets dw ON t.dest_wallet_id = dw.id
+          LEFT JOIN categories c ON t.category_id = c.id
+          ORDER BY t.created_at;
+      ''';
+      final result = await db.rawQuery(query);
+
+      final formattedResult = result.map(_formatTransaction).toList();
+      final list = formattedResult.map(model.Transaction.fromJson).toList();
+
+      return DbResult.success(list);
+    } catch (e, st) {
+      return DbResult.failure(e, st);
+    }
+  }
 }
 
-final transactionRepositoryProvider =
-    Provider((ref) => TransactionRepository(ref.watch(databaseHelperProvider)));
+final transactionRepositoryProvider = Provider<TransactionRepository>((ref) {
+  return TransactionRepository(ref.watch(databaseHelperProvider));
+});
+
+// Separate provider to handle sync notifications
+final transactionSyncProvider = Provider<void>((ref) {
+  ref.listen(transactionRepositoryProvider, (previous, next) {
+    ref.read(syncProvider.notifier).sync();
+  });
+});

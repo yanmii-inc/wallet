@@ -19,6 +19,7 @@ mixin _$RegisterState {
   EmailFormz get email => throw _privateConstructorUsedError;
   PasswordFormz get password => throw _privateConstructorUsedError;
   ConfirmPasswordFormz get password2 => throw _privateConstructorUsedError;
+  TextFormz get fullName => throw _privateConstructorUsedError;
   bool get isValid => throw _privateConstructorUsedError;
   FormzSubmissionStatus get submissionStatus =>
       throw _privateConstructorUsedError;
@@ -41,6 +42,7 @@ abstract class $RegisterStateCopyWith<$Res> {
       {EmailFormz email,
       PasswordFormz password,
       ConfirmPasswordFormz password2,
+      TextFormz fullName,
       bool isValid,
       FormzSubmissionStatus submissionStatus,
       AsyncValue<User?> value});
@@ -64,6 +66,7 @@ class _$RegisterStateCopyWithImpl<$Res, $Val extends RegisterState>
     Object? email = null,
     Object? password = null,
     Object? password2 = null,
+    Object? fullName = null,
     Object? isValid = null,
     Object? submissionStatus = null,
     Object? value = null,
@@ -81,6 +84,10 @@ class _$RegisterStateCopyWithImpl<$Res, $Val extends RegisterState>
           ? _value.password2
           : password2 // ignore: cast_nullable_to_non_nullable
               as ConfirmPasswordFormz,
+      fullName: null == fullName
+          ? _value.fullName
+          : fullName // ignore: cast_nullable_to_non_nullable
+              as TextFormz,
       isValid: null == isValid
           ? _value.isValid
           : isValid // ignore: cast_nullable_to_non_nullable
@@ -109,6 +116,7 @@ abstract class _$$RegisterStateImplCopyWith<$Res>
       {EmailFormz email,
       PasswordFormz password,
       ConfirmPasswordFormz password2,
+      TextFormz fullName,
       bool isValid,
       FormzSubmissionStatus submissionStatus,
       AsyncValue<User?> value});
@@ -130,6 +138,7 @@ class __$$RegisterStateImplCopyWithImpl<$Res>
     Object? email = null,
     Object? password = null,
     Object? password2 = null,
+    Object? fullName = null,
     Object? isValid = null,
     Object? submissionStatus = null,
     Object? value = null,
@@ -147,6 +156,10 @@ class __$$RegisterStateImplCopyWithImpl<$Res>
           ? _value.password2
           : password2 // ignore: cast_nullable_to_non_nullable
               as ConfirmPasswordFormz,
+      fullName: null == fullName
+          ? _value.fullName
+          : fullName // ignore: cast_nullable_to_non_nullable
+              as TextFormz,
       isValid: null == isValid
           ? _value.isValid
           : isValid // ignore: cast_nullable_to_non_nullable
@@ -170,6 +183,7 @@ class _$RegisterStateImpl implements _RegisterState {
       {this.email = const EmailFormz.pure(),
       this.password = const PasswordFormz.pure(),
       this.password2 = const ConfirmPasswordFormz.pure(),
+      this.fullName = const TextFormz.pure(),
       this.isValid = false,
       this.submissionStatus = FormzSubmissionStatus.initial,
       this.value = const AsyncValue.data(null)});
@@ -185,6 +199,9 @@ class _$RegisterStateImpl implements _RegisterState {
   final ConfirmPasswordFormz password2;
   @override
   @JsonKey()
+  final TextFormz fullName;
+  @override
+  @JsonKey()
   final bool isValid;
   @override
   @JsonKey()
@@ -195,7 +212,7 @@ class _$RegisterStateImpl implements _RegisterState {
 
   @override
   String toString() {
-    return 'RegisterState(email: $email, password: $password, password2: $password2, isValid: $isValid, submissionStatus: $submissionStatus, value: $value)';
+    return 'RegisterState(email: $email, password: $password, password2: $password2, fullName: $fullName, isValid: $isValid, submissionStatus: $submissionStatus, value: $value)';
   }
 
   @override
@@ -208,6 +225,8 @@ class _$RegisterStateImpl implements _RegisterState {
                 other.password == password) &&
             (identical(other.password2, password2) ||
                 other.password2 == password2) &&
+            (identical(other.fullName, fullName) ||
+                other.fullName == fullName) &&
             (identical(other.isValid, isValid) || other.isValid == isValid) &&
             (identical(other.submissionStatus, submissionStatus) ||
                 other.submissionStatus == submissionStatus) &&
@@ -216,7 +235,7 @@ class _$RegisterStateImpl implements _RegisterState {
 
   @override
   int get hashCode => Object.hash(runtimeType, email, password, password2,
-      isValid, submissionStatus, value);
+      fullName, isValid, submissionStatus, value);
 
   /// Create a copy of RegisterState
   /// with the given fields replaced by the non-null parameter values.
@@ -232,6 +251,7 @@ abstract class _RegisterState implements RegisterState {
       {final EmailFormz email,
       final PasswordFormz password,
       final ConfirmPasswordFormz password2,
+      final TextFormz fullName,
       final bool isValid,
       final FormzSubmissionStatus submissionStatus,
       final AsyncValue<User?> value}) = _$RegisterStateImpl;
@@ -242,6 +262,8 @@ abstract class _RegisterState implements RegisterState {
   PasswordFormz get password;
   @override
   ConfirmPasswordFormz get password2;
+  @override
+  TextFormz get fullName;
   @override
   bool get isValid;
   @override

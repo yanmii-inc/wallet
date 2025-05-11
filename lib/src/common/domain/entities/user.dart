@@ -7,6 +7,7 @@ class User {
   const User({
     required this.uid,
     required this.email,
+    this.fullName,
   });
 
   @HiveField(0)
@@ -15,6 +16,9 @@ class User {
   @HiveField(1)
   final String email;
 
+  @HiveField(2)
+  final String? fullName;
+
   @override
-  String toString() => 'User(uid: $uid, email: $email)';
+  String toString() => 'User(uid: $uid, email: $email, fullName: $fullName)';
 }

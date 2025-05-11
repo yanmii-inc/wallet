@@ -1,89 +1,112 @@
+import 'dart:developer';
+
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:yanmii_wallet/src/common/data/mappers/user_mapper.dart';
-import 'package:yanmii_wallet/src/common/data/models/requests/login_request.dart';
-import 'package:yanmii_wallet/src/common/data/sources/local/hive_service.dart';
-import 'package:yanmii_wallet/src/common/data/sources/sources.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 import 'package:yanmii_wallet/src/common/domain/entities/user.dart';
-import 'package:yanmii_wallet/src/utils/delay.dart';
+import 'package:yanmii_wallet/src/common/domain/enums/auth_status.dart';
+import 'package:yanmii_wallet/src/utils/helpers/supabase_helper.dart';
 
 class AuthRepository {
-  AuthRepository(
-    this.authApi, {
-    required this.hiveService,
-  });
+  AuthRepository();
 
-  final AuthApi authApi;
-  final HiveService hiveService;
+  supabase.SupabaseClient get _client => SupabaseHelper.client;
 
-  User? get currentUser => hiveService.currentUser;
+  User? get currentUser {
+    final session = _client.auth.currentSession;
+    if (session == null) return null;
 
-  Future<String?> get userToken => hiveService.userToken;
+    final supaUser = _client.auth.currentUser;
+    if (supaUser == null) return null;
 
-  Stream<User?> get userStream async* {
-    yield hiveService.currentUser;
-  }
-
-  Future<NetworkResult<User>> login(
-    String email,
-    String password,
-  ) async {
-    final request = LoginRequest(
-      email: email,
-      password: password,
+    return User(
+      uid: supaUser.id,
+      email: supaUser.email ?? '',
+      fullName: supaUser.userMetadata?['full_name'] as String?,
     );
-
-    try {
-      final response = await authApi.login(request.toJson());
-
-      final user = UserMapper.mapUserResponseToUser(response);
-
-      hiveService.saveCurrentUser(user);
-      await hiveService.saveUserToken(response.token);
-      return NetworkResult.success(user);
-    } catch (e, st) {
-      return NetworkResult.failure(
-        NetworkExceptions.getException(e, st),
-        st,
-      );
-    }
   }
 
-  Future<NetworkResult<User>> register(
-    String email,
-    String password,
-    String password2,
-  ) async {
+  Future<String?> get userToken async {
+    final session = _client.auth.currentSession;
+    return session?.accessToken;
+  }
+
+  Future<AuthStatus> get authStatus async {
+    final token = await userToken;
+    return token != null
+        ? AuthStatus.authenticated
+        : AuthStatus.unauthenticated;
+  }
+
+  Future<User> signIn(String email, String password) async {
     try {
-      // final user = await authApi.register();
-      await delay();
-      final user = User(
-        uid: email.split('').reversed.join(),
+      final response = await _client.auth.signInWithPassword(
         email: email,
+        password: password,
       );
 
-      hiveService.saveCurrentUser(user);
+      final user = response.user;
+      if (user == null) throw Exception('User not found');
 
-      return NetworkResult.success(user);
-    } catch (e, st) {
-      return NetworkResult.failure(
-        NetworkExceptions.getException(e, st),
-        st,
+      return User(
+        uid: user.id,
+        email: user.email ?? '',
+        fullName: user.userMetadata?['full_name'] as String?,
       );
+    } catch (e) {
+      log('Sign in error:', error: e);
+      log('Error type: ${e.runtimeType}');
+      if (e is supabase.AuthException) {
+        log('Auth error message: ${e.message}');
+        log('Auth error status: ${e.statusCode}');
+        throw Exception(e.message);
+      }
+      throw Exception('Failed to sign in. Please try again later.');
     }
   }
 
-  Future<void> logout() async => hiveService
-    ..deleteCurrentUser()
-    ..deleteUserToken();
+  Future<User> signUp({
+    required String email,
+    required String password,
+    required String fullName,
+  }) async {
+    log('signUp $email $password $fullName');
+    try {
+      final response = await _client.auth.signUp(
+        email: email,
+        password: password,
+        data: {'full_name': fullName},
+      );
 
-  void dispose() => hiveService.close();
+      final user = response.user;
+      if (user == null) throw Exception('Failed to create user');
+
+      return User(
+        uid: user.id,
+        email: user.email ?? '',
+        fullName: fullName,
+      );
+    } catch (e, st) {
+      debugPrint(e.toString());
+      debugPrintStack(stackTrace: st);
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<void> signOut() async {
+    await _client.auth.signOut();
+  }
+
+  Future<void> resendConfirmationEmail(String email) async {
+    try {
+      await _client.auth.resend(email: email, type: supabase.OtpType.signup);
+    } catch (e) {
+      log('Resend confirmation email error:', error: e);
+      throw Exception('Failed to resend confirmation email. Please try again later.');
+    }
+  }
 }
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  final auth = AuthRepository(
-    ref.watch(authApiProvider),
-    hiveService: ref.watch(hiveServiceProvider),
-  );
-  ref.onDispose(auth.dispose);
-  return auth;
+  return AuthRepository();
 });

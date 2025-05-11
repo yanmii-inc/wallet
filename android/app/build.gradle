@@ -80,7 +80,7 @@ android {
         }
         dev {
             dimension "flavor-type"
-            applicationId "com.yanmi.wallet.dev"
+            applicationId "com.yanmii.wallet.dev"
             resValue "string", "app_name", "[DEV] Yanmii Wallet"
             manifestPlaceholders.deeplinkHost = "devAppLink"
         }

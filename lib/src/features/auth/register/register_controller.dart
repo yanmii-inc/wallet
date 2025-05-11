@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:formz/formz.dart';
-import 'package:yanmii_wallet/src/common/data/repositories/auth_repository.dart';
 import 'package:yanmii_wallet/src/common/domain/formz/formz.dart';
+import 'package:yanmii_wallet/src/common/services/auth_service.dart';
 import 'package:yanmii_wallet/src/features/auth/register/register_state.dart';
 
 class RegisterController extends StateNotifier<RegisterState> {
@@ -13,11 +13,13 @@ class RegisterController extends StateNotifier<RegisterState> {
     EmailFormz? email,
     PasswordFormz? password,
     ConfirmPasswordFormz? password2,
+    TextFormz? fullName,
   }) {
     return Formz.validate([
       email ?? state.email,
       password ?? state.password,
       password2 ?? state.password2,
+      fullName ?? state.fullName,
     ]);
   }
 
@@ -49,25 +51,35 @@ class RegisterController extends StateNotifier<RegisterState> {
     );
   }
 
-  Future<void> submit(
-    String email,
-    String password,
-    String password2,
-  ) async {
-    state = state.copyWith(value: const AsyncValue.loading());
-
-    final response = await ref
-        .read(authRepositoryProvider)
-        .register(email, password, password2);
-    response.when(
-      success: (data) => state = state.copyWith(
-        value: AsyncValue.data(data),
-        submissionStatus: FormzSubmissionStatus.success,
-      ),
-      failure: (error, stackTrace) => state = state.copyWith(
-        submissionStatus: FormzSubmissionStatus.failure,
-      ),
+  void updateFullName(String value) {
+    final fullName = TextFormz.dirty(value);
+    state = state.copyWith(
+      fullName: fullName,
+      isValid: validate(fullName: fullName),
     );
+  }
+
+  Future<void> submit() async {
+    if (!state.isValid) return;
+
+    state = state.copyWith(submissionStatus: FormzSubmissionStatus.inProgress);
+
+    try {
+      final user = await ref.read(authServiceProvider).signUp(
+        email: state.email.value,
+        password: state.password.value,
+        fullName: state.fullName.value,
+      );
+
+      state = state.copyWith(
+        value: AsyncValue.data(user),
+        submissionStatus: FormzSubmissionStatus.success,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        submissionStatus: FormzSubmissionStatus.failure,
+      );
+    }
   }
 }
 
