@@ -135,6 +135,36 @@ class TransactionRepository {
     }
   }
 
+  Future<DbResult<int>> updateTransactions(List<model.Transaction> transactions) async {
+    final db = await _db;
+    var updatedCount = 0;
+
+    try {
+      await db.transaction((txn) async {
+        final now = DateTime.now().toUtc();
+        final batch = txn.batch();
+
+        for (final transaction in transactions) {
+          final updatedTransaction = transaction.copyWith(updatedAt: now);
+          batch.update(
+            'transactions',
+            updatedTransaction.toJson(),
+            where: 'id = ?',
+            whereArgs: [updatedTransaction.id],
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
+        }
+
+        final results = await batch.commit();
+        updatedCount = results.length;
+      });
+
+      return DbResult.success(updatedCount);
+    } catch (e, st) {
+      return DbResult.failure(e, st);
+    }
+  }
+
   Future<DbResult<List<MonthlyBalance>>> getMonthlyRecaps({
     required int startDate,
   }) async {

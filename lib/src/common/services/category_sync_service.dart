@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:yanmii_wallet/src/common/data/models/local/category.dart';
@@ -7,7 +8,52 @@ import 'package:yanmii_wallet/src/common/data/repositories/category_repository.d
 import 'package:yanmii_wallet/src/common/services/auth_service.dart';
 
 class CategorySyncService extends StateNotifier<bool> {
+
   CategorySyncService(this.ref) : super(false);
+  Future<void> syncCategoryById(int categoryId) async {
+    final authService = ref.read(authServiceProvider);
+    final categoryRepo = ref.read(categoryRepositoryProvider);
+    final client = Supabase.instance.client;
+
+    if (!authService.isAuthenticated || authService.currentUser?.uid == null) {
+      log('Skipping category sync: Not authenticated or no user ID');
+      return;
+    }
+
+    // Get local category
+    final localResult = await categoryRepo.getCategories();
+    final localCategory = localResult.when(
+      success: (categories) =>
+          categories.firstWhereOrNull((c) => c.id == categoryId),
+      failure: (e, st) => null,
+    );
+    if (localCategory == null) {
+      log('No local category found for id $categoryId');
+      return;
+    }
+
+    // Check if category exists in Supabase
+    final cloudResult = await client
+        .from('categories')
+        .select()
+        .eq('user_id', authService.currentUser!.uid)
+        .eq('label', localCategory.label)
+        .maybeSingle();
+
+    if (cloudResult == null) {
+      // Upload category to Supabase
+      log('Uploading category ${localCategory.label} to Supabase');
+      final categoryData = {
+        'label': localCategory.label,
+        'user_id': authService.currentUser!.uid,
+        if (localCategory.updatedAt != null)
+          'updated_at': localCategory.updatedAt!.toIso8601String(),
+      };
+      await client.from('categories').insert(categoryData);
+    } else {
+      log('Category already exists in Supabase: ${localCategory.label}');
+    }
+  }
 
   final Ref ref;
   bool _isSyncing = false;
@@ -101,7 +147,7 @@ class CategorySyncService extends StateNotifier<bool> {
                         'user_id': authService.currentUser!.uid,
                         if (category.updatedAt != null)
                           'updated_at': category.updatedAt!.toIso8601String(),
-                      })
+                      },)
                   .toList();
 
               final results =
@@ -136,7 +182,7 @@ class CategorySyncService extends StateNotifier<bool> {
               // Update local with cloud versions
               final cloudVersions = cloudCategories
                   .where((c) =>
-                      categoriesToUpdate.any((l) => l.cloudId == c.cloudId))
+                      categoriesToUpdate.any((l) => l.cloudId == c.cloudId),)
                   .toList();
 
               if (cloudVersions.isNotEmpty) {
@@ -170,4 +216,4 @@ class CategorySyncService extends StateNotifier<bool> {
 
 final categorySyncServiceProvider =
     StateNotifierProvider<CategorySyncService, bool>(
-        (ref) => CategorySyncService(ref));
+        CategorySyncService.new,);

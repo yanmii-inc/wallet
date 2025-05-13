@@ -31,7 +31,8 @@ class SyncNotifier extends StateNotifier<bool> {
     log('Starting sync process');
     state = true;
     try {
-      await ref.read(cloudSyncServiceProvider).syncTransactions();
+      final syncService = ref.read<CloudSyncService>(cloudSyncServiceProvider.notifier);
+      await syncService.syncTransactions();
       log('Sync completed successfully');
     } catch (e) {
       log('Sync failed', error: e);

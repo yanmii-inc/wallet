@@ -17,8 +17,6 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final routers = ref.watch(goRouterProvider);
-    // Initialize sync providers
-    // Initialize sync providers
     ref
       ..watch(syncProvider)
       ..watch(transactionSyncProvider)
@@ -27,11 +25,14 @@ class MyApp extends ConsumerWidget {
       ..listen(
         authStateProvider,
         (previous, next) {
-          log('User authenticated, triggering sync');
-          // Use a callback to avoid calling read inside a selector
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            ref.read(syncProvider.notifier).sync();
-          });
+          final authChanged =
+              (next.hasValue && next.value != null) && previous?.value == null;
+          if (authChanged) {
+            log('User authenticated, triggering sync');
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              ref.read(syncProvider.notifier).sync();
+            });
+          }
         },
       );
 

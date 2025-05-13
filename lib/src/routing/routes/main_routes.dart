@@ -61,8 +61,14 @@ final Provider<ShellRoute> _mainRouteProvider = Provider<ShellRoute>((ref) {
       GoRoute(
         path: MainTabRoute.settings.path,
         parentNavigatorKey: _mainTabNavigatorKey,
-        pageBuilder: (BuildContext context, GoRouterState state) =>
-            const NoTransitionPage(child: AuthScreen()),
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          final authService = ref.watch(authServiceProvider);
+          log(authService.currentUser?.email ?? 'No user');
+          if (authService.currentUser != null) {
+            return const NoTransitionPage(child: LogoutButton());
+          }
+          return const NoTransitionPage(child: AuthScreen());
+        },
       ),
     ],
   );
